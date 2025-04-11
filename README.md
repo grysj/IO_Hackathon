@@ -15,7 +15,7 @@ Dynamiczny charakter współczesnego życia studenckiego powoduje, że studenci 
 
 Nasza aplikacja odpowiada na te problemy, dostarczając studentom scentralizowaną i intuicyjną platformę do łatwego planowania wydarzeń, koordynowania dostępności znajomych oraz sprawdzania ich planów zajęć w czasie rzeczywistym. Dzięki aplikacji użytkownicy mogą szybko zobaczyć, kiedy i gdzie ich znajomi mają zajęcia lub inne zobowiązania, co znacząco upraszcza organizowanie zarówno formalnych, jak i nieformalnych spotkań.
 
-Rozwiązanie zostało stworzone z myślą o elastyczności i specyfice życia studenckiego, wspierając zarówno zaplanowane spotkania projektowe, jak i spontaniczne wydarzenia towarzyskie. Dzięki dostępowi przez przeglądarkę oraz urządzenia mobilne, aplikacja nie tylko usprawnia współpracę między studentami, ale również wspiera budowanie silniejszych więzi społecznych w środowisku akademickim.
+Rozwiązanie zostało stworzone z myślą o elastyczności i specyfice życia studenckiego, wspierając zarówno zaplanowane spotkania projektowe, jak i spontaniczne wydarzenia towarzyskie. Dzięki dostępowi przez przeglądarkę można z niej korzystać z dowolnego urządzenia min. z telefonu, aplikacja nie tylko usprawnia współpracę między studentami, ale również wspiera budowanie silniejszych więzi społecznych w środowisku akademickim.
 
 
 ## 2. Grupa docelowa
