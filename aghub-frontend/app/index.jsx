@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 
-export default function Index() {
+export default function HomeScreen() {
   return (
     <View
       style={{
@@ -9,7 +9,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Hello, krzysiu!</Text>
+      <Text className="text-2xl">Hello, world!</Text>
     </View>
   );
 }
