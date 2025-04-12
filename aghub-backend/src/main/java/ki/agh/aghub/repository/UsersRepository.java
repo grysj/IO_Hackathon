@@ -1,16 +1,25 @@
 package ki.agh.aghub.repository;
 
+import ki.agh.aghub.model.POI;
 import ki.agh.aghub.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface UsersRepository extends JpaRepository<User, Long> {
 
-    public List<User> findAll();
+    List<User> findAll();
 
-    public List<User> getUsersByPOIAndByDay();
+    @Query("SELECT DISTINCT c.user FROM Class c " +
+           "WHERE c.poi = :poi " +
+           "AND c.date_start BETWEEN :startOfDay AND :endOfDay")
+    List<User> getUsersByPOIAndByDay(@Param("poi") POI poi,
+                                     @Param("startOfDay") LocalDateTime startOfDay,
+                                     @Param("endOfDay") LocalDateTime endOfDay);
 
-    public User getUserByMail();
-
+    User findByMail(String mail);
 }
+

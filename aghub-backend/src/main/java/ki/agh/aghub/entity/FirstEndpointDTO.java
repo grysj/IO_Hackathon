@@ -1,5 +1,7 @@
 package ki.agh.aghub.entity;
 
+import java.util.List;
+
 public class FirstEndpointDTO {
 
     private List<String> usernames;

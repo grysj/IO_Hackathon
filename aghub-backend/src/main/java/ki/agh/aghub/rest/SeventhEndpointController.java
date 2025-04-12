@@ -2,6 +2,7 @@ package ki.agh.aghub.rest;
 
 import ki.agh.aghub.entity.FriendsDTO;
 import ki.agh.aghub.entity.FriendsRequestDTO;
+import ki.agh.aghub.service.UsersService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,15 +14,15 @@ import java.util.Map;
 @RequestMapping("/api/friends")
 public class SeventhEndpointController {
 
-    private FriendsService friendsService;
+    private UsersService usersService;
 
-    public SeventhEndpointController(FriendsService friendsService) {
-        this.friendsService = friendsService;
+    public SeventhEndpointController(UsersService friendsService) {
+        this.usersService = usersService;
     }
 
     @PostMapping("")
     public Map<String, String> addFriend(@RequestBody FriendsRequestDTO friendsRequestDTO) {
-        String result = this.friendsService.;
+        String result = this.usersService.addFriend(Long.valueOf(friendsRequestDTO.getIdA()), Long.valueOf(friendsRequestDTO.getIdB()));
         return Map.of("message", result);
     }
 }

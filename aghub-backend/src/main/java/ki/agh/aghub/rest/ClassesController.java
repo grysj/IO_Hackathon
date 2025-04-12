@@ -1,6 +1,7 @@
 package ki.agh.aghub.rest;
 
 import ki.agh.aghub.entity.ClassesDTO;
+import ki.agh.aghub.service.ClassesService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +18,8 @@ public class ClassesController {
     }
 
     @PostMapping()
-    public ClassesDTO saveClass(@RequestBody ClassesDTO classesDTO) {
-        return this.classesService.save(classesDTO);
+    public void saveClass(@RequestBody ClassesDTO classesDTO) {
+        this.classesService.saveDTO(classesDTO);
     }
 }
 
