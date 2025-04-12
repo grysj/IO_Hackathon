@@ -1,23 +1,17 @@
-import { Tabs } from "expo-router";
-// import { useToken } from "@gluestack-ui/themed";
-import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { View } from "react-native";
+import { Slot } from "expo-router";
+import NavigationBar from "../../components/NavigationBar";
 
-export default function TabsLayout() {
+const Layout = () => {
+  const navigationBarItems = [];
+
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Tabs.Screen
-        name="mapmock"
-        options={{
-          title: "Map",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="map" size={24} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+    <View className="flex flex-col min-h-screen">
+      <Slot />
+      <NavigationBar items={navigationBarItems} />
+    </View>
   );
-}
+};
+
+export default Layout;

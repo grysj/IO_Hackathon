@@ -6,7 +6,11 @@ import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 export default function RootLayout() {
   return (
     <GluestackUIProvider mode="light">
-      <Stack />
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="loginmock" />
+        <Stack.Screen name="(pages)" options={{ headerShown: false }} />
+      </Stack>
     </GluestackUIProvider>
   );
 }
