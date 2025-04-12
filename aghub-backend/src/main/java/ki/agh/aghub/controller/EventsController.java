@@ -1,4 +1,4 @@
-package ki.agh.aghub.rest;
+package ki.agh.aghub.controller;
 
 public class EventsController {
 }

@@ -1,6 +1,6 @@
 package ki.agh.aghub.service;
 
-import ki.agh.aghub.entity.ClassesDTO;
+import ki.agh.aghub.dto.ClassesDTO;
 import ki.agh.aghub.model.Class;
 import ki.agh.aghub.repository.ClassesRepository;
 import ki.agh.aghub.repository.PoiRepository;

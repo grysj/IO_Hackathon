@@ -1,9 +1,9 @@
 package ki.agh.aghub.service;
 
 
-import ki.agh.aghub.entity.FirstEndpointDTO;
-import ki.agh.aghub.entity.FriendsDTO;
-import ki.agh.aghub.entity.UsersDTO;
+import ki.agh.aghub.dto.FirstEndpointDTO;
+import ki.agh.aghub.dto.FriendsDTO;
+import ki.agh.aghub.dto.UsersDTO;
 import ki.agh.aghub.model.POI;
 import ki.agh.aghub.model.User;
 import ki.agh.aghub.repository.PoiRepository;

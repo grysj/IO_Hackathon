@@ -1,4 +1,4 @@
-package ki.agh.aghub.configuration;
+package ki.agh.aghub.config;
 
 
 import ki.agh.aghub.model.*;

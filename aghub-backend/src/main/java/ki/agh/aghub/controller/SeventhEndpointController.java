@@ -1,7 +1,6 @@
-package ki.agh.aghub.rest;
+package ki.agh.aghub.controller;
 
-import ki.agh.aghub.entity.FriendsDTO;
-import ki.agh.aghub.entity.FriendsRequestDTO;
+import ki.agh.aghub.dto.FriendsRequestDTO;
 import ki.agh.aghub.service.UsersService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

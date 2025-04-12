@@ -1,7 +1,7 @@
-package ki.agh.aghub.rest;
+package ki.agh.aghub.controller;
 
-import ki.agh.aghub.entity.FifthEndpointDTO;
-import ki.agh.aghub.entity.FriendsDTO;
+import ki.agh.aghub.dto.FifthEndpointDTO;
+import ki.agh.aghub.dto.FriendsDTO;
 import ki.agh.aghub.service.UsersService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

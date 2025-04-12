@@ -1,8 +1,7 @@
 package ki.agh.aghub.service;
 
 
-import ki.agh.aghub.entity.UnavailabilityDTO;
-import ki.agh.aghub.model.Unavailability;
+import ki.agh.aghub.dto.UnavailabilityDTO;
 import ki.agh.aghub.repository.UnavailabilitiesRepository;
 import org.springframework.stereotype.Service;
 

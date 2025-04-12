@@ -1,8 +1,7 @@
 package ki.agh.aghub.service;
 
 
-import ki.agh.aghub.entity.EventsDTO;
-import ki.agh.aghub.model.Event;
+import ki.agh.aghub.dto.EventsDTO;
 import ki.agh.aghub.repository.EventsRepository;
 import org.springframework.stereotype.Service;
 
