@@ -4,37 +4,41 @@ import java.util.List;
 
 public class FourthEndpointDTO {
 
-    private List<EventsDTO> acceptedEvents;
-    private List<EventsDTO> declinedEvents;
-    private List<EventsDTO> pendingEvents;
+    private List<EventDTO> acceptedEvents;
+    private List<EventDTO> declinedEvents;
+    private List<EventDTO> pendingEvents;
 
-    public FourthEndpointDTO(List<EventsDTO> acceptedEvents, List<EventsDTO> declinedEvents, List<EventsDTO> pendingEvents) {
+    public FourthEndpointDTO(
+        List<EventDTO> acceptedEvents, 
+        List<EventDTO> declinedEvents, 
+        List<EventDTO> pendingEvents
+    ) {
         this.acceptedEvents = acceptedEvents;
         this.declinedEvents = declinedEvents;
         this.pendingEvents = pendingEvents;
     }
 
-    public List<EventsDTO> getAcceptedEvents() {
+    public List<EventDTO> getAcceptedEvents() {
         return acceptedEvents;
     }
 
-    public void setAcceptedEvents(List<EventsDTO> acceptedEvents) {
+    public void setAcceptedEvents(List<EventDTO> acceptedEvents) {
         this.acceptedEvents = acceptedEvents;
     }
 
-    public List<EventsDTO> getDeclinedEvents() {
+    public List<EventDTO> getDeclinedEvents() {
         return declinedEvents;
     }
 
-    public void setDeclinedEvents(List<EventsDTO> declinedEvents) {
+    public void setDeclinedEvents(List<EventDTO> declinedEvents) {
         this.declinedEvents = declinedEvents;
     }
 
-    public List<EventsDTO> getPendingEvents() {
+    public List<EventDTO> getPendingEvents() {
         return pendingEvents;
     }
 
-    public void setPendingEvents(List<EventsDTO> pendingEvents) {
+    public void setPendingEvents(List<EventDTO> pendingEvents) {
         this.pendingEvents = pendingEvents;
     }
 }

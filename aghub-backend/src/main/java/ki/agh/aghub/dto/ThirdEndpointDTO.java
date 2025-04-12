@@ -4,23 +4,23 @@ import java.util.List;
 
 public class ThirdEndpointDTO {
 
-    private List<EventsDTO> events;
+    private List<EventDTO> events;
 
     private List<ClassesDTO> classes;
 
     private List<UnavailabilityDTO> unavailability;
 
-    public ThirdEndpointDTO(List<EventsDTO> events, List<ClassesDTO> classes, List<UnavailabilityDTO> unavailability) {
+    public ThirdEndpointDTO(List<EventDTO> events, List<ClassesDTO> classes, List<UnavailabilityDTO> unavailability) {
         this.events = events;
         this.classes = classes;
         this.unavailability = unavailability;
     }
 
-    public List<EventsDTO> getEvents() {
+    public List<EventDTO> getEvents() {
         return events;
     }
 
-    public void setEvents(List<EventsDTO> events) {
+    public void setEvents(List<EventDTO> events) {
         this.events = events;
     }
 

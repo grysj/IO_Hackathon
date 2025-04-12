@@ -15,7 +15,7 @@ public interface UsersRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT DISTINCT c.user FROM Classes c " +
            "WHERE c.poi = :poi " +
-           "AND c.date_start BETWEEN :startOfDay AND :endOfDay")
+           "AND c.dateStart BETWEEN :startOfDay AND :endOfDay")
     List<User> getUsersByPOIAndByDay(@Param("poi") POI poi,
                                      @Param("startOfDay") LocalDateTime startOfDay,
                                      @Param("endOfDay") LocalDateTime endOfDay);

@@ -1,8 +1,11 @@
 package ki.agh.aghub.mapper;
 
+import org.springframework.stereotype.Component;
+
 import ki.agh.aghub.dto.ClassesDTO;
 import ki.agh.aghub.model.Classes;
 
+@Component
 public class ClassesMapper {
 
     public ClassesDTO toDto(Classes classes) {
