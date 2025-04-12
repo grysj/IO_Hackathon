@@ -1,26 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Box, HStack, VStack, Text, Pressable, ScrollView, Checkbox } from '@gluestack-ui/themed';
-// import { fetchFriendsFromBackend } from '../api/friends'; // przykładowy fetch
+import React, {useEffect, useState} from 'react';
+import {Box, HStack, Pressable, ScrollView, Text, VStack,} from '@gluestack-ui/themed';
+import {MaterialIcons} from "@expo/vector-icons";
 
 const mockFriends = [
-    { id: 1, username: 'alice', email: 'alice@example.com' },
-    { id: 2, username: 'bob', email: 'bob@example.com' },
-    { id: 3, username: 'charlie', email: 'charlie@example.com' },
+    {id: 1, username: 'alice', email: 'alice@example.com'},
+    {id: 2, username: 'bob', email: 'bob@example.com'},
+    {id: 3, username: 'charlie', email: 'charlie@example.com'},
 ];
 
-const FriendSelector = ({ onConfirm }) => {
+const FriendSelector = ({onConfirm}) => {
     const [friends, setFriends] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
 
-    // ⏬ symulacja pobierania z backendu
     useEffect(() => {
-        // const fetchData = async () => {
-        //   const response = await fetchFriendsFromBackend();
-        //   setFriends(response);
-        // };
-        // fetchData();
-
-        // Na razie używamy mocka:
         setFriends(mockFriends);
     }, []);
 
@@ -43,43 +35,69 @@ const FriendSelector = ({ onConfirm }) => {
             <Text className="text-xl font-bold text-typography-950 mb-4">Wybierz znajomych</Text>
 
             <ScrollView className="mb-4">
-                <VStack space="md">
-                    {friends.map((friend) => (
+                <Box justifyContent="space-between">
+                    <VStack space="md">
+                        {friends.map((friend) => {
+                            const isSelected = selectedIds.includes(friend.id);
+
+                            return (
+                                <Pressable
+                                    key={friend.id}
+                                    onPress={() => toggleSelection(friend.id)}
+                                    className={`rounded-lg p-3 border mb-3 flex-row items-center ${
+                                        isSelected
+                                            ? 'bg-yellow-600 border-yellow-700'
+                                            : 'bg-background-100 border-outline-200'
+                                    }`}
+                                >
+                                    <Box className="mr-4">
+                                        <MaterialIcons name="person" size={30} color="white" />
+                                    </Box>
+                                    <Box>
+
+                                        <Text
+                                            className={`font-semibold ${
+                                                isSelected ? 'text-white' : 'text-typography-900'
+                                            }`}
+                                        >
+                                            {friend.username}
+                                        </Text>
+                                        <Text
+                                            className={`text-xs ${
+                                                isSelected ? 'text-yellow-100' : 'text-typography-500'
+                                            }`}
+                                        >
+                                            {friend.email}
+                                        </Text>
+                                    </Box>
+                                </Pressable>
+                            );
+                        })}
+                    </VStack>
+                    <HStack space="md" justifyContent="space-between" className="flex flex-row mt-4">
                         <Pressable
-                            key={friend.id}
-                            className="flex-row items-center bg-background-100 rounded-lg p-3 border border-outline-200"
-                            onPress={() => toggleSelection(friend.id)}
+                            onPress={handleCancel}
+                            className="flex-1 items-center py-2 rounded-xl bg-background-muted"
                         >
-                            <Checkbox
-                                isChecked={selectedIds.includes(friend.id)}
-                                onChange={() => toggleSelection(friend.id)}
-                                className="mr-3 border-outline-300"
-                            />
-                            <Box>
-                                <Text className="text-typography-900 font-semibold">{friend.username}</Text>
-                                <Text className="text-typography-500 text-xs">{friend.email}</Text>
-                            </Box>
+                            <Text className="text-error-500 font-bold">Anuluj</Text>
                         </Pressable>
-                    ))}
-                </VStack>
+
+                        <Pressable
+                            onPress={handleConfirm}
+                            disabled={selectedIds.length === 0}
+                            className={`flex-1 items-center py-2 rounded-xl ml-2
+                            ${
+                                selectedIds.length === 0 ? 'bg-background-muted' : 'bg-yellow-600'
+                            }`}
+                        >
+
+                            <Text className="text-background-light font-bold">Potwierdź</Text>
+                        </Pressable>
+                    </HStack>
+                </Box>
             </ScrollView>
 
-            {/* Przyciski akcji */}
-            <HStack space="md" justifyContent="space-between">
-                <Pressable
-                    onPress={handleCancel}
-                    className="flex-1 items-center py-2 rounded-xl bg-background-muted"
-                >
-                    <Text className="text-error-500 font-bold">Anuluj</Text>
-                </Pressable>
 
-                <Pressable
-                    onPress={handleConfirm}
-                    className="flex-1 items-center py-2 rounded-xl bg-primary-500"
-                >
-                    <Text className="text-background-light font-bold">Potwierdź</Text>
-                </Pressable>
-            </HStack>
         </Box>
     );
 };
