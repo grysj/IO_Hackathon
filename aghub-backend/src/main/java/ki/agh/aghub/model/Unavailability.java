@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name= "unavailabilities")
-public class Unavaiability {
+public class Unavailability {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

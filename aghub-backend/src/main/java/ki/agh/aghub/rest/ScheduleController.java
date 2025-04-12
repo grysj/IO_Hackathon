@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-public class ThirdEndpointController {
+public class ScheduleController {
 
     private EventsService eventsService;
 
@@ -22,13 +22,13 @@ public class ThirdEndpointController {
 
     private UnavailabilityService unavailabilityService;
 
-    public ThirdEndpointController(EventsService eventsService, ClassesService classesService, UnavailabilityService unavailabilityService) {
+    public ScheduleController(EventsService eventsService, ClassesService classesService, UnavailabilityService unavailabilityService) {
         this.eventsService = eventsService;
         this.classesService = classesService;
         this.unavailabilityService = unavailabilityService;
     }
 
-    @GetMapping("/third/{user_id}/{date}")
+    @GetMapping("/schedule/{user_id}/{date}")
     public ThirdEndpointDTO getScheduleByUserAndDate(@PathVariable String user_id, @PathVariable String date) {
         List<EventsDTO> events = this.eventsService.;
         List<ClassesDTO> classes = this.classesService.;

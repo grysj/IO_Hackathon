@@ -3,23 +3,19 @@ package ki.agh.aghub.rest;
 import ki.agh.aghub.entity.EventsDTO;
 import ki.agh.aghub.entity.FourthEndpointDTO;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
-import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api")
-public class FourthEndpointController {
+public class EventsController {
 
     private EventsService eventsService;
 
-    public FourthEndpointController(EventsService eventsService) {
+    public EventsController(EventsService eventsService) {
         this.eventsService = eventsService;
     }
 
-    @GetMapping("/fourth/{user_id}")
+    @GetMapping("/events/{user_id}")
     public FourthEndpointDTO getEventsByUserId(@PathVariable Integer user_id) {
         List<EventsDTO> acceptedEvents = this.eventsService.;
         List<EventsDTO> declinedEvents = this.eventsService.;

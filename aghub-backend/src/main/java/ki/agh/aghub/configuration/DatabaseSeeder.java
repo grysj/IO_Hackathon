@@ -19,11 +19,11 @@ public class DatabaseSeeder {
 
     @Bean
     CommandLineRunner initDatabase(
-            ClassRepository classRepo,
+            ClassesRepository classRepo,
             RoleRepository roleRepo,
-            EventRepository eventRepo,
+            EventsRepository eventRepo,
             PoiRepository poiRepo,
-            UserRepository userRepo) {
+            UsersRepository userRepo) {
         return args -> {
             Role role = new Role();
             role.setId(1L);

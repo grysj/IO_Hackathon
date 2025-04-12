@@ -12,12 +12,15 @@ public class ClassesDTO {
 
     private Integer poiId;
 
-    public ClassesDTO(String name, String startDate, String endDate, String room, Integer poiId) {
+    private Integer userId;
+
+    public ClassesDTO(String name, String startDate, String endDate, String room, Integer poiId, Integer userId) {
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
         this.room = room;
         this.poiId = poiId;
+        this.userId = userId;
     }
 
     public String getName() {
@@ -58,5 +61,13 @@ public class ClassesDTO {
 
     public void setPoiId(Integer poiId) {
         this.poiId = poiId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }
