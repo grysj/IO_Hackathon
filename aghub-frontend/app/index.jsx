@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/contexts/authContext";
@@ -17,36 +17,36 @@ export default function HomeScreen() {
           resizeMode="contain"
         />
 
-        <Text style={styles.header}>Hello, world!</Text>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.push("/(pages)/map")}
-        >
-          <Text style={styles.buttonText}>Przejdź do mapy</Text>
-        </TouchableOpacity>
-
         {isLoggedIn ? (
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => setIsLoggedIn(false)}
-          >
-            <Text style={styles.buttonText}>Wyloguj się</Text>
-          </TouchableOpacity>
+          <>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => router.push("/map")}
+            >
+              <Text style={styles.buttonText}>Continue</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => setIsLoggedIn(false)}
+            >
+              <Text style={styles.buttonText}>Logout</Text>
+            </TouchableOpacity>
+          </>
         ) : (
           <>
             <TouchableOpacity
               style={styles.button}
               onPress={() => router.push("/(auth)/login")}
             >
-              <Text style={styles.buttonText}>Zaloguj się</Text>
+              <Text style={styles.buttonText}>Log In</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() => router.push("/(auth)/register")}
+              onPress={() => router.push("/(auth)/signup")}
             >
-              <Text style={styles.buttonText}>Zarejestruj się</Text>
+              <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
           </>
         )}

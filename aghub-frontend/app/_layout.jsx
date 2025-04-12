@@ -12,7 +12,11 @@ export default function RootLayout() {
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen
             name="(auth)/login"
-            options={{ headerTitle: "Login" }}
+            options={{ headerTitle: "Log In" }}
+          />
+          <Stack.Screen
+            name="(auth)/signup"
+            options={{ headerTitle: "Sign Up" }}
           />
           <Stack.Screen name="(pages)" options={{ headerShown: false }} />
         </Stack>
