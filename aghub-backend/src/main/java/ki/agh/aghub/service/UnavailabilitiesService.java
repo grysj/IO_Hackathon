@@ -30,8 +30,8 @@ public class UnavailabilitiesService {
                 .map(u -> new UnavailabilityDTO(
                         u.getName(),
                         u.getDescription(),
-                        u.getDate_start().toString(),
-                        u.getDate_end().toString()
+                        u.getDate_start(),
+                        u.getDate_end()
                 ))
                 .collect(Collectors.toList());
 

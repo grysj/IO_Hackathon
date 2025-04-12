@@ -2,7 +2,7 @@ package ki.agh.aghub.controller;
 
 import ki.agh.aghub.dto.ClassesDTO;
 import ki.agh.aghub.dto.EventsDTO;
-import ki.agh.aghub.dto.ThirdEndpointDTO;
+import ki.agh.aghub.dto.CalendarDTO;
 import ki.agh.aghub.dto.UnavailabilityDTO;
 import ki.agh.aghub.service.ClassesService;
 import ki.agh.aghub.service.EventsService;
@@ -33,13 +33,13 @@ public class ScheduleController {
     }
 
     @GetMapping("/schedule/{user_id}/{date}")
-    public ThirdEndpointDTO getScheduleByUserAndDate(@PathVariable String user_id, @PathVariable LocalDateTime date) {
+    public CalendarDTO getScheduleByUserAndDate(@PathVariable String user_id, @PathVariable LocalDateTime date) {
         List<EventsDTO> events = this.eventsService.getUserEventsByDate(user_id, date);
         List<ClassesDTO> classes = this.classesService.getUserClassesByDate(user_id, date);
         List<UnavailabilityDTO> unavailability = this.unavailabilitiesService.getUserUnavailabilitiesByDate(user_id, date);
 
-        ThirdEndpointDTO thirdEndpointDTO = new ThirdEndpointDTO(events, classes, unavailability);
-        return thirdEndpointDTO;
+        CalendarDTO calendarDTO = new CalendarDTO(events, classes, unavailability);
+        return calendarDTO;
     }
 
 }
