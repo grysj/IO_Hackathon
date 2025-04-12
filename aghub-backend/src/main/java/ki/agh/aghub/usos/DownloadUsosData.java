@@ -13,7 +13,7 @@ public class DownloadUsosData {
 
     @PostMapping("/download_usos")
     public ResponseEntity<String> downloadAndParse(@RequestBody Map<String, String> body) {
-        // Ustawienie cache'u dla ical4j
+
         System.setProperty("net.fortuna.ical4j.timezone.cache.impl", "net.fortuna.ical4j.util.MapTimeZoneCache");
 
         String url = body.get("url");

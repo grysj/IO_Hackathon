@@ -1,4 +1,4 @@
-package ki.agh.aghub.entity;
+package ki.agh.aghub.dto;
 
 import java.time.LocalDateTime;
 

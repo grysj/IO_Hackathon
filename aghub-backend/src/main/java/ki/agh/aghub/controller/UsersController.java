@@ -1,9 +1,8 @@
-package ki.agh.aghub.rest;
+package ki.agh.aghub.controller;
 
-import ki.agh.aghub.entity.FirstEndpointDTO;
-import ki.agh.aghub.entity.LogInDTO;
-import ki.agh.aghub.entity.SixthEndpointDTO;
-import ki.agh.aghub.entity.UsersDTO;
+import ki.agh.aghub.dto.FirstEndpointDTO;
+import ki.agh.aghub.dto.LogInDTO;
+import ki.agh.aghub.dto.UsersDTO;
 import ki.agh.aghub.model.Role;
 import ki.agh.aghub.model.User;
 import ki.agh.aghub.service.UsersService;

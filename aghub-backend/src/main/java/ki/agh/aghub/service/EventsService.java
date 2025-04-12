@@ -1,14 +1,14 @@
 package ki.agh.aghub.service;
 
 
-import jakarta.persistence.EntityNotFoundException;
-import ki.agh.aghub.entity.ClassesDTO;
-import ki.agh.aghub.entity.EventsDTO;
+import ki.agh.aghub.dto.EventsDTO;
 import ki.agh.aghub.model.Event;
 import ki.agh.aghub.repository.EventsRepository;
 import ki.agh.aghub.repository.PoiRepository;
 import ki.agh.aghub.repository.UsersRepository;
 import org.springframework.stereotype.Service;
+
+import jakarta.persistence.EntityNotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

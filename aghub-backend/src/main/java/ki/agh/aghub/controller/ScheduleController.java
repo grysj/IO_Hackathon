@@ -1,9 +1,9 @@
-package ki.agh.aghub.rest;
+package ki.agh.aghub.controller;
 
-import ki.agh.aghub.entity.ClassesDTO;
-import ki.agh.aghub.entity.EventsDTO;
-import ki.agh.aghub.entity.ThirdEndpointDTO;
-import ki.agh.aghub.entity.UnavailabilityDTO;
+import ki.agh.aghub.dto.ClassesDTO;
+import ki.agh.aghub.dto.EventsDTO;
+import ki.agh.aghub.dto.ThirdEndpointDTO;
+import ki.agh.aghub.dto.UnavailabilityDTO;
 import ki.agh.aghub.service.ClassesService;
 import ki.agh.aghub.service.EventsService;
 import ki.agh.aghub.service.UnavailabilitiesService;

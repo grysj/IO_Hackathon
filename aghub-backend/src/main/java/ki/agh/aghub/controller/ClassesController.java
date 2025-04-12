@@ -1,6 +1,6 @@
-package ki.agh.aghub.rest;
+package ki.agh.aghub.controller;
 
-import ki.agh.aghub.entity.ClassesDTO;
+import ki.agh.aghub.dto.ClassesDTO;
 import ki.agh.aghub.service.ClassesService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +19,7 @@ public class ClassesController {
 
     @PostMapping()
     public void saveClass(@RequestBody ClassesDTO classesDTO) {
-        this.classesService.saveClass(classesDTO);
+        this.classesService.saveClasses(classesDTO);
     }
 }
 

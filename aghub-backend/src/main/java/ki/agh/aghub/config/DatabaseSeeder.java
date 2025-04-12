@@ -1,9 +1,9 @@
-package ki.agh.aghub.configuration;
+package ki.agh.aghub.config;
 
 
 import ki.agh.aghub.model.*;
 
-import ki.agh.aghub.model.Class;
+import ki.agh.aghub.model.Classes;
 import ki.agh.aghub.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -59,14 +59,23 @@ public class DatabaseSeeder {
             poiRepo.save(poi);
 
             // Create Class
-            Class klass = new Class();
-            klass.setName("AI Fundamentals");
-            klass.setRoom("Room 101");
-            klass.setDateStart(LocalDateTime.now().plusDays(1));
-            klass.setDateEnd(LocalDateTime.now().plusDays(1).plusHours(2));
-            klass.setPoi(poi);
-            klass.setUser(user1);
+            Classes klass = Classes.builder()
+                .name("AI Fundamentals")
+                .room("Room 101")
+                .dateStart(LocalDateTime.now().plusDays(1))
+                .dateEnd(LocalDateTime.now().plusDays(1).plusHours(2))
+                .poi(poi)
+                .user(user1)
+                .build();
             classRepo.save(klass);
+
+            // klass.setName("AI Fundamentals");
+            // klass.setRoom("Room 101");
+            // klass.setDateStart(LocalDateTime.now().plusDays(1));
+            // klass.setDateEnd(LocalDateTime.now().plusDays(1).plusHours(2));
+            // klass.setPoi(poi);
+            // klass.setUser(user1);
+            // classRepo.save(klass);
 
             // Create Event
             Event event = new Event();

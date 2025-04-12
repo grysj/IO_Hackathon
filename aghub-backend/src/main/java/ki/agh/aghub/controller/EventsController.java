@@ -1,4 +1,4 @@
-package ki.agh.aghub.rest;
+package ki.agh.aghub.controller;
 
 import ki.agh.aghub.entity.EventsDTO;
 import ki.agh.aghub.model.Event;
