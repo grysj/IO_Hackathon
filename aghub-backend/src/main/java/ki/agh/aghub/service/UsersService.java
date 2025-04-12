@@ -1,10 +1,13 @@
 package ki.agh.aghub.service;
 
 
+import jakarta.persistence.EntityNotFoundException;
 import ki.agh.aghub.entity.FirstEndpointDTO;
 import ki.agh.aghub.entity.FriendsDTO;
 import ki.agh.aghub.entity.UsersDTO;
+import ki.agh.aghub.model.Event;
 import ki.agh.aghub.model.POI;
+import ki.agh.aghub.model.Role;
 import ki.agh.aghub.model.User;
 import ki.agh.aghub.repository.PoiRepository;
 import ki.agh.aghub.repository.UsersRepository;
@@ -26,6 +29,33 @@ public class UsersService {
         this.poiRepository = poiRepository;
     }
 
+    public List<UsersDTO> findAllUsers() {
+        return usersRepository.findAll().stream()
+                .map(user -> new UsersDTO(
+                        user.getId() != null ? user.getId() : null,
+                        user.getUsername(),
+                        user.getMail()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    public UsersDTO findByIdUser(Long id) {
+        return usersRepository.findById(id)
+                .map(user -> new UsersDTO(
+                        user.getId() != null ? user.getId() : null,
+                        user.getUsername(),
+                        user.getMail()
+                )).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+    }
+
+    public void saveUser(UsersDTO usersDTO, Role role) {
+        User user = new User();
+        user.setId(usersDTO.getId());
+        user.setUsername(usersDTO.getUsername());
+        user.setMail(usersDTO.getMail());
+        user.setRole(role);
+        this.usersRepository.save(user);
+    }
 
     public FirstEndpointDTO getUsersByPOIAndByDay(Long poi_id, String dayString) {
         LocalDate date = LocalDate.parse(dayString); // format: yyyy-MM-dd
@@ -66,17 +96,6 @@ public class UsersService {
         usersRepository.save(receiver);
 
         return "Friend added successfully.";
-    }
-
-
-    public List<UsersDTO> findAllUsers() {
-    return usersRepository.findAll().stream()
-            .map(user -> new UsersDTO(
-                    user.getId() != null ? user.getId().intValue() : null,
-                    user.getUsername(),
-                    user.getMail()
-            ))
-            .collect(Collectors.toList());
     }
 
     public List<FriendsDTO> getUsersFriends(Long poi_id) {

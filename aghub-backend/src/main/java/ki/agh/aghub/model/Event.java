@@ -1,6 +1,7 @@
 package ki.agh.aghub.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -13,50 +14,50 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long event_id;
+    private Long eventId;
 
-    private double lat;
-    private double lng;
+    private double latitude;
+    private double longitude;
     private String name;
     private String description;
 
-    @ManyToOne
+//    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="created_by")
-    private User created_by;
+    private User createdBy;
 
     @ManyToOne
     @JoinColumn(name="poi_id")
-    private POI poi_id;
+    private POI poiId;
 
-    private LocalDateTime date_start;
-    private LocalDateTime date_end;
-
+    private LocalDateTime dateStart;
+    private LocalDateTime dateEnd;
 
     @ManyToMany(mappedBy = "events")
     private Set<User> participants;
 
-    public Long getEvent_id() {
-        return event_id;
+    public Long getEventId() {
+        return eventId;
     }
 
-    public void setEvent_id(Long event_id) {
-        this.event_id = event_id;
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
     }
 
-    public double getLat() {
-        return lat;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public void setLat(double lat) {
-        this.lat = lat;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
-    public double getLng() {
-        return lng;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setLng(double lng) {
-        this.lng = lng;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public String getName() {
@@ -75,36 +76,36 @@ public class Event {
         this.description = description;
     }
 
-    public User getCreated_by() {
-        return created_by;
+    public User getCreatedBy() {
+        return createdBy;
     }
 
-    public void setCreated_by(User created_by) {
-        this.created_by = created_by;
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
     }
 
-    public POI getPoi_id() {
-        return poi_id;
+    public POI getPoiId() {
+        return poiId;
     }
 
-    public void setPoi_id(POI poi_id) {
-        this.poi_id = poi_id;
+    public void setPoiId(POI poiId) {
+        this.poiId = poiId;
     }
 
-    public LocalDateTime getDate_start() {
-        return date_start;
+    public LocalDateTime getDateStart() {
+        return dateStart;
     }
 
-    public void setDate_start(LocalDateTime date_start) {
-        this.date_start = date_start;
+    public void setDateStart(LocalDateTime dateStart) {
+        this.dateStart = dateStart;
     }
 
-    public LocalDateTime getDate_end() {
-        return date_end;
+    public LocalDateTime getDateEnd() {
+        return dateEnd;
     }
 
-    public void setDate_end(LocalDateTime date_end) {
-        this.date_end = date_end;
+    public void setDateEnd(LocalDateTime dateEnd) {
+        this.dateEnd = dateEnd;
     }
 
     public Set<User> getParticipants() {

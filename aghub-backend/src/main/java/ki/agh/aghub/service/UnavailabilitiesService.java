@@ -20,12 +20,11 @@ public class UnavailabilitiesService {
         this.unavailabilitiesRepository = unavailabilitiesRepository;
     }
 
-    public List<UnavailabilityDTO> getUserUnavailabilitiesByDate(String userId, String date) {
+    public List<UnavailabilityDTO> getUserUnavailabilitiesByDate(String userId, LocalDateTime date) {
     try {
         Long parsedUserId = Long.parseLong(userId);
-        LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
-        LocalDateTime startOfDay = parsedDate.atStartOfDay();
-        LocalDateTime endOfDay = parsedDate.atTime(23, 59, 59);
+        LocalDateTime startOfDay = date.toLocalDate().atStartOfDay();
+        LocalDateTime endOfDay = date.toLocalDate().atTime(23, 59, 59);
 
         return unavailabilitiesRepository.findByUserIdAndDate(parsedUserId, startOfDay, endOfDay)
                 .stream()

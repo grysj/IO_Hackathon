@@ -19,7 +19,7 @@ public class ClassesController {
 
     @PostMapping()
     public void saveClass(@RequestBody ClassesDTO classesDTO) {
-        this.classesService.saveDTO(classesDTO);
+        this.classesService.saveClass(classesDTO);
     }
 }
 
