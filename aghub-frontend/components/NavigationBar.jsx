@@ -17,7 +17,7 @@ function NavigationBar({ items }) {
             <TouchableOpacity
               key={index}
               className={`flex-1 justify-center items-center`}
-              onPress={() => router.push(item.path)}
+              onPress={() => router.replace(item.path)}
             >
               <Ionicons
                 name={isActive ? item.icon : `${item.icon}-outline`}
