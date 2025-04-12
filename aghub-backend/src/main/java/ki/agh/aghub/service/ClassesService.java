@@ -1,7 +1,7 @@
 package ki.agh.aghub.service;
 
 import ki.agh.aghub.dto.ClassesDTO;
-import ki.agh.aghub.model.Class;
+import ki.agh.aghub.model.Classes;
 import ki.agh.aghub.repository.ClassesRepository;
 import ki.agh.aghub.repository.PoiRepository;
 import ki.agh.aghub.repository.UsersRepository;
@@ -55,15 +55,15 @@ public class ClassesService {
 
     public void saveDTO(ClassesDTO classDTO) {
 
-        Class newClass = new Class();
-        newClass.setName(classDTO.getName());
-        newClass.setDate_start(LocalDateTime.parse(classDTO.getStartDate(), DateTimeFormatter.ISO_DATE));
-        newClass.setDate_end(LocalDateTime.parse(classDTO.getEndDate(), DateTimeFormatter.ISO_DATE));
-        newClass.setRoom(classDTO.getRoom());
-        newClass.setPoi(poiRepository.findById(Long.valueOf(classDTO.getPoiId())).orElse(null));
-        newClass.setUser(usersRepository.findById(Long.valueOf(classDTO.getUserId())).orElse(null));
+        Classes newClasses = new Classes();
+        newClasses.setName(classDTO.getName());
+        newClasses.setDate_start(LocalDateTime.parse(classDTO.getStartDate(), DateTimeFormatter.ISO_DATE));
+        newClasses.setDate_end(LocalDateTime.parse(classDTO.getEndDate(), DateTimeFormatter.ISO_DATE));
+        newClasses.setRoom(classDTO.getRoom());
+        newClasses.setPoi(poiRepository.findById(Long.valueOf(classDTO.getPoiId())).orElse(null));
+        newClasses.setUser(usersRepository.findById(Long.valueOf(classDTO.getUserId())).orElse(null));
 
-        classesRepository.save(newClass);
+        classesRepository.save(newClasses);
     }
 
 }

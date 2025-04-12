@@ -3,7 +3,7 @@ package ki.agh.aghub.config;
 
 import ki.agh.aghub.model.*;
 
-import ki.agh.aghub.model.Class;
+import ki.agh.aghub.model.Classes;
 import ki.agh.aghub.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -59,7 +59,7 @@ public class DatabaseSeeder {
             poiRepo.save(poi);
 
             // Create Class
-            Class klass = new Class();
+            Classes klass = new Classes();
             klass.setName("AI Fundamentals");
             klass.setRoom("Room 101");
             klass.setDate_start(LocalDateTime.now().plusDays(1));
