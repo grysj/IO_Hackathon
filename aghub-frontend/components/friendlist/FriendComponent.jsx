@@ -3,7 +3,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import React, {useState} from "react";
 import {Button} from "@gluestack-ui/themed";
 
-const FriendsComponent = ({ onClickRemove, onClickClalendar, friend }) => {
+const FriendsComponent = ({ onClickRemove, onClickCalendar, friend }) => {
     const [expanded, setExpanded] = useState(false);
 
     return (
@@ -55,7 +55,7 @@ const FriendsComponent = ({ onClickRemove, onClickClalendar, friend }) => {
                         <ButtonText className="text-white font-semibold">Usuń znajomego</ButtonText>
                     </Button>
                     <Button
-                        onPress={() => onClickClalendar(friend.id)}
+                        onPress={() => onClickCalendar(friend)}
                         className="bg-info-600 rounded-xl py-3 px-4 shadow-md flex-1"
                         justifyContent="center"
                         alignItems="center"

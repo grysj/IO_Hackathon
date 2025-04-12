@@ -14,6 +14,7 @@ export default function RootLayout() {
             name="(auth)/login"
             options={{ headerTitle: "Login" }}
           />
+
           <Stack.Screen name="(pages)" options={{ headerShown: false }} />
         </Stack>
       </AuthProvider>

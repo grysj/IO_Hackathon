@@ -3,10 +3,12 @@ import {Box, ScrollView, VStack} from '@gluestack-ui/themed'
 import {mockFriends} from "../../mock/MockedData";
 import {useAuth} from "../../contexts/authContext";
 import FriendComponent from "../../components/friendlist/FriendComponent";
-import {View} from "react-native";
+import {useRouter} from "expo-router";
+
 
 const FriendsScreen = () => {
     const {user} = useAuth();
+    const router = useRouter();
     const [friends, setFriends] = useState([]);
     const fetchFriends = (userId) => {
         setFriends(mockFriends);
@@ -17,8 +19,11 @@ const FriendsScreen = () => {
     const removeFriend = (friendId) => {
         fetchFriends()
     }
-    const goToCalendar=(userId)=>{
-
+    const goToCalendar=(friend)=>{
+            router.push({
+                pathname: "/friends/friends-calendar",
+                params: friend,
+            });
     }
     return (
 
@@ -26,7 +31,7 @@ const FriendsScreen = () => {
             <ScrollView>
                 <VStack space="md" className={"p-3"}>
                     {friends.map((friend) => {
-                        return (<FriendComponent key={friend.id} onClickRemove={removeFriend} onClickClalendar={goToCalendar()} friend={friend}/>)
+                        return (<FriendComponent key={friend.id} onClickRemove={removeFriend} onClickCalendar={goToCalendar} friend={friend}/>)
                     })}
                 </VStack>
             </ScrollView>
