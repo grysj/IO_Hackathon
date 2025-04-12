@@ -5,7 +5,7 @@ import ki.agh.aghub.dto.EventsDTO;
 import ki.agh.aghub.dto.CalendarDTO;
 import ki.agh.aghub.dto.UnavailabilityDTO;
 import ki.agh.aghub.service.ClassesService;
-import ki.agh.aghub.service.EventsService;
+import ki.agh.aghub.service.EventService;
 import ki.agh.aghub.service.UnavailabilitiesService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,16 +17,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/schedule")
 public class ScheduleController {
 
-    private EventsService eventsService;
+    private EventService eventsService;
 
     private ClassesService classesService;
 
     private UnavailabilitiesService unavailabilitiesService;
 
-    public ScheduleController(EventsService eventsService, ClassesService classesService, UnavailabilitiesService unavailabilitiesService) {
+    public ScheduleController(EventService eventsService, ClassesService classesService, UnavailabilitiesService unavailabilitiesService) {
         this.eventsService = eventsService;
         this.classesService = classesService;
         this.unavailabilitiesService = unavailabilitiesService;

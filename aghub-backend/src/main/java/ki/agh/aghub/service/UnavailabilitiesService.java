@@ -5,9 +5,7 @@ import ki.agh.aghub.dto.UnavailabilityDTO;
 import ki.agh.aghub.repository.UnavailabilitiesRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,13 +17,12 @@ public class UnavailabilitiesService {
         this.unavailabilitiesRepository = unavailabilitiesRepository;
     }
 
-    public List<UnavailabilityDTO> getUserUnavailabilitiesByDate(String userId, LocalDateTime date) {
+    public List<UnavailabilityDTO> getUserUnavailabilitiesByDate(Long userId, LocalDateTime date) {
     try {
-        Long parsedUserId = Long.parseLong(userId);
         LocalDateTime startOfDay = date.toLocalDate().atStartOfDay();
         LocalDateTime endOfDay = date.toLocalDate().atTime(23, 59, 59);
 
-        return unavailabilitiesRepository.findByUserIdAndDate(parsedUserId, startOfDay, endOfDay)
+        return unavailabilitiesRepository.findByUserIdAndDate(userId, startOfDay, endOfDay)
                 .stream()
                 .map(u -> new UnavailabilityDTO(
                         u.getName(),

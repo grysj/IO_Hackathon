@@ -21,7 +21,7 @@ public class DatabaseSeeder {
     CommandLineRunner initDatabase(
             ClassesRepository classRepo,
             RoleRepository roleRepo,
-            EventsRepository eventRepo,
+            EventRepository eventRepo,
             PoiRepository poiRepo,
             UsersRepository userRepo) {
         return args -> {
@@ -84,7 +84,7 @@ public class DatabaseSeeder {
             event.setLatitude(poi.getLat());
             event.setLongitude(poi.getLng());
             event.setCreatedBy(user2);
-            event.setPoiId(poi);
+            event.setPoi(poi);
             event.setDateStart(LocalDateTime.now().plusDays(2));
             event.setDateEnd(LocalDateTime.now().plusDays(2).plusHours(3));
             event.setParticipants(Set.of(user1, user2));

@@ -34,9 +34,12 @@ public class Event {
 
     @ManyToOne
     @JoinColumn(name="poi_id")
-    private POI poiId;
+    private POI poi;
 
+    @Column(name = "date_start")
     private LocalDateTime dateStart;
+
+    @Column(name = "date_end")
     private LocalDateTime dateEnd;
 
     @ManyToMany(mappedBy = "events")

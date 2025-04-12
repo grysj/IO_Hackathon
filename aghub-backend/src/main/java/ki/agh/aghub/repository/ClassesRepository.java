@@ -7,13 +7,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ClassesRepository extends JpaRepository<Classes, Long> {
-    @Query("SELECT c FROM Classes c " +
-           "WHERE c.user.id = :userId " +
-           "AND c.date_start BETWEEN :startOfDay AND :endOfDay")
-    List<Classes> findByUserIdAndDate(Long userId, LocalDateTime startOfDay, LocalDateTime endOfDay);
+    // @Query("SELECT c FROM Classes c " +
+    //        "WHERE c.user.id = :userId " +
+    //        "AND c.dateStart BETWEEN :startOfDay AND :endOfDay")
+    // List<Classes> findByUserIdAndDate(Long userId, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
     // Possibly can be done like this
-    // List<Classes> findByUserIdAndDateStartBetween(
-    //     Long userId, LocalDateTime startOfDay, LocalDateTime endOfDay
-    // );
+    List<Classes> findByUserIdAndDateStartBetween(
+        Long userId, LocalDateTime startOfDay, LocalDateTime endOfDay
+    );
 }

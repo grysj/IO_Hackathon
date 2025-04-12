@@ -60,7 +60,7 @@ public class ClassesService {
         LocalDateTime startOfDay = date.toLocalDate().atStartOfDay();
         LocalDateTime endOfDay = date.toLocalDate().atTime(LocalTime.MAX);
 
-        return classesRepository.findByUserIdAndDate(userId, startOfDay, endOfDay)
+        return classesRepository.findByUserIdAndDateStartBetween(userId, startOfDay, endOfDay)
             .stream()
             .map(classesMapper::toDto)
             .collect(Collectors.toList());

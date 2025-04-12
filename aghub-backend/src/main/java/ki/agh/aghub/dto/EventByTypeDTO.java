@@ -9,9 +9,9 @@ import java.util.List;
 @Setter
 public class EventByTypeDTO {
 
-    private List<EventsDTO> acceptedEvents;
-    private List<EventsDTO> declinedEvents;
-    private List<EventsDTO> pendingEvents;
+    private List<EventDTO> acceptedEvents;
+    private List<EventDTO> declinedEvents;
+    private List<EventDTO> pendingEvents;
 
     public EventByTypeDTO(List<EventsDTO> acceptedEvents, List<EventsDTO> declinedEvents, List<EventsDTO> pendingEvents) {
         this.acceptedEvents = acceptedEvents;
