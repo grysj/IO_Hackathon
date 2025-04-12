@@ -1,15 +1,32 @@
 import { useState } from "react";
-import { Box, Text } from "@gluestack-ui/themed";
+import { Box } from "@gluestack-ui/themed";
 import FriendSelector from "../../components/event/FriendSelector";
 import LocationPickerScreen from "../../components/event/locationpicker";
 
 const EventCreateScreen = () => {
     const [friends, setFriends] = useState([]);
-    const [step, setStep] = useState("location");
+    const [location, setLocation] = useState(null);
+    const [step, setStep] = useState("friends");
 
     const handleFriendsConfirm = (ids) => {
         setFriends(ids);
         setStep("location");
+    };
+
+    const handleLocationConfirm = (location) => {
+        setLocation(location);
+
+        const eventData = {
+            friends,
+            location,
+        };
+
+        console.log("✅ Wysyłamy dane eventu na backend:", eventData);
+
+        // TODO: wyślij dane na backend, np. fetch("/api/events", { method: "POST", body: JSON.stringify(eventData) })
+
+        // reset or navigate
+        setStep("done");
     };
 
     return (
@@ -18,7 +35,14 @@ const EventCreateScreen = () => {
                 <FriendSelector onConfirm={handleFriendsConfirm} />
             )}
             {step === "location" && (
-                <LocationPickerScreen />
+                <LocationPickerScreen onConfirmLocation={handleLocationConfirm} />
+            )}
+            {step === "done" && (
+                <Box className="p-4">
+                    <Text className="text-xl text-center text-green-700 font-bold">
+                        Event zapisany!
+                    </Text>
+                </Box>
             )}
         </Box>
     );
