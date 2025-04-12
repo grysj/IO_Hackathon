@@ -17,6 +17,8 @@ export default function RootLayout() {
           <Stack.Screen name="(pages)" options={{ headerShown: false }} />
         </Stack>
       </AuthProvider>
+    <GluestackUIProvider mode="dark">
+      <Stack />
     </GluestackUIProvider>
   );
 }
