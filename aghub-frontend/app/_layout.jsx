@@ -6,7 +6,7 @@ import { AuthProvider } from "../contexts/authContext"; // zakładam, że authCo
 
 export default function RootLayout() {
   return (
-    <GluestackUIProvider mode="light">
+    <GluestackUIProvider mode="dark">
       <AuthProvider>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -17,8 +17,6 @@ export default function RootLayout() {
           <Stack.Screen name="(pages)" options={{ headerShown: false }} />
         </Stack>
       </AuthProvider>
-    <GluestackUIProvider mode="dark">
-      <Stack />
     </GluestackUIProvider>
   );
 }
