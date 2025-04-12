@@ -1,20 +1,24 @@
 package ki.agh.aghub.entity;
 
+import ki.agh.aghub.model.POI;
+
+import java.time.LocalDateTime;
+
 public class ClassesDTO {
 
     private String name;
 
-    private String startDate;
+    private LocalDateTime startDate;
 
-    private String endDate;
+    private LocalDateTime endDate;
 
     private String room;
 
-    private Integer poiId;
+    private Long poiId;
 
-    private Integer userId;
+    private Long userId;
 
-    public ClassesDTO(String name, String startDate, String endDate, String room, Integer poiId, Integer userId) {
+    public ClassesDTO(String name, LocalDateTime startDate, LocalDateTime endDate, String room, Long poiId, Long userId) {
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -31,19 +35,19 @@ public class ClassesDTO {
         this.name = name;
     }
 
-    public String getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
@@ -55,19 +59,19 @@ public class ClassesDTO {
         this.room = room;
     }
 
-    public Integer getPoiId() {
+    public Long getPoiId() {
         return poiId;
     }
 
-    public void setPoiId(Integer poiId) {
+    public void setPoiId(Long poiId) {
         this.poiId = poiId;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 }

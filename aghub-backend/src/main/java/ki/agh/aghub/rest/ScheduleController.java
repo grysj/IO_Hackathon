@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -32,7 +33,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/schedule/{user_id}/{date}")
-    public ThirdEndpointDTO getScheduleByUserAndDate(@PathVariable String user_id, @PathVariable String date) {
+    public ThirdEndpointDTO getScheduleByUserAndDate(@PathVariable String user_id, @PathVariable LocalDateTime date) {
         List<EventsDTO> events = this.eventsService.getUserEventsByDate(user_id, date);
         List<ClassesDTO> classes = this.classesService.getUserClassesByDate(user_id, date);
         List<UnavailabilityDTO> unavailability = this.unavailabilitiesService.getUserUnavailabilitiesByDate(user_id, date);

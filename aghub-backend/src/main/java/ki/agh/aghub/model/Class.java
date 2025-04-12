@@ -17,8 +17,8 @@ public class Class {
     @JoinColumn(name = "poi_id")
     private POI poi;
 
-    private LocalDateTime date_start;
-    private LocalDateTime date_end;
+    private LocalDateTime dateStart;
+    private LocalDateTime dateEnd;
 
     private String name;
     private String room;
@@ -44,20 +44,20 @@ public class Class {
         this.id = id;
     }
 
-    public LocalDateTime getDate_start() {
-        return date_start;
+    public LocalDateTime getDateStart() {
+        return dateStart;
     }
 
-    public void setDate_start(LocalDateTime date_start) {
-        this.date_start = date_start;
+    public void setDateStart(LocalDateTime date_start) {
+        this.dateStart = date_start;
     }
 
-    public LocalDateTime getDate_end() {
-        return date_end;
+    public LocalDateTime getDateEnd() {
+        return dateEnd;
     }
 
-    public void setDate_end(LocalDateTime date_end) {
-        this.date_end = date_end;
+    public void setDateEnd(LocalDateTime date_end) {
+        this.dateEnd = date_end;
     }
 
     public String getName() {

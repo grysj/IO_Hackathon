@@ -6,17 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventsRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT e FROM Event e JOIN e.participants p " +
-           "WHERE p.id = :userId AND DATE(e.date_start) = :date")
-    List<Event> findByUserIdAndStartDate(@Param("userId") Long userId, @Param("date") LocalDate date);
-
-    // Znajdź eventy użytkownika (dowolne)
-    @Query("SELECT e FROM Event e JOIN e.participants p WHERE p.id = :userId")
-    List<Event> findEventsByUserAndDate(@Param("userId") Long userId);
+            "WHERE p.id = :userId AND e.dateStart >= :now")
+    List<Event> findUpcomingEventsByUserId(@Param("userId") Long userId,
+                                           @Param("now") LocalDateTime now);
 
 }
 

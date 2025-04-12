@@ -62,8 +62,8 @@ public class DatabaseSeeder {
             Class klass = new Class();
             klass.setName("AI Fundamentals");
             klass.setRoom("Room 101");
-            klass.setDate_start(LocalDateTime.now().plusDays(1));
-            klass.setDate_end(LocalDateTime.now().plusDays(1).plusHours(2));
+            klass.setDateStart(LocalDateTime.now().plusDays(1));
+            klass.setDateEnd(LocalDateTime.now().plusDays(1).plusHours(2));
             klass.setPoi(poi);
             klass.setUser(user1);
             classRepo.save(klass);
@@ -72,12 +72,12 @@ public class DatabaseSeeder {
             Event event = new Event();
             event.setName("AI Meetup");
             event.setDescription("Discussing latest AI trends.");
-            event.setLat(poi.getLat());
-            event.setLng(poi.getLng());
-            event.setCreated_by(user2);
-            event.setPoi_id(poi);
-            event.setDate_start(LocalDateTime.now().plusDays(2));
-            event.setDate_end(LocalDateTime.now().plusDays(2).plusHours(3));
+            event.setLatitude(poi.getLat());
+            event.setLongitude(poi.getLng());
+            event.setCreatedBy(user2);
+            event.setPoiId(poi);
+            event.setDateStart(LocalDateTime.now().plusDays(2));
+            event.setDateEnd(LocalDateTime.now().plusDays(2).plusHours(3));
             event.setParticipants(Set.of(user1, user2));
             eventRepo.save(event);
 
