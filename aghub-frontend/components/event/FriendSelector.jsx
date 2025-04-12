@@ -1,12 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Box, HStack, Pressable, ScrollView, Text, VStack,} from '@gluestack-ui/themed';
 import {MaterialIcons} from "@expo/vector-icons";
-
-const mockFriends = [
-    {id: 1, username: 'alice', email: 'alice@example.com'},
-    {id: 2, username: 'bob', email: 'bob@example.com'},
-    {id: 3, username: 'charlie', email: 'charlie@example.com'},
-];
+import {mockFriends} from "../../mock/MockedData";
 
 const FriendSelector = ({onConfirm}) => {
     const [friends, setFriends] = useState([]);
