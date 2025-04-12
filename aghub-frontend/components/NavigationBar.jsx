@@ -8,7 +8,7 @@ function NavigationBar({ items }) {
   const currentPath = usePathname();
 
   return (
-    <View className="w-full fixed bottom-0 left-0 right-0 p-4 z-10">
+    <View className="w-full absolute bottom-0 left-0 right-0 p-4 z-10">
       <View className="bg-yellow-600 flex-row justify-between items-center w-full p-4 rounded-xl">
         {items.map((item, index) => {
           const isActive = currentPath.includes(item.path);
