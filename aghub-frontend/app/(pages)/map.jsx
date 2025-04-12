@@ -7,15 +7,35 @@ import {
     SafeAreaView,
     TextInput,
     TouchableOpacity,
-    Keyboard,
 } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
 
+// Mock danych znajomych
+const mockFriends = [
+    {
+        id: 1,
+        username: "alice",
+        latitude: 50.062,
+        longitude: 19.937,
+    },
+    {
+        id: 2,
+        username: "bob",
+        latitude: 50.064,
+        longitude: 19.938,
+    },
+    {
+        id: 3,
+        username: "charlie",
+        latitude: 50.060,
+        longitude: 19.935,
+    },
+];
+
 export default function MapScreen() {
     const [location, setLocation] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedLocation, setSelectedLocation] = useState(null);
     const mapRef = useRef(null);
 
     useEffect(() => {
@@ -31,56 +51,24 @@ export default function MapScreen() {
         })();
     }, []);
 
-    const handleMapPress = (event) => {
-        const { latitude, longitude } = event.nativeEvent.coordinate;
-        setSelectedLocation({ latitude, longitude });
-    };
+    const handleSearch = () => {
+        const found = mockFriends.find((friend) =>
+            friend.username.toLowerCase().includes(searchQuery.toLowerCase())
+        );
 
-    const handleSearch = async () => {
-        if (!searchQuery) return;
-
-        try {
-            const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-                    searchQuery
-                )}&format=json&limit=1`
+        if (found) {
+            mapRef.current.animateToRegion(
+                {
+                    latitude: found.latitude,
+                    longitude: found.longitude,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                },
+                1000
             );
-            const data = await response.json();
-
-            if (data.length > 0) {
-                const { lat, lon } = data[0];
-                const location = {
-                    latitude: parseFloat(lat),
-                    longitude: parseFloat(lon),
-                };
-
-                mapRef.current.animateToRegion(
-                    {
-                        ...location,
-                        latitudeDelta: 0.01,
-                        longitudeDelta: 0.01,
-                    },
-                    1000
-                );
-
-                setSelectedLocation(location);
-                Keyboard.dismiss();
-            } else {
-                alert("Nie znaleziono lokalizacji");
-            }
-        } catch (error) {
-            console.error("Błąd wyszukiwania:", error);
-            alert("Błąd podczas wyszukiwania lokalizacji.");
+        } else {
+            alert("Nie znaleziono takiego znajomego.");
         }
-    };
-
-    const handleConfirm = () => {
-        console.log("✅ Wybrana lokalizacja:", selectedLocation);
-        // TODO: przekazanie danych do parenta / backendu
-    };
-
-    const handleUndo = () => {
-        setSelectedLocation(null);
     };
 
     if (!location) {
@@ -97,7 +85,7 @@ export default function MapScreen() {
             <View style={styles.searchContainer}>
                 <TextInput
                     style={styles.searchInput}
-                    placeholder="Wyszukaj lokalizację"
+                    placeholder="Wyszukaj znajomego"
                     placeholderTextColor="#aaa"
                     value={searchQuery}
                     onChangeText={setSearchQuery}
@@ -118,8 +106,8 @@ export default function MapScreen() {
                     latitudeDelta: 0.01,
                     longitudeDelta: 0.01,
                 }}
-                onPress={handleMapPress}
             >
+                {/* Twoja lokalizacja */}
                 <Marker coordinate={location} pinColor="#ca8a04">
                     <Callout tooltip>
                         <View style={styles.calloutContainer}>
@@ -131,51 +119,27 @@ export default function MapScreen() {
                     </Callout>
                 </Marker>
 
-                {selectedLocation && (
-                    <Marker coordinate={selectedLocation} pinColor="green">
+                {/* Pinezki znajomych */}
+                {mockFriends.map((friend) => (
+                    <Marker
+                        key={friend.id}
+                        coordinate={{
+                            latitude: friend.latitude,
+                            longitude: friend.longitude,
+                        }}
+                        pinColor="blue"
+                    >
                         <Callout tooltip>
                             <View style={styles.calloutContainer}>
-                                <Text style={styles.calloutText}>Wybrana lokalizacja</Text>
+                                <Text style={styles.calloutText}>{friend.username}</Text>
                                 <Text style={styles.calloutSubtext}>
-                                    {selectedLocation.latitude.toFixed(4)},{" "}
-                                    {selectedLocation.longitude.toFixed(4)}
+                                    {friend.latitude.toFixed(4)}, {friend.longitude.toFixed(4)}
                                 </Text>
                             </View>
                         </Callout>
                     </Marker>
-                )}
+                ))}
             </MapView>
-
-            <View style={styles.bottomPanel}>
-                <Text style={styles.infoText}>
-                    {selectedLocation
-                        ? `Wybrano: ${selectedLocation.latitude.toFixed(
-                            4
-                        )}, ${selectedLocation.longitude.toFixed(4)}`
-                        : "Kliknij na mapie lub wyszukaj lokalizację"}
-                </Text>
-
-                <View style={styles.buttonRow}>
-                    <TouchableOpacity
-                        style={styles.cancelButton}
-                        onPress={handleUndo}
-                        disabled={!selectedLocation}
-                    >
-                        <Text style={styles.buttonText}>Cofnij</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={[
-                            styles.confirmButton,
-                            { backgroundColor: selectedLocation ? "#22c55e" : "#4a4a4a" },
-                        ]}
-                        onPress={handleConfirm}
-                        disabled={!selectedLocation}
-                    >
-                        <Text style={styles.buttonText}>Zatwierdź</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
         </SafeAreaView>
     );
 }
@@ -184,9 +148,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#1a1a1a",
-    },
-    map: {
-        flex: 1,
     },
     loadingContainer: {
         flex: 1,
@@ -226,50 +187,6 @@ const styles = StyleSheet.create({
     searchButtonText: {
         color: "#fff",
         fontWeight: "600",
-    },
-    bottomPanel: {
-        position: "absolute",
-        bottom: 100,
-        left: 20,
-        right: 20,
-        backgroundColor: "#2d2d2d",
-        padding: 16,
-        borderRadius: 12,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        shadowOffset: { width: 0, height: 2 },
-    },
-    infoText: {
-        fontSize: 14,
-        color: "#eee",
-        textAlign: "center",
-        marginBottom: 16,
-    },
-    buttonRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        width: "100%",
-    },
-    cancelButton: {
-        backgroundColor: "#d9534f",
-        paddingVertical: 12,
-        paddingHorizontal: 24,
-        borderRadius: 30,
-        width: "48%",
-        alignItems: "center",
-    },
-    confirmButton: {
-        paddingVertical: 12,
-        paddingHorizontal: 24,
-        borderRadius: 30,
-        width: "48%",
-        alignItems: "center",
-    },
-    buttonText: {
-        color: "#fff",
-        fontWeight: "bold",
     },
     calloutContainer: {
         backgroundColor: "#2d2d2d",
