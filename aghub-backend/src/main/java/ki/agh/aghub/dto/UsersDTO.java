@@ -2,23 +2,23 @@ package ki.agh.aghub.dto;
 
 public class UsersDTO {
 
-    private Integer id;
+    private Long id;
 
     private String username;
 
     private String mail;
 
-    public UsersDTO(Integer id, String username, String mail) {
+    public UsersDTO(Long id, String username, String mail) {
         this.id = id;
         this.username = username;
         this.mail = mail;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

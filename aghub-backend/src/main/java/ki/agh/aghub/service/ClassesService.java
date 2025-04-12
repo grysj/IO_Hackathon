@@ -1,15 +1,16 @@
 package ki.agh.aghub.service;
 
 import ki.agh.aghub.dto.ClassesDTO;
-import ki.agh.aghub.model.Classes;
+import jakarta.persistence.EntityNotFoundException;
+import ki.agh.aghub.mapper.ClassesMapper;
 import ki.agh.aghub.repository.ClassesRepository;
 import ki.agh.aghub.repository.PoiRepository;
 import ki.agh.aghub.repository.UsersRepository;
+
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,53 +18,53 @@ import java.util.stream.Collectors;
 public class ClassesService {
 
     private final ClassesRepository classesRepository;
-    private final PoiRepository poiRepository;
-    private final UsersRepository usersRepository;
-    public ClassesService(ClassesRepository classesRepository, PoiRepository poiRepository, UsersRepository usersRepository) {
+    private final ClassesMapper classesMapper;
 
+    public ClassesService(
+        ClassesRepository classesRepository, 
+        PoiRepository poiRepository, 
+        UsersRepository usersRepository,
+        ClassesMapper classesMapper
+    ) { 
         this.classesRepository = classesRepository;
-        this.poiRepository = poiRepository;
-        this.usersRepository = usersRepository;
+        this.classesMapper = classesMapper;
     }
 
-
-    public List<ClassesDTO> getUserClassesByDate(String userId, String date) {
-    try {
-        Long parsedUserId = Long.parseLong(userId);
-        LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
-        LocalDateTime startOfDay = parsedDate.atStartOfDay();
-        LocalDateTime endOfDay = parsedDate.atTime(23, 59, 59);
-
-        return classesRepository.findByUserIdAndDate(parsedUserId, startOfDay, endOfDay)
-                .stream()
-                .map(c -> new ClassesDTO(
-                        c.getName(),
-                        c.getDate_start().toString(),
-                        c.getDate_end().toString(),
-                        c.getRoom(),
-                        c.getPoi() != null ? c.getPoi().getId().intValue() : null,
-                        c.getUser() != null ? c.getUser().getId().intValue() : null
-                ))
-                .collect(Collectors.toList());
-
-    } catch (Exception e) {
-        throw new IllegalArgumentException("Invalid userId or date format. Expected format: yyyy-MM-dd", e);
-    }
-}
-
-
-
-    public void saveDTO(ClassesDTO classDTO) {
-
-        Classes newClasses = new Classes();
-        newClasses.setName(classDTO.getName());
-        newClasses.setDate_start(LocalDateTime.parse(classDTO.getStartDate(), DateTimeFormatter.ISO_DATE));
-        newClasses.setDate_end(LocalDateTime.parse(classDTO.getEndDate(), DateTimeFormatter.ISO_DATE));
-        newClasses.setRoom(classDTO.getRoom());
-        newClasses.setPoi(poiRepository.findById(Long.valueOf(classDTO.getPoiId())).orElse(null));
-        newClasses.setUser(usersRepository.findById(Long.valueOf(classDTO.getUserId())).orElse(null));
-
-        classesRepository.save(newClasses);
+    public List<ClassesDTO> findAllClasses() {
+        return this.classesRepository.findAll().stream()
+            .map(classesMapper::toDto)
+            .collect(Collectors.toList());
     }
 
+    public ClassesDTO findByIdClasses(Long id) {
+        return this.classesRepository.findById(id)
+                .map(classesMapper::toDto)
+                .orElseThrow(() -> 
+                    new EntityNotFoundException("Class not found with id: " + id)
+                );
+    }
+
+    public void saveClasses(ClassesDTO classesDTO) {
+        classesRepository.save(classesMapper.fromDto(classesDTO));
+    }
+
+    public List<ClassesDTO> getUserClassesByDate(Long userId, LocalDateTime date) {
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+
+        if (date == null) {
+            throw new IllegalArgumentException("Date cannot be null");
+        }
+
+        LocalDateTime startOfDay = date.toLocalDate().atStartOfDay();
+        LocalDateTime endOfDay = date.toLocalDate().atTime(LocalTime.MAX);
+
+        return classesRepository.findByUserIdAndDate(userId, startOfDay, endOfDay)
+            .stream()
+            .map(classesMapper::toDto)
+            .collect(Collectors.toList());
+
+    }
+                       
 }

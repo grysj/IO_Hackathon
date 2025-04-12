@@ -2,39 +2,42 @@ package ki.agh.aghub.model;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
 
-@Setter
-@Getter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "events")
 public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long event_id;
+    private Long eventId;
 
-    private double lat;
-    private double lng;
+    private double latitude;
+    private double longitude;
     private String name;
     private String description;
 
     @ManyToOne
     @JoinColumn(name="created_by")
-    private User created_by;
+    private User createdBy;
 
     @ManyToOne
     @JoinColumn(name="poi_id")
-    private POI poi_id;
+    private POI poiId;
 
-    private LocalDateTime date_start;
-    private LocalDateTime date_end;
-
+    private LocalDateTime dateStart;
+    private LocalDateTime dateEnd;
 
     @ManyToMany(mappedBy = "events")
     private Set<User> participants;

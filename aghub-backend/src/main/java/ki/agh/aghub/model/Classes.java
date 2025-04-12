@@ -2,14 +2,19 @@ package ki.agh.aghub.model;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 import java.time.LocalDateTime;
 
-@Setter
-@Getter
+import lombok.Builder;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "classes")
 public class Classes {
@@ -17,16 +22,18 @@ public class Classes {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne
-    @JoinColumn(name = "poi_id")
-    private POI poi;
-
-    private LocalDateTime date_start;
-    private LocalDateTime date_end;
-
     private String name;
     private String room;
 
+    @Column(name = "date_start")
+    private LocalDateTime dateStart;
+
+    @Column(name = "date_end")
+    private LocalDateTime dateEnd;
+    
+    @ManyToOne
+    @JoinColumn(name = "poi_id")
+    private POI poi;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -1,31 +1,33 @@
 package ki.agh.aghub.dto;
 
+import java.time.LocalDateTime;
+
 public class EventsDTO {
 
     private String name;
 
     private String description;
 
-    private String dateStart;
+    private LocalDateTime dateStart;
 
-    private String dateEnd;
+    private LocalDateTime dateEnd;
 
     private Double latitude;
 
     private Double longitude;
 
-    private Integer poiId;
+    private Long poiId;
 
-    private Integer createdById;
+    private Long createdById;
 
-    public EventsDTO(String name, String description, String dateStart, String dateEnd, Double latitude, Double longitude, Integer createdById) {
+    public EventsDTO(String name, String description, LocalDateTime dateStart, LocalDateTime dateEnd, Double latitude, Double longitude, Long poiId, Long createdById) {
         this.name = name;
         this.description = description;
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.poiId = null;
+        this.poiId = poiId;
         this.createdById = createdById;
     }
 
@@ -45,19 +47,19 @@ public class EventsDTO {
         this.description = description;
     }
 
-    public String getDateStart() {
+    public LocalDateTime getDateStart() {
         return dateStart;
     }
 
-    public void setDateStart(String dateStart) {
+    public void setDateStart(LocalDateTime dateStart) {
         this.dateStart = dateStart;
     }
 
-    public String getDateEnd() {
+    public LocalDateTime getDateEnd() {
         return dateEnd;
     }
 
-    public void setDateEnd(String dateEnd) {
+    public void setDateEnd(LocalDateTime dateEnd) {
         this.dateEnd = dateEnd;
     }
 
@@ -77,19 +79,19 @@ public class EventsDTO {
         this.longitude = longitude;
     }
 
-    public Integer getPoiId() {
+    public Long getPoiId() {
         return poiId;
     }
 
-    public void setPoiId(Integer poiId) {
+    public void setPoiId(Long poiId) {
         this.poiId = poiId;
     }
 
-    public Integer getCreatedById() {
+    public Long getCreatedById() {
         return createdById;
     }
 
-    public void setCreatedById(Integer createdById) {
+    public void setCreatedById(Long createdById) {
         this.createdById = createdById;
     }
 }

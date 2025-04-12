@@ -59,25 +59,34 @@ public class DatabaseSeeder {
             poiRepo.save(poi);
 
             // Create Class
-            Classes klass = new Classes();
-            klass.setName("AI Fundamentals");
-            klass.setRoom("Room 101");
-            klass.setDate_start(LocalDateTime.now().plusDays(1));
-            klass.setDate_end(LocalDateTime.now().plusDays(1).plusHours(2));
-            klass.setPoi(poi);
-            klass.setUser(user1);
+            Classes klass = Classes.builder()
+                .name("AI Fundamentals")
+                .room("Room 101")
+                .dateStart(LocalDateTime.now().plusDays(1))
+                .dateEnd(LocalDateTime.now().plusDays(1).plusHours(2))
+                .poi(poi)
+                .user(user1)
+                .build();
             classRepo.save(klass);
+
+            // klass.setName("AI Fundamentals");
+            // klass.setRoom("Room 101");
+            // klass.setDateStart(LocalDateTime.now().plusDays(1));
+            // klass.setDateEnd(LocalDateTime.now().plusDays(1).plusHours(2));
+            // klass.setPoi(poi);
+            // klass.setUser(user1);
+            // classRepo.save(klass);
 
             // Create Event
             Event event = new Event();
             event.setName("AI Meetup");
             event.setDescription("Discussing latest AI trends.");
-            event.setLat(poi.getLat());
-            event.setLng(poi.getLng());
-            event.setCreated_by(user2);
-            event.setPoi_id(poi);
-            event.setDate_start(LocalDateTime.now().plusDays(2));
-            event.setDate_end(LocalDateTime.now().plusDays(2).plusHours(3));
+            event.setLatitude(poi.getLat());
+            event.setLongitude(poi.getLng());
+            event.setCreatedBy(user2);
+            event.setPoiId(poi);
+            event.setDateStart(LocalDateTime.now().plusDays(2));
+            event.setDateEnd(LocalDateTime.now().plusDays(2).plusHours(3));
             event.setParticipants(Set.of(user1, user2));
             eventRepo.save(event);
 
