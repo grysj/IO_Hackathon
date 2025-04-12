@@ -40,17 +40,7 @@ public class UsersController {
 
     }
 
-    @GetMapping("/if")
-    public Boolean ifCorrectPassword(@RequestBody LoginRequest loginRequest) {
-        User user = this.usersService.getUserByMail(loginRequest.getMail());
-        if(user.getPassword() == loginRequest.getPassword()) {
-            return true;
-        }
-        return false;
-    }
 
-    @PostMapping("/register")
-    public void registerUser(@RequestBody UserDTO userDTO) {
 
-    }
+
 }
