@@ -28,7 +28,9 @@ export default function HomeScreen() {
           title="Zaloguj się"
           onPress={() => router.push("/(auth)/login")}
         />
+
       )}
+        
     </View>
   );
 }
