@@ -46,14 +46,30 @@ const Calendar = ({ user }) => {
           }
 
           const data = await response.json(); // Zakładamy, że data = { events: [], classes: [], unavailability: [] }
-          setSchedule(data);
+            const parsedSchedule = {
+                classes: (data.classes || []).map(e => ({
+                    ...e,
+                    startDate: new Date(e.startDate),
+                    endDate: new Date(e.endDate),
+                })),
+                events: (data.events || []).map(e => ({
+                    ...e,
+                    startDate: new Date(e.startDate),
+                    endDate: new Date(e.endDate),
+                })),
+                unavailability: (data.unavailability || []).map(e => ({
+                    ...e,
+                    startDate: new Date(e.startDate),
+                    endDate: new Date(e.endDate),
+                })),
+            };
+
+            setSchedule(parsedSchedule);
         } catch (error) {
           console.error('Error fetching schedule:', error);
         }
 
 
-        // Tymczasowo używamy mocka
-        //setSchedule(mockSchedule)
     }
     const getSchedule = (userId) =>{
         const startDate = weekDays[0]
