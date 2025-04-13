@@ -63,3 +63,11 @@ Aplikacja mobilna pozwala studentom łatwo planować i koordynować spotkania dz
 - PostreSQL
 - Docker
 - gluestack
+
+## 8. Raport z retrospektywy
+
+Podczas realizacji projektu zauważyliśmy wiele pozytywnych aspektów naszej współpracy.
+Na szczególną uwagę zasługuje bardzo dobra komunikacja, koordynacja i ogólna współpraca w zespole.
+Podział pracy został przeprowadzony w odpowiedni sposób, co przełożyło się na sprawne wykonywanie zadań. Udało się również skutecznie zrealizować funkcjonalność dodawania danych z USOS poprzez URL, a frontend – w tym mapka i kalendarz – został wykonany sprawnie i zgodnie z założeniami. Dodatkowo lider zespołu dobrze wywiązywał się ze swojej roli, skutecznie zarządzając pracą grupy.
+
+Z drugiej strony pojawiło się kilka trudności. Problemy dotyczyły m.in. korzystania z frameworka Spring oraz generowania bazy danych. Wystąpiły także wyzwania związane z koordynacją pracy, szczególnie pod kątem dopasowania zadań do doświadczenia poszczególnych członków zespołu. Pewne trudności pojawiły się również podczas integracji backendu z frontendem. Mimo wszystko, część zespołu podkreśliła, że nie dostrzegła istotnych minusów, co świadczy o pozytywnym odbiorze przebiegu projektu.

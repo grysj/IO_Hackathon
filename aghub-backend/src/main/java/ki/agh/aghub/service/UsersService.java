@@ -49,10 +49,14 @@ public class UsersService {
             );
     }
 
-    public void saveUser(UserDTO userDTO, Role role) {
-        User user = UserDTO.toUser(userDTO, role);
-        this.usersRepository.save(user);
+    public UserDTO saveUser(UserDTO userDTO, Role role) {
+        return UserDTO.fromUser(this.usersRepository.save(UserDTO.toUser(userDTO, role)));
     }
+
+    public void deleteUser(Long id) {
+        this.usersRepository.deleteById(id);
+    }
+
 
 //    public List<String> getUsersByPOIAndByDay(Long poi_id, String dayString) {
 //        LocalDate date = LocalDate.parse(dayString); // format: yyyy-MM-dd
