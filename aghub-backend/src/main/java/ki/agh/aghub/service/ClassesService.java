@@ -151,7 +151,7 @@ public class ClassesService {
                     );
 
             // DEBUG: wypisanie każdej DTO w konsoli
-            dtos.forEach(dto -> System.out.println("DTO: " + dto));
+            //dtos.forEach(dto -> System.out.println("DTO: " + dto));
 
 
             // Mapowanie DTO na encje przy użyciu mappera
@@ -160,9 +160,14 @@ public class ClassesService {
                     .collect(Collectors.toList());
 
             // Zapis encji do bazy danych za pomocą repository
-            classesRepository.saveAll(classesEntities);
+            //classesRepository.saveAll(classesEntities);
 
-            System.out.println("Zapisano " + classesEntities.size() + " encji Classes do bazy.");
+            classesEntities.forEach(entity -> {
+                classesRepository.save(entity);
+                //System.out.println("Zapisano encję: " + entity);
+            });
+
+            //System.out.println("Zapisano " + classesEntities.size() + " encji Classes do bazy.");
 
         } catch (Exception e) {
             e.printStackTrace();
