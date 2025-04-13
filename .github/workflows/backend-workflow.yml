@@ -12,28 +12,28 @@ jobs:
   backend-up:
     runs-on: ubuntu-latest
 
-    services:
-      docker:
-        image: docker:20.10.24-dind
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Docker Compose
         run: |
+          docker compose version || sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose
+
+      - name: Start backend using Docker Compose
+        run: |
           cd aghub-backend
           docker-compose up --build -d
 
       - name: Wait for backend to be healthy
         run: |
-          echo "Waiting for services to be ready..."
+          echo "Waiting for backend to be ready..."
           for i in {1..30}; do
-            if curl -s http://localhost:PORT/healthcheck | grep "ok"; then
+            if curl -s http://localhost:3000/healthcheck | grep "ok"; then
               echo "Backend is ready!"
               break
             fi
-            echo "Waiting..."
+            echo "Still waiting..."
             sleep 5
           done
         continue-on-error: false
