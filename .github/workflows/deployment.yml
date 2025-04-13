@@ -1,4 +1,4 @@
-name: Deploy aghub-backend to GCP VM
+name: Deployments
 
 on:
   push:
