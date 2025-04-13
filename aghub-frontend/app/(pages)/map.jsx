@@ -3,6 +3,28 @@ import { View, StyleSheet, ActivityIndicator } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
+// Mock danych znajomych
+const mockFriends = [
+    {
+        id: 1,
+        username: "alicee",
+        latitude: 50.062,
+        longitude: 19.937,
+    },
+    {
+        id: 2,
+        username: "bob",
+        latitude: 50.064,
+        longitude: 19.938,
+    },
+    {
+        id: 3,
+        username: "charlie",
+        latitude: 50.060,
+        longitude: 19.935,
+    },
+];
+
 export default function MapScreen() {
   const [location, setLocation] = useState(null);
 
