@@ -2,11 +2,11 @@ name: Backend Docker Compose Up
 
 on:
   push:
-    # paths:
-    #   - "aghub-backend/**"
+    paths:
+      - "aghub-backend/**"
   pull_request:
-    # paths:
-    #   - "aghub-backend/**"
+    paths:
+      - "aghub-backend/**"
 
 jobs:
   backend-up:
