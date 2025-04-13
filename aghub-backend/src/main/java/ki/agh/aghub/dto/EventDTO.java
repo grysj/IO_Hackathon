@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import ki.agh.aghub.model.Event;
 
 public record EventDTO(
+    Long id,
     String name,
     String description,
     LocalDateTime dateStart,
@@ -17,6 +18,7 @@ public record EventDTO(
 
     public static EventDTO fromEvent(Event event) {
         return new EventDTO(
+            event.getId(),
             event.getName(),
             event.getDescription(),
             event.getDateStart(),
@@ -30,6 +32,7 @@ public record EventDTO(
 
     public static Event toEvent(EventDTO eventDTO) {
         return Event.builder()
+            .id(eventDTO.id())
             .name(eventDTO.name())
             .description(eventDTO.description())
             .dateStart(eventDTO.dateStart())

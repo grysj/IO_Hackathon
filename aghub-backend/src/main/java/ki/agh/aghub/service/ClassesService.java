@@ -144,7 +144,7 @@ public class ClassesService {
 
             // Obliczenie najwcześniejszej daty zajęć w otrzymanym batchu
             dtos.stream()
-                    .map(ki.agh.aghub.dto.ClassesDTO::startDate)
+                    .map(ki.agh.aghub.dto.ClassesDTO::dateStart)
                     .min(LocalDateTime::compareTo)
                     .ifPresent(earliestDate ->
                             System.out.println("Najwcześniejsza data zajęć: " + earliestDate)

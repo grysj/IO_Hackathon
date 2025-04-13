@@ -8,8 +8,8 @@ public record ClassesDTO(
     Long id,
     String name,
     String room,
-    LocalDateTime startDate,
-    LocalDateTime endDate,
+    LocalDateTime dateStart,
+    LocalDateTime dateEnd,
     Long poiId,
     Long userId
 ) {
@@ -30,8 +30,8 @@ public record ClassesDTO(
         return Classes.builder()
             .name(classesDTO.name())
             .room(classesDTO.room())
-            .dateStart(classesDTO.startDate())
-            .dateEnd(classesDTO.endDate())
+            .dateStart(classesDTO.dateStart())
+            .dateEnd(classesDTO.dateEnd())
             .build();
     }
 }

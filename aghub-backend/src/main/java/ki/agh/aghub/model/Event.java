@@ -21,7 +21,7 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long eventId;
+    private Long id;
 
     private double latitude;
     private double longitude;
