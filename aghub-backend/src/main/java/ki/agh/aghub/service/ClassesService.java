@@ -48,23 +48,11 @@ public class ClassesService {
         this.classesRepository.deleteById(id);
     }
 
-    public List<ClassesDTO> getUserClassesByDate(Long userId, LocalDateTime date) {
-        if (userId == null) {
-            throw new IllegalArgumentException("User ID cannot be null");
-        }
-
-        if (date == null) {
-            throw new IllegalArgumentException("Date cannot be null");
-        }
-
-        LocalDateTime startOfDay = date.toLocalDate().atStartOfDay();
-        LocalDateTime endOfDay = date.toLocalDate().atTime(LocalTime.MAX);
-
-        return classesRepository.findByUserIdAndDateStartBetween(userId, startOfDay, endOfDay)
+    public List<ClassesDTO> getUserClassesByDate(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
+        return classesRepository.findByUserIdAndDateStartBetween(userId, startDate, endDate)
             .stream()
             .map(ClassesDTO::fromClasses)
             .collect(Collectors.toList());
-
     }
                        
 }

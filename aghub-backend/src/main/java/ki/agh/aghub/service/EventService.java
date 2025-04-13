@@ -71,16 +71,8 @@ public class EventService {
         this.eventRepository.deleteById(id);
     }
 
-    public List<EventDTO> getUserEventsByDate(Long userId, LocalDateTime date) {
-        if (userId == null) {
-            throw new IllegalArgumentException("User ID cannot be null");
-        }
-
-        if (date == null) {
-            throw new IllegalArgumentException("Date cannot be null");
-        }
-
-        return eventRepository.findUpcomingEventsByUserId(userId, date)
+    public List<EventDTO> getUserEventsByDate(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
+        return eventRepository.findEventsByUserIdBetweenDates(userId, startDate, endDate)
             .stream()
             .map(EventDTO::fromEvent)
             .collect(Collectors.toList());

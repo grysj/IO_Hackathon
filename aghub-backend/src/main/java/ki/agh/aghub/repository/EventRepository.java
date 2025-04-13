@@ -11,9 +11,12 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT e FROM Event e JOIN e.participants p " +
-            "WHERE p.id = :userId AND e.dateStart >= :now")
-    List<Event> findUpcomingEventsByUserId(@Param("userId") Long userId,
-                                           @Param("now") LocalDateTime now);
+            "WHERE p.id = :userId " +
+            "AND e.dateStart >= :startDate " +
+            "AND e.dateStart <= :endDate")
+    List<Event> findEventsByUserIdBetweenDates(@Param("userId") Long userId,
+                                               @Param("startDate") LocalDateTime startDate,
+                                               @Param("endDate") LocalDateTime endDate);
 
 }
 

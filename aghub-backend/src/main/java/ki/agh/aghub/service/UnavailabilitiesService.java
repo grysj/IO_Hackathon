@@ -40,19 +40,8 @@ public class UnavailabilitiesService {
         this.unavailabilitiesRepository = unavailabilitiesRepository;
     }
 
-    public List<UnavailabilityDTO> getUserUnavailabilitiesByDate(Long userId, LocalDateTime date) {
-        if (userId == null) {
-            throw new IllegalArgumentException("User ID cannot be null");
-        }
-
-        if (date == null) {
-            throw new IllegalArgumentException("Date cannot be null");
-        }
-        
-        LocalDateTime startOfDay = date.toLocalDate().atStartOfDay();
-        LocalDateTime endOfDay = date.toLocalDate().atTime(23, 59, 59);
-
-        return unavailabilitiesRepository.findByUserIdAndDate(userId, startOfDay, endOfDay)
+    public List<UnavailabilityDTO> getUserUnavailabilitiesByDate(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
+        return unavailabilitiesRepository.findByUserIdAndDate(userId, startDate, endDate)
             .stream()
             .map(UnavailabilityDTO::fromUnavailability)
             .collect(Collectors.toList());
