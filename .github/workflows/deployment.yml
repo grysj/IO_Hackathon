@@ -1,10 +1,8 @@
-name: Deployment please please works
+name: Backend deployment
 
 on:
   push:
     branches: [main]
-    # paths:
-    #   - "aghub-backend/**"
 
 jobs:
   deploy:
@@ -12,25 +10,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: 📦 Checkout code
         uses: actions/checkout@v3
 
-      - name: Copy backend code to VM via SCP
+      - name: 🚚 Copy entire repo to VM
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.GCP_VM_IP }}
           username: ${{ secrets.GCP_VM_USERNAME }}
           key: ${{ secrets.GCP_VM_SSH_KEY }}
-          source: "aghub-backend"
-          target: "~/aghub-backend"
+          source: "." # send whole repo
+          target: "~/aghub"
 
-      - name: SSH and restart Docker Compose
+      - name: 🚀 Deploy backend via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.GCP_VM_IP }}
           username: ${{ secrets.GCP_VM_USERNAME }}
           key: ${{ secrets.GCP_VM_SSH_KEY }}
           script: |
-            cd ~/aghub-backend
+            echo "🔧 Backend deployment started"
+            cd ~/aghub/aghub-backend
             docker compose down || true
             docker compose up --build -d
