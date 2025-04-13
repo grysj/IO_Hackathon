@@ -1,9 +1,7 @@
 package ki.agh.aghub.controller;
 
-import ki.agh.aghub.dto.request.LoginRequest;
 import ki.agh.aghub.dto.UserDTO;
 import ki.agh.aghub.model.Role;
-import ki.agh.aghub.model.User;
 import ki.agh.aghub.service.UsersService;
 import org.springframework.web.bind.annotation.*;
 
