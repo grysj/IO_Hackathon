@@ -12,28 +12,28 @@ public interface UnavailabilitiesRepository extends JpaRepository<Unavailability
     @Query("""
             SELECT u FROM Unavailability u
             WHERE u.user.id = :userId
-              AND u.dateStart BETWEEN :startDate AND :endDate
+              AND u.dateStart BETWEEN :dateStart AND :dateEnd
             """)
     List<Unavailability> findByUserIdAndDate(
             @Param("userId") Long userId,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate
+            @Param("dateStart") LocalDateTime dateStart,
+            @Param("dateEnd") LocalDateTime dateEnd
     );
 
     @Query("""
                 SELECT u FROM Unavailability u
                 WHERE u.user.id = :userId
                 AND (
-                    (:startDate BETWEEN u.dateStart AND u.dateEnd)
-                    OR (:endDate BETWEEN u.dateStart AND u.dateEnd)
-                    OR (u.dateStart BETWEEN :startDate AND :endDate)
-                    OR (u.dateEnd BETWEEN :startDate AND :endDate)
+                    (:dateStart BETWEEN u.dateStart AND u.dateEnd)
+                    OR (:dateEnd BETWEEN u.dateStart AND u.dateEnd)
+                    OR (u.dateStart BETWEEN :dateStart AND :dateEnd)
+                    OR (u.dateEnd BETWEEN :dateStart AND :dateEnd)
                 )
             """)
     List<Unavailability> findAllOverlappingByUserId(
             @Param("userId") Long userId,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate
+            @Param("dateStart") LocalDateTime dateStart,
+            @Param("dateEnd") LocalDateTime dateEnd
     );
 
 

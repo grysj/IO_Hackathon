@@ -12,26 +12,26 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT e FROM Event e JOIN e.participants p " +
             "WHERE p.id = :userId " +
-            "AND e.dateStart >= :startDate " +
-            "AND e.dateStart <= :endDate")
+            "AND e.dateStart >= :dateStart " +
+            "AND e.dateStart <= :dateStart")
     List<Event> findEventsByUserIdBetweenDates(@Param("userId") Long userId,
-                                               @Param("startDate") LocalDateTime startDate,
-                                               @Param("endDate") LocalDateTime endDate);
+                                               @Param("dateStart") LocalDateTime dateStart,
+                                               @Param("dateEnd") LocalDateTime dateEnd);
 
     @Query("""
                 SELECT e FROM Event e
                 WHERE e.createdBy.id = :userId
                 AND (
-                    (:startDate BETWEEN e.dateStart AND e.dateEnd)
-                    OR (:endDate BETWEEN e.dateStart AND e.dateEnd)
-                    OR (e.dateStart BETWEEN :startDate AND :endDate)
-                    OR (e.dateEnd BETWEEN :startDate AND :endDate)
+                    (:dateStart BETWEEN e.dateStart AND e.dateEnd)
+                    OR (:dateEnd BETWEEN e.dateStart AND e.dateEnd)
+                    OR (e.dateStart BETWEEN :dateStart AND :dateEnd)
+                    OR (e.dateEnd BETWEEN :dateStart AND :dateEnd)
                 )
             """)
     List<Event> findAllOverlappingCreatedByUserId(
             @Param("userId") Long userId,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate
+            @Param("dateStart") LocalDateTime dateStart,
+            @Param("dateEnd") LocalDateTime dateEnd
     );
 
 
