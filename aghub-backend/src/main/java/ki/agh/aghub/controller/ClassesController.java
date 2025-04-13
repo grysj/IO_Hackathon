@@ -26,7 +26,7 @@ public class ClassesController {
         return this.classesService.findByIdClasses(id);
     }
 
-    @PostMapping()
+    @PostMapping("")
     public void saveClass(@RequestBody ClassesDTO classesDTO) {
         this.classesService.saveClasses(classesDTO);
     }
