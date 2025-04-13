@@ -21,7 +21,7 @@ jobs:
           host: ${{ secrets.GCP_VM_IP }}
           username: ${{ secrets.GCP_VM_USERNAME }}
           key: ${{ secrets.GCP_VM_SSH_KEY }}
-          source: "aghub-backend/*"
+          source: "aghub-backend"
           target: "~/aghub-backend"
 
       - name: SSH and restart Docker Compose
