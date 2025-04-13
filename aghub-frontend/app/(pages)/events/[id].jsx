@@ -9,39 +9,43 @@ import {
 import { useLocalSearchParams } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
-const mockEvents = {
-  1: {
-    name: "Flany",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...",
-    date: "April 20, 2025",
-    start: "15:00",
-    end: "18:30",
-    location: "Miasteczko",
-    friends: ["Piotr Błaszczyk", "Joachim Grys", "Stanisław Barycki"],
-  },
-  2: {
-    name: "Wycieczka do studenciaka",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...",
-    date: "May 3, 2025",
-    start: "09:00",
-    end: "22:00",
-    location: "d17",
-    friends: ["Piotr Błaszczyk", "Krzysztof Swędzioł"],
-  },
-};
-
 export default function EventDetails() {
   const { id } = useLocalSearchParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    setTimeout(() => {
-      setEvent(mockEvents[id]);
-      setLoading(false);
-    }, 800);
+    const abortController = new AbortController();
+
+    const fetchEvent = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        console.log(`http://localhost:8080/api/events/${id}`);
+        const response = await fetch(`http://localhost:8080/api/events/${id}`, {
+          signal: abortController.signal,
+        });
+        if (!response.ok) {
+          throw new Error(response.statusText || "Unknown error");
+        }
+        const data = await response.json();
+        setEvent(data);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          setError(err.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvent();
+
+    return () => {
+      abortController.abort();
+    };
   }, [id]);
 
   const handleFriendPress = (friend) => {
@@ -61,11 +65,11 @@ export default function EventDetails() {
     );
   }
 
-  if (!event) {
+  if (error) {
     return (
       <View className="flex-1 justify-center items-center bg-background-50">
         <Text className="text-white text-2xl font-semibold">
-          Event not found.
+          Error: {error}
         </Text>
       </View>
     );
