@@ -1,20 +1,41 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
     View,
     StyleSheet,
     Text,
-    TouchableOpacity,
     TextInput,
+    TouchableOpacity,
     Keyboard,
+    ActivityIndicator,
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
-import { useRouter } from "expo-router";
+import MapView, { Marker, Callout } from "react-native-maps";
+import * as Location from "expo-location";
 
-export default function LocationPickerScreen() {
+export default function LocationPickerScreen({ onConfirmLocation }) {
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
+    const [initialRegion, setInitialRegion] = useState(null);
+    const [currentLocation, setCurrentLocation] = useState(null);
     const mapRef = useRef(null);
-    const router = useRouter();
+
+    useEffect(() => {
+        (async () => {
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== "granted") {
+                alert("Brak uprawnień do lokalizacji");
+                return;
+            }
+            const loc = await Location.getCurrentPositionAsync({});
+            const region = {
+                latitude: loc.coords.latitude,
+                longitude: loc.coords.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+            };
+            setInitialRegion(region);
+            setCurrentLocation(loc.coords);
+        })();
+    }, []);
 
     const handleMapPress = (event) => {
         const { latitude, longitude } = event.nativeEvent.coordinate;
@@ -61,13 +82,23 @@ export default function LocationPickerScreen() {
 
     const handleConfirm = () => {
         if (!selectedLocation) return;
-        console.log("Wybrana lokalizacja:", selectedLocation);
-        router.replace("/");
+        if (typeof onConfirmLocation === "function") {
+            onConfirmLocation(selectedLocation);
+        }
     };
 
     const handleUndo = () => {
         setSelectedLocation(null);
     };
+
+    if (!initialRegion) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#ca8a04" />
+                <Text style={styles.loadingText}>Pobieranie lokalizacji...</Text>
+            </View>
+        );
+    }
 
     return (
         <View style={styles.container}>
@@ -75,6 +106,7 @@ export default function LocationPickerScreen() {
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Wpisz lokalizację (np. Rynek Kraków)"
+                    placeholderTextColor="#aaa"
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                     onSubmitEditing={handleSearch}
@@ -87,21 +119,36 @@ export default function LocationPickerScreen() {
 
             <MapView
                 ref={mapRef}
-                style={styles.map}
+                style={StyleSheet.absoluteFillObject}
+                initialRegion={initialRegion}
                 onPress={handleMapPress}
-                initialRegion={{
-                    latitude: 50.06143,
-                    longitude: 19.93658,
-                    latitudeDelta: 0.01,
-                    longitudeDelta: 0.01,
-                }}
             >
+                {/* Twoja lokalizacja */}
+                {currentLocation && (
+                    <Marker coordinate={currentLocation} pinColor="#ca8a04">
+                        <Callout tooltip>
+                            <View style={styles.calloutContainer}>
+                                <Text style={styles.calloutText}>Twoja lokalizacja</Text>
+                                <Text style={styles.calloutSubtext}>
+                                    {currentLocation.latitude.toFixed(4)}, {currentLocation.longitude.toFixed(4)}
+                                </Text>
+                            </View>
+                        </Callout>
+                    </Marker>
+                )}
+
+                {/* Wybrana lokalizacja */}
                 {selectedLocation && (
-                    <Marker
-                        coordinate={selectedLocation}
-                        title="Wybrana lokalizacja"
-                        tracksViewChanges={false}
-                    />
+                    <Marker coordinate={selectedLocation} pinColor="green">
+                        <Callout tooltip>
+                            <View style={styles.calloutContainer}>
+                                <Text style={styles.calloutText}>Wybrana lokalizacja</Text>
+                                <Text style={styles.calloutSubtext}>
+                                    {selectedLocation.latitude.toFixed(4)}, {selectedLocation.longitude.toFixed(4)}
+                                </Text>
+                            </View>
+                        </Callout>
+                    </Marker>
                 )}
             </MapView>
 
@@ -112,54 +159,70 @@ export default function LocationPickerScreen() {
                         : "Kliknij na mapie lub wyszukaj lokalizację"}
                 </Text>
 
-                {selectedLocation && (
-                    <TouchableOpacity style={styles.undoButton} onPress={handleUndo}>
-                        <Text style={styles.undoText}>Cofnij</Text>
+                <View style={styles.buttonRow}>
+                    <TouchableOpacity
+                        style={styles.cancelButton}
+                        onPress={handleUndo}
+                        disabled={!selectedLocation}
+                    >
+                        <Text style={styles.buttonText}>Cofnij</Text>
                     </TouchableOpacity>
-                )}
 
-                <TouchableOpacity
-                    style={[
-                        styles.confirmButton,
-                        { backgroundColor: selectedLocation ? "#22c55e" : "#ccc" },
-                    ]}
-                    onPress={handleConfirm}
-                    disabled={!selectedLocation}
-                >
-                    <Text style={styles.confirmText}>Zatwierdź lokalizację</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[
+                            styles.confirmButton,
+                            { backgroundColor: selectedLocation ? "#22c55e" : "#4a4a4a" },
+                        ]}
+                        onPress={handleConfirm}
+                        disabled={!selectedLocation}
+                    >
+                        <Text style={styles.buttonText}>Zatwierdź</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1 },
-    map: { flex: 1 },
+    container: {
+        flex: 1,
+        backgroundColor: "#1a1a1a",
+    },
+    loadingContainer: {
+        flex: 1,
+        backgroundColor: "#1a1a1a",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    loadingText: {
+        color: "#fff",
+        marginTop: 12,
+        fontSize: 16,
+    },
     searchContainer: {
         position: "absolute",
         top: 50,
         left: 20,
         right: 20,
-        zIndex: 10,
+        zIndex: 20,
         flexDirection: "row",
         gap: 8,
     },
     searchInput: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: "#2d2d2d",
         borderRadius: 8,
         paddingHorizontal: 12,
         paddingVertical: 10,
         fontSize: 16,
-        elevation: 2,
+        color: "#fff",
     },
     searchButton: {
         backgroundColor: "#ca8a04",
         borderRadius: 8,
         paddingHorizontal: 16,
         justifyContent: "center",
-        elevation: 2,
     },
     searchButtonText: {
         color: "#fff",
@@ -167,43 +230,66 @@ const styles = StyleSheet.create({
     },
     bottomPanel: {
         position: "absolute",
-        bottom: 110,
+        bottom: 100,
         left: 20,
         right: 20,
-        backgroundColor: "#fff",
+        backgroundColor: "#2d2d2d",
         padding: 16,
         borderRadius: 12,
-        elevation: 5,
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowOffset: { width: 0, height: 3 },
-        shadowRadius: 5,
         alignItems: "center",
+        shadowColor: "#000",
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 2 },
     },
     infoText: {
         fontSize: 14,
-        marginBottom: 10,
-        color: "#444",
+        color: "#eee",
         textAlign: "center",
+        marginBottom: 16,
+    },
+    buttonRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: "100%",
+    },
+    cancelButton: {
+        backgroundColor: "#d9534f",
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 30,
+        width: "48%",
+        alignItems: "center",
     },
     confirmButton: {
         paddingVertical: 12,
-        paddingHorizontal: 20,
+        paddingHorizontal: 24,
         borderRadius: 30,
+        width: "48%",
+        alignItems: "center",
     },
-    confirmText: {
+    buttonText: {
         color: "#fff",
         fontWeight: "bold",
     },
-    undoButton: {
-        marginBottom: 12,
-        backgroundColor: "#d9534f",
-        borderRadius: 20,
+    calloutContainer: {
+        backgroundColor: "#2d2d2d",
+        borderRadius: 8,
         paddingVertical: 8,
-        paddingHorizontal: 16,
+        paddingHorizontal: 12,
+        borderWidth: 1,
+        borderColor: "#444",
+        maxWidth: 200,
+        alignItems: "center",
     },
-    undoText: {
+    calloutText: {
         color: "#fff",
-        fontWeight: "600",
+        fontWeight: "bold",
+        fontSize: 14,
+        marginBottom: 4,
+    },
+    calloutSubtext: {
+        color: "#ccc",
+        fontSize: 12,
     },
 });
