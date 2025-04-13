@@ -26,7 +26,9 @@ public class FriendsController {
     }
     @PostMapping("/add")
     public Map<String, String> addFriend(@RequestBody AddFriendRequest addFriendRequest) {
-        String result = this.usersService.addFriend(addFriendRequest.user(), addFriendRequest.friend());
+        String result = this.usersService.addFriend(
+            addFriendRequest.user(), addFriendRequest.friend()
+        );
         return Map.of("message", result);
     }
 }

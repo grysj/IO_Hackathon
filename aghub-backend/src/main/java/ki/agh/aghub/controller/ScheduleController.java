@@ -1,7 +1,7 @@
 package ki.agh.aghub.controller;
 
 import ki.agh.aghub.dto.ClassesDTO;
-import ki.agh.aghub.dto.EventsDTO;
+import ki.agh.aghub.dto.EventDTO;
 import ki.agh.aghub.dto.CalendarDTO;
 import ki.agh.aghub.dto.UnavailabilityDTO;
 import ki.agh.aghub.service.ClassesService;
@@ -21,25 +21,30 @@ import java.util.List;
 public class ScheduleController {
 
     private EventService eventsService;
-
     private ClassesService classesService;
-
     private UnavailabilitiesService unavailabilitiesService;
 
-    public ScheduleController(EventService eventsService, ClassesService classesService, UnavailabilitiesService unavailabilitiesService) {
+    public ScheduleController(
+        EventService eventsService, 
+        ClassesService classesService, 
+        UnavailabilitiesService unavailabilitiesService
+    ) {
         this.eventsService = eventsService;
         this.classesService = classesService;
         this.unavailabilitiesService = unavailabilitiesService;
     }
 
-    @GetMapping("/schedule/{user_id}/{date}")
-    public CalendarDTO getScheduleByUserAndDate(@PathVariable String user_id, @PathVariable LocalDateTime date) {
-        List<EventsDTO> events = this.eventsService.getUserEventsByDate(user_id, date);
-        List<ClassesDTO> classes = this.classesService.getUserClassesByDate(user_id, date);
-        List<UnavailabilityDTO> unavailability = this.unavailabilitiesService.getUserUnavailabilitiesByDate(user_id, date);
+    @GetMapping("/{user_id}/{date}")
+    public CalendarDTO getScheduleByUserAndDate(
+        @PathVariable(name = "user_id") Long userId, 
+        @PathVariable LocalDateTime date
+    ) {
+        List<EventDTO> events = this.eventsService.getUserEventsByDate(userId, date);
+        List<ClassesDTO> classes = this.classesService.getUserClassesByDate(userId, date);
+        List<UnavailabilityDTO> unavailability = 
+            this.unavailabilitiesService.getUserUnavailabilitiesByDate(userId, date);
 
-        CalendarDTO calendarDTO = new CalendarDTO(events, classes, unavailability);
-        return calendarDTO;
+        return new CalendarDTO(events, classes, unavailability);
     }
 
 }
