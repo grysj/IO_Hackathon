@@ -1,0 +1,36 @@
+name: Deploy aghub-backend to GCP VM
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "aghub-backend/**"
+
+jobs:
+  deploy:
+    name: Deploy to GCP VM
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Copy backend code to VM via SCP
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.GCP_VM_IP }}
+          username: ${{ secrets.GCP_VM_USERNAME }}
+          key: ${{ secrets.GCP_VM_SSH_KEY }}
+          source: "aghub-backend/*"
+          target: "~/aghub-backend"
+
+      - name: SSH and restart Docker Compose
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.GCP_VM_IP }}
+          username: ${{ secrets.GCP_VM_USERNAME }}
+          key: ${{ secrets.GCP_VM_SSH_KEY }}
+          script: |
+            cd ~/aghub-backend
+            docker compose down || true
+            docker compose up --build -d
