@@ -17,13 +17,6 @@ export default function HomeScreen() {
           resizeMode="contain"
         />
 
-        {/* <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.push("/events/1")}
-        >
-          <Text style={styles.buttonText}>Go to Event 1</Text>
-        </TouchableOpacity> */}
-
         {isLoggedIn ? (
           <>
             <TouchableOpacity
