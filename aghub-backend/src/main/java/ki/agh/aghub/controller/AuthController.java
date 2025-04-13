@@ -4,15 +4,9 @@ import jakarta.validation.Valid;
 import ki.agh.aghub.dto.UserDTO;
 import ki.agh.aghub.dto.request.LoginRequest;
 import ki.agh.aghub.dto.request.RegisterRequest;
-import ki.agh.aghub.model.User;
 import ki.agh.aghub.service.UsersService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 
 @RestController

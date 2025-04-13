@@ -27,14 +27,20 @@ public class UsersController {
         return this.usersService.findByIdUser(id);
     }
 
+    @PostMapping("")
+    public UserDTO saveUser(@RequestBody UserDTO userDTO) {
+        return this.usersService.saveUser(userDTO, new Role());
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(Long id) {
+        this.usersService.deleteUser(id);
+    }
 
 //    @GetMapping("/{poi_id}/{day}")
 //    public List<String> getUsersByPOIAndByDay(@PathVariable Long poi_id, @PathVariable String day) {
 //        return this.usersService.getUsersByPOIAndByDay(poi_id, day);
 //
 //    }
-
-
-
 
 }

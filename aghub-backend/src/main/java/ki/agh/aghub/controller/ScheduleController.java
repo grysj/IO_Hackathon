@@ -5,6 +5,7 @@ import ki.agh.aghub.dto.EventDTO;
 import ki.agh.aghub.dto.CalendarDTO;
 import ki.agh.aghub.dto.EventDTO;
 import ki.agh.aghub.dto.UnavailabilityDTO;
+import ki.agh.aghub.dto.request.ScheduleRequest;
 import ki.agh.aghub.service.ClassesService;
 import ki.agh.aghub.service.EventService;
 import ki.agh.aghub.service.UnavailabilitiesService;
@@ -35,15 +36,13 @@ public class ScheduleController {
         this.unavailabilitiesService = unavailabilitiesService;
     }
 
-    @GetMapping("/{user_id}/{date}")
+    @GetMapping("")
     public CalendarDTO getScheduleByUserAndDate(
-        @PathVariable(name = "user_id") Long userId, 
-        @PathVariable LocalDateTime date
-    ) {
-        List<EventDTO> events = this.eventsService.getUserEventsByDate(userId, date);
-        List<ClassesDTO> classes = this.classesService.getUserClassesByDate(userId, date);
-        List<UnavailabilityDTO> unavailability = 
-            this.unavailabilitiesService.getUserUnavailabilitiesByDate(userId, date);
+            @RequestBody ScheduleRequest scheduleRequest
+            ) {
+        List<EventDTO> events = this.eventsService.getUserEventsByDate(scheduleRequest.id(), scheduleRequest.startDate(), scheduleRequest.endDate());
+        List<ClassesDTO> classes = this.classesService.getUserClassesByDate(scheduleRequest.id(), scheduleRequest.startDate(), scheduleRequest.endDate());
+        List<UnavailabilityDTO> unavailability = this.unavailabilitiesService.getUserUnavailabilitiesByDate(scheduleRequest.id(), scheduleRequest.startDate(), scheduleRequest.endDate());
 
         return new CalendarDTO(events, classes, unavailability);
     }

@@ -37,27 +37,26 @@ public class UsersService {
 
     public List<UserDTO> findAllUsers() {
         return usersRepository.findAll().stream()
-                .map(user -> new UserDTO(
-                        user.getId() != null ? user.getId() : null,
-                        user.getUsername(),
-                        user.getEmail()
-                ))
-                .collect(Collectors.toList());
+            .map(UserDTO::fromUser)
+            .collect(Collectors.toList());
     }
 
     public UserDTO findByIdUser(Long id) {
         return usersRepository.findById(id)
-                .map(user -> new UserDTO(
-                        user.getId() != null ? user.getId() : null,
-                        user.getUsername(),
-                        user.getEmail()
-                )).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+            .map(UserDTO::fromUser)
+            .orElseThrow(() -> 
+                new EntityNotFoundException("User not found with id: " + id)
+            );
     }
 
-    public void saveUser(UserDTO userDTO, Role role) {
-        User user = UserDTO.toUser(userDTO, role);
-        this.usersRepository.save(user);
+    public UserDTO saveUser(UserDTO userDTO, Role role) {
+        return UserDTO.fromUser(this.usersRepository.save(UserDTO.toUser(userDTO, role)));
     }
+
+    public void deleteUser(Long id) {
+        this.usersRepository.deleteById(id);
+    }
+
 
 //    public List<String> getUsersByPOIAndByDay(Long poi_id, String dayString) {
 //        LocalDate date = LocalDate.parse(dayString); // format: yyyy-MM-dd
@@ -82,6 +81,7 @@ public class UsersService {
 
         return UserDTO.fromUser(user);
     }
+
     public UserDTO register(RegisterRequest request) {
         if (usersRepository.findByEmail(request.email()).isPresent()) {
             throw new EmailAlreadyUsedException(request.email());
@@ -100,14 +100,16 @@ public class UsersService {
 
         return UserDTO.fromUser(user);
     }
+
     public Optional<User> getUserByEmail(String mail) {
         return usersRepository.findByEmail(mail);
     }
+
     public Optional<User> getUserByUsername(String username) { return usersRepository.findByUsername(username); }
 
     public String addFriend(Long senderId, Long receiverId) {
         if (senderId.equals(receiverId)) {
-            return "Cannot add yourself as a friend.";
+            throw new IllegalArgumentException("Cannot add yourself as a friend.");
         }
 
         User sender = usersRepository.findById(senderId)
@@ -128,20 +130,15 @@ public class UsersService {
         return "Friend added successfully.";
     }
 
-    public List<UserDTO> getUsersFriends(Long poi_id) {
-        User user = usersRepository.findById(poi_id).orElse(null);
+    public List<UserDTO> getUsersFriends(Long poiId) {
+        User user = usersRepository.findById(poiId)
+            .orElseThrow(() -> 
+                new EntityNotFoundException("User not found with id: " + poiId)
+            );
 
-        if (user == null) {
-            return List.of();
-        }
-        List<User> friends = user.getFriends().stream().toList();
-        return friends.stream()
-                .map(friend -> new UserDTO(
-                        friend.getId() != null ? friend.getId() : null,
-                        friend.getUsername(),
-                        friend.getEmail()
-                ))
-                .collect(Collectors.toList());
+        return user.getFriends().stream()
+            .map(UserDTO::fromUser)
+            .collect(Collectors.toList());
 
     }
 

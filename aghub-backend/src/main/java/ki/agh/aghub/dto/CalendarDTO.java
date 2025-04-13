@@ -7,4 +7,12 @@ public record CalendarDTO(
     List<ClassesDTO> classes,
     List<UnavailabilityDTO> unavailability
 ) {
+
+    public static CalendarDTO fromEventsClassesAndUnavailability(
+        List<EventDTO> events,
+        List<ClassesDTO> classes,
+        List<UnavailabilityDTO> unavailability
+    ) {
+        return new CalendarDTO(events, classes, unavailability);
+    }
 }
