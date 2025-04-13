@@ -3,6 +3,7 @@ import { Box } from "@gluestack-ui/themed";
 import FriendSelector from "../../components/event/FriendSelector";
 import LocationPickerScreen from "../../components/event/locationpicker";
 
+
 const EventCreateScreen = () => {
     const [friends, setFriends] = useState([]);
     const [location, setLocation] = useState(null);

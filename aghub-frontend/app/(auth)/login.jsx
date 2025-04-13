@@ -31,58 +31,58 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.flex}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <Text style={styles.title}>Welcome back!</Text>
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>E-mail</Text>
-          <TextInput
-            placeholder="yourname@example.com"
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoComplete="off"
-            textContentType="none"
-            autoCorrect={false}
-            importantForAutofill="no"
-          />
-        </View>
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            autoCapitalize="none"
-            autoComplete="off"
-            textContentType="none"
-            autoCorrect={false}
-            importantForAutofill="no"
-          />
-        </View>
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Log In</Text>
-        </TouchableOpacity>
+        <ScrollView
+            contentContainerStyle={styles.container}
+            keyboardShouldPersistTaps="handled"
+        >
+          <Text style={styles.title}>Welcome back!</Text>
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>E-mail</Text>
+            <TextInput
+                placeholder="yourname@example.com"
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoComplete="off"
+                textContentType="none"
+                autoCorrect={false}
+                importantForAutofill="no"
+            />
+          </View>
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+                style={styles.input}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                autoCapitalize="none"
+                autoComplete="off"
+                textContentType="none"
+                autoCorrect={false}
+                importantForAutofill="no"
+            />
+          </View>
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Log In</Text>
+          </TouchableOpacity>
 
-        <View style={styles.signupContainer}>
-          <Text style={styles.signupText}>
-            Don't have an account yet?{" "}
-            <Text style={styles.signupLink} onPress={handleSignUp}>
-              Sign Up
+          <View style={styles.signupContainer}>
+            <Text style={styles.signupText}>
+              Don't have an account yet?{" "}
+              <Text style={styles.signupLink} onPress={handleSignUp}>
+                Sign Up
+              </Text>
             </Text>
-          </Text>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
   );
 }
 

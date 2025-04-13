@@ -1,13 +1,17 @@
 package ki.agh.aghub.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Setter
-@Getter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name= "unavailabilities")
 public class Unavailability {
@@ -21,8 +25,11 @@ public class Unavailability {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private LocalDateTime date_start;
-    private LocalDateTime date_end;
+    @Column(name = "date_start")
+    private LocalDateTime dateStart;
+
+    @Column(name = "date_end")
+    private LocalDateTime dateEnd;
     private String name;
     private String description;
 

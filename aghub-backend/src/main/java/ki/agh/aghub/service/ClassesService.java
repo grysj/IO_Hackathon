@@ -2,8 +2,10 @@ package ki.agh.aghub.service;
 
 import ki.agh.aghub.dto.ClassesDTO;
 import jakarta.persistence.EntityNotFoundException;
+
 import ki.agh.aghub.mapper.ClassesMapper;
 import ki.agh.aghub.model.Classes;
+
 import ki.agh.aghub.repository.ClassesRepository;
 import ki.agh.aghub.repository.PoiRepository;
 import ki.agh.aghub.repository.UsersRepository;
@@ -25,7 +27,6 @@ import java.time.format.DateTimeFormatter;
 public class ClassesService {
 
     private final ClassesRepository classesRepository;
-    private final ClassesMapper classesMapper;
 
     // zhardkodowane kordy lokacji
     private static final Map<String, double[]> LOCATION_COORDINATES = Map.of(
@@ -44,48 +45,38 @@ public class ClassesService {
     public ClassesService(
         ClassesRepository classesRepository, 
         PoiRepository poiRepository, 
-        UsersRepository usersRepository,
-        ClassesMapper classesMapper
+        UsersRepository usersRepository
     ) { 
         this.classesRepository = classesRepository;
-        this.classesMapper = classesMapper;
     }
 
     public List<ClassesDTO> findAllClasses() {
         return this.classesRepository.findAll().stream()
-            .map(classesMapper::toDto)
+            .map(ClassesDTO::fromClasses)
             .collect(Collectors.toList());
     }
 
     public ClassesDTO findByIdClasses(Long id) {
         return this.classesRepository.findById(id)
-                .map(classesMapper::toDto)
+                .map(ClassesDTO::fromClasses)
                 .orElseThrow(() -> 
                     new EntityNotFoundException("Class not found with id: " + id)
                 );
     }
 
-    public void saveClasses(ClassesDTO classesDTO) {
-        classesRepository.save(classesMapper.fromDto(classesDTO));
+    public ClassesDTO saveClasses(ClassesDTO classesDTO) {
+        return ClassesDTO.fromClasses(classesRepository.save(ClassesDTO.toClasses(classesDTO)));
     }
 
-    public List<ClassesDTO> getUserClassesByDate(Long userId, LocalDateTime date) {
-        if (userId == null) {
-            throw new IllegalArgumentException("User ID cannot be null");
-        }
+    public void deleteClasses(Long id) {
+        this.classesRepository.deleteById(id);
+    }
 
-        if (date == null) {
-            throw new IllegalArgumentException("Date cannot be null");
-        }
-
-        LocalDateTime startOfDay = date.toLocalDate().atStartOfDay();
-        LocalDateTime endOfDay = date.toLocalDate().atTime(LocalTime.MAX);
-
-        return classesRepository.findByUserIdAndDateStartBetween(userId, startOfDay, endOfDay)
+    public List<ClassesDTO> getUserClassesByDate(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
+        return classesRepository.findByUserIdAndDateStartBetween(userId, startDate, endDate)
             .stream()
-            .map(classesMapper::toDto)
+            .map(ClassesDTO::fromClasses)
             .collect(Collectors.toList());
-
     }
 
     // Mapowanie planu do DataMappera
