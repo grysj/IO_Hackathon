@@ -3,8 +3,8 @@ name: Deploy aghub-backend to GCP VM
 on:
   push:
     branches: [main]
-    paths:
-      - "aghub-backend/**"
+    # paths:
+    #   - "aghub-backend/**"
 
 jobs:
   deploy:
