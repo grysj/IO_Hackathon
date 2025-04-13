@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
 
   const signup = async (username, email, password) => {
     try {
-      const response = await fetch("http://localhost:8080/auth/register", {
+      const response = await fetch("http://34.116.250.33:8080/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +58,7 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch("http://localhost:8080/auth/login", {
+      const response = await fetch("http://34.116.250.33:8080/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
