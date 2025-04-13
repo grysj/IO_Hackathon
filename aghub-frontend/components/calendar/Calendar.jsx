@@ -27,7 +27,7 @@ const Calendar = ({ user }) => {
     const [unavailabilityPicked, setUnavailabilityPicked] = useState([]);
     const fetchSchedule = async (userId, startDate, endDate) => {
         // Zakomentowany przykład requestu:
-        /*
+
         try {
           const response = await fetch('https://your-api-url/api/calendar', {
             method: 'GET',
@@ -50,10 +50,10 @@ const Calendar = ({ user }) => {
         } catch (error) {
           console.error('Error fetching schedule:', error);
         }
-        */
+
 
         // Tymczasowo używamy mocka
-        setSchedule(mockSchedule)
+        //setSchedule(mockSchedule)
     }
     const getSchedule = (userId) =>{
         const startDate = weekDays[0]
