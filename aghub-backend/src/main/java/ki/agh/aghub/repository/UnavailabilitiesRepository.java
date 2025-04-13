@@ -9,6 +9,6 @@ import java.util.List;
 public interface UnavailabilitiesRepository extends JpaRepository<Unavailability, Long> {
     @Query("SELECT u FROM Unavailability u " +
            "WHERE u.user.id = :userId " +
-           "AND u.date_start BETWEEN :startOfDay AND :endOfDay")
+           "AND u.dateStart BETWEEN :startOfDay AND :endOfDay")
     List<Unavailability> findByUserIdAndDate(Long userId, LocalDateTime startOfDay, LocalDateTime endOfDay);
 }

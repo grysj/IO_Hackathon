@@ -8,9 +8,7 @@ import org.hibernate.proxy.HibernateProxy;
 import java.util.Objects;
 import java.util.Set;
 
-@Getter
-@Setter
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

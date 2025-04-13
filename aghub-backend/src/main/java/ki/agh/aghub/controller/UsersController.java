@@ -27,6 +27,10 @@ public class UsersController {
         return this.usersService.findByIdUser(id);
     }
 
+    @PostMapping("")
+    public void saveUser(@RequestBody UserDTO userDTO) {
+        this.usersService.saveUser(userDTO, new Role());
+    }
 
 //    @GetMapping("/{poi_id}/{day}")
 //    public List<String> getUsersByPOIAndByDay(@PathVariable Long poi_id, @PathVariable String day) {

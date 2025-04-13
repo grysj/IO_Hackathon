@@ -21,13 +21,19 @@ public class EventController {
         return this.eventsService.findAllEvents();
     }
 
+    @GetMapping("/{id}")
+    public EventDTO findEventById(@PathVariable Long id) {
+        return this.eventsService.findEventById(id);
+    }
+
     @PostMapping("")
     public void saveEvent(@RequestBody EventDTO eventDto) {
         this.eventsService.saveEvent(eventDto);
     }
 
-    @GetMapping("/{id}")
-    public EventDTO findEventById(@PathVariable Long id) {
-        return this.eventsService.findEventById(id);
+    @DeleteMapping("/{id}")
+    public void deleteEvent(@PathVariable Long id) {
+        this.eventsService.deleteEvent(id);
     }
+
 }
