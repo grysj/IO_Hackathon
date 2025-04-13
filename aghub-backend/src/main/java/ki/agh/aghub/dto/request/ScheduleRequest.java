@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public record ScheduleRequest(
         Long id,
-        LocalDateTime startDate,
-        LocalDateTime endDate
+        LocalDateTime dateStart,
+        LocalDateTime dateEnd
 ) {
 }
