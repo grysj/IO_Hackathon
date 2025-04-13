@@ -14,6 +14,10 @@ import java.util.stream.Collectors;
 public class UnavailabilitiesService {
     private final UnavailabilitiesRepository unavailabilitiesRepository;
 
+    public UnavailabilitiesService(UnavailabilitiesRepository unavailabilitiesRepository) {
+        this.unavailabilitiesRepository = unavailabilitiesRepository;
+    }
+
     public List<UnavailabilityDTO> findAllUnavailabilities() {
         return this.unavailabilitiesRepository.findAll().stream()
                 .map(UnavailabilityDTO::fromUnavailability)
@@ -36,16 +40,13 @@ public class UnavailabilitiesService {
         this.unavailabilitiesRepository.deleteById(id);
     }
 
-    public UnavailabilitiesService(UnavailabilitiesRepository unavailabilitiesRepository) {
-        this.unavailabilitiesRepository = unavailabilitiesRepository;
-    }
-
     public List<UnavailabilityDTO> getUserUnavailabilitiesByDate(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
         return unavailabilitiesRepository.findByUserIdAndDate(userId, startDate, endDate)
-            .stream()
-            .map(UnavailabilityDTO::fromUnavailability)
-            .collect(Collectors.toList());
+                .stream()
+                .map(UnavailabilityDTO::fromUnavailability)
+                .collect(Collectors.toList());
 
-}
+    }
+
 
 }

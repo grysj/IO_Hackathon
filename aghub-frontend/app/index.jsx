@@ -5,7 +5,11 @@ import { useAuth } from "@/contexts/authContext";
 
 export default function HomeScreen() {
   const router = useRouter();
+<<<<<<< HEAD
   const { isLoggedIn, setIsLoggedIn } = useAuth();
+=======
+  const { isLoggedIn, logout } = useAuth();
+>>>>>>> main
 
   return (
     <View style={styles.container}>
@@ -26,10 +30,7 @@ export default function HomeScreen() {
               <Text style={styles.buttonText}>Continue</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setIsLoggedIn(false)}
-            >
+            <TouchableOpacity style={styles.button} onPress={() => logout()}>
               <Text style={styles.buttonText}>Logout</Text>
             </TouchableOpacity>
           </>

@@ -42,7 +42,12 @@ public class Event {
     @Column(name = "date_end")
     private LocalDateTime dateEnd;
 
-    @ManyToMany(mappedBy = "events")
+    @ManyToMany
+    @JoinTable(
+            name = "event_participants",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private Set<User> participants;
 
 }

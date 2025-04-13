@@ -1,7 +1,9 @@
 package ki.agh.aghub.service;
 
 import ki.agh.aghub.dto.EventDTO;
+import ki.agh.aghub.dto.UserDTO;
 import ki.agh.aghub.model.Event;
+import ki.agh.aghub.model.User;
 import ki.agh.aghub.repository.EventRepository;
 import ki.agh.aghub.repository.PoiRepository;
 import ki.agh.aghub.repository.UsersRepository;
@@ -12,6 +14,7 @@ import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +32,15 @@ public class EventService {
         this.eventRepository = eventsRepository;
         this.poiRepository = poiRepository;
         this.usersRepository = usersRepository;
+    }
+
+    public Set<UserDTO> getParticipantsForEvent(Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + eventId));
+
+        return event.getParticipants().stream()
+                .map(UserDTO::fromUser)
+                .collect(Collectors.toSet());
     }
 
     public List<EventDTO> findAllEvents() {
@@ -62,9 +74,25 @@ public class EventService {
                 )
             )
         );
+
+        event.setParticipants(Set.of(event.getCreatedBy()));
+
         Event savedEvent = this.eventRepository.save(event);
         return EventDTO.fromEvent(savedEvent);
     }
+
+    @Transactional
+    public void addParticipantToEvent(Long eventId, Long userId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + eventId));
+
+        User user = usersRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+
+        event.getParticipants().add(user);
+        eventRepository.save(event);
+    }
+
 
     @Transactional
     public void deleteEvent(Long id) {
