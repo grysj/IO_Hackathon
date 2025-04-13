@@ -20,7 +20,7 @@ export default function RegisterScreen() {
   const [error, setError] = useState("");
 
   const router = useRouter();
-  const { setIsLoggedIn } = useAuth();
+  const { signup } = useAuth();
 
   // Simple regex to validate the email format.
   const validateEmail = (email) => {
@@ -47,8 +47,7 @@ export default function RegisterScreen() {
     }
     setError("");
     // Connect registration logic here (e.g., API call)
-    setIsLoggedIn(true);
-    router.replace("/");
+    signup(username, email, password);
   };
 
   return (

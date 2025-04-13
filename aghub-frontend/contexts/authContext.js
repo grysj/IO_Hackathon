@@ -28,6 +28,34 @@ export function AuthProvider({ children }) {
     checkLoggedInStatus();
   }, []);
 
+  const signup = async (username, email, password) => {
+    try {
+      const response = await fetch("http://localhost:8080/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, email, password }), // Adjust this body to match your RegisterRequest structure
+      });
+
+      if (!response.ok) {
+        throw new Error("Signup failed. Please try again.");
+      }
+
+      const userData = await response.json();
+
+      setUser(userData);
+      setIsLoggedIn(true);
+
+      await AsyncStorage.setItem("user", JSON.stringify(userData));
+      await AsyncStorage.setItem("isLoggedIn", "true");
+
+      router.push("/map");
+    } catch (error) {
+      console.error("Error signing up:", error);
+    }
+  };
+
   const login = async (email, password) => {
     try {
       const response = await fetch("http://localhost:8080/auth/login", {
@@ -67,7 +95,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );
