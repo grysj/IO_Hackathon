@@ -23,7 +23,7 @@ jobs:
       - name: Start backend using Docker Compose
         run: |
           cd aghub-backend
-          docker-compose up --build -d
+          docker compose up --build -d
 
       - name: Wait for backend to be healthy
         run: |
