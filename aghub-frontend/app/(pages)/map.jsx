@@ -15,7 +15,7 @@ import * as Location from "expo-location";
 const mockFriends = [
     {
         id: 1,
-        username: "alice",
+        username: "alicee",
         latitude: 50.062,
         longitude: 19.937,
     },
