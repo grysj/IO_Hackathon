@@ -1,0 +1,42 @@
+name: Backend Docker Compose Up
+
+on:
+  push:
+    paths:
+      - "backend/**"
+  pull_request:
+    paths:
+      - "backend/**"
+
+jobs:
+  backend-up:
+    runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:20.10.24-dind
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Compose
+        run: |
+          cd backend
+          docker-compose up --build -d
+
+      - name: Wait for backend to be healthy
+        run: |
+          echo "Waiting for services to be ready..."
+          for i in {1..30}; do
+            if curl -s http://localhost:PORT/healthcheck | grep "ok"; then
+              echo "Backend is ready!"
+              break
+            fi
+            echo "Waiting..."
+            sleep 5
+          done
+        continue-on-error: false
+
+      - name: Show running containers
+        run: docker ps
