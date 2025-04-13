@@ -28,8 +28,13 @@ public class UsersController {
     }
 
     @PostMapping("")
-    public void saveUser(@RequestBody UserDTO userDTO) {
-        this.usersService.saveUser(userDTO, new Role());
+    public UserDTO saveUser(@RequestBody UserDTO userDTO) {
+        return this.usersService.saveUser(userDTO, new Role());
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(Long id) {
+        this.usersService.deleteUser(id);
     }
 
 //    @GetMapping("/{poi_id}/{day}")
@@ -37,8 +42,5 @@ public class UsersController {
 //        return this.usersService.getUsersByPOIAndByDay(poi_id, day);
 //
 //    }
-
-
-
 
 }
