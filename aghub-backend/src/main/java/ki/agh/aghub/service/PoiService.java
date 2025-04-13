@@ -7,6 +7,9 @@ import ki.agh.aghub.repository.PoiRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class PoiService {
 
     private PoiRepository poiRepository;
