@@ -26,12 +26,11 @@ const Calendar = ({ user }) => {
     const [eventsPicked, setEventsPicked] = useState([]);
     const [unavailabilityPicked, setUnavailabilityPicked] = useState([]);
     const fetchSchedule = async (userId, startDate, endDate) => {
-        // Zakomentowany przykład requestu:
 
 
         try {
           const response = await fetch('http://34.116.250.33:8080/api/schedule', {
-            method: 'GET',
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
