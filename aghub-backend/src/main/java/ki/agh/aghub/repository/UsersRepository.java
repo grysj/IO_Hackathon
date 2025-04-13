@@ -20,7 +20,7 @@ public interface UsersRepository extends JpaRepository<User, Long> {
 //    List<User> getUsersByPOIAndByDay(@Param("poi") POI poi,
 //                                     @Param("startOfDay") LocalDateTime startOfDay,
 //                                     @Param("endOfDay") LocalDateTime endOfDay);
-    List<User> findDistinctByPoiAndDateStartBetween(POI poi, LocalDateTime startOfDay, LocalDateTime endOfDay);
+//    List<User> findDistinctByPoiAndDateStartBetween(POI poi, LocalDateTime startOfDay, LocalDateTime endOfDay);
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
 }

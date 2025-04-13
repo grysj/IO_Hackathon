@@ -28,11 +28,11 @@ public class UsersController {
     }
 
 
-    @GetMapping("/{poi_id}/{day}")
-    public List<String> getUsersByPOIAndByDay(@PathVariable Long poi_id, @PathVariable String day) {
-        return this.usersService.getUsersByPOIAndByDay(poi_id, day);
-
-    }
+//    @GetMapping("/{poi_id}/{day}")
+//    public List<String> getUsersByPOIAndByDay(@PathVariable Long poi_id, @PathVariable String day) {
+//        return this.usersService.getUsersByPOIAndByDay(poi_id, day);
+//
+//    }
 
 
 

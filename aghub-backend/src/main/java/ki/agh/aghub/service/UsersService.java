@@ -59,18 +59,18 @@ public class UsersService {
         this.usersRepository.save(user);
     }
 
-    public List<String> getUsersByPOIAndByDay(Long poi_id, String dayString) {
-        LocalDate date = LocalDate.parse(dayString); // format: yyyy-MM-dd
-        LocalDateTime startOfDay = date.atStartOfDay();
-        LocalDateTime endOfDay = date.atTime(23, 59, 59);
-        POI poi = poiRepository.findById(poi_id).orElse(null);
-        List<User> users = usersRepository.findDistinctByPoiAndDateStartBetween(poi, startOfDay, endOfDay);
-        List<String> usernames = users.stream()
-                .map(User::getUsername)
-                .collect(Collectors.toList());
-
-        return usernames;
-    }
+//    public List<String> getUsersByPOIAndByDay(Long poi_id, String dayString) {
+//        LocalDate date = LocalDate.parse(dayString); // format: yyyy-MM-dd
+//        LocalDateTime startOfDay = date.atStartOfDay();
+//        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+//        POI poi = poiRepository.findById(poi_id).orElse(null);
+//        List<User> users = usersRepository.findDistinctByPoiAndDateStartBetween(poi, startOfDay, endOfDay);
+//        List<String> usernames = users.stream()
+//                .map(User::getUsername)
+//                .collect(Collectors.toList());
+//
+//        return usernames;
+//    }
 
     public UserDTO login(String email, String password) {
         User user = usersRepository.findByEmail(email)
