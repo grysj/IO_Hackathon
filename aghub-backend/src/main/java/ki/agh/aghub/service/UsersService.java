@@ -2,11 +2,16 @@ package ki.agh.aghub.service;
 
 
 import ki.agh.aghub.dto.UserDTO;
+import ki.agh.aghub.dto.request.RegisterRequest;
+import ki.agh.aghub.exception.EmailAlreadyUsedException;
+import ki.agh.aghub.exception.InvalidCredentialsException;
+import ki.agh.aghub.exception.UsernameAlreadyUsedException;
 import ki.agh.aghub.model.POI;
 import ki.agh.aghub.model.Role;
 import ki.agh.aghub.model.User;
 import ki.agh.aghub.repository.PoiRepository;
 import ki.agh.aghub.repository.UsersRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -14,6 +19,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,10 +27,12 @@ public class UsersService {
 
     private final UsersRepository usersRepository;
     private final PoiRepository poiRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsersService(UsersRepository usersRepository, PoiRepository poiRepository) {
+    public UsersService(UsersRepository usersRepository, PoiRepository poiRepository, PasswordEncoder passwordEncoder) {
         this.usersRepository = usersRepository;
         this.poiRepository = poiRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<UserDTO> findAllUsers() {
@@ -32,7 +40,7 @@ public class UsersService {
                 .map(user -> new UserDTO(
                         user.getId() != null ? user.getId() : null,
                         user.getUsername(),
-                        user.getMail()
+                        user.getEmail()
                 ))
                 .collect(Collectors.toList());
     }
@@ -42,16 +50,12 @@ public class UsersService {
                 .map(user -> new UserDTO(
                         user.getId() != null ? user.getId() : null,
                         user.getUsername(),
-                        user.getMail()
+                        user.getEmail()
                 )).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
     }
 
     public void saveUser(UserDTO userDTO, Role role) {
-        User user = new User();
-        user.setId(userDTO.getId());
-        user.setUsername(userDTO.getUsername());
-        user.setMail(userDTO.getMail());
-        user.setRole(role);
+        User user = UserDTO.toUser(userDTO, role);
         this.usersRepository.save(user);
     }
 
@@ -60,7 +64,7 @@ public class UsersService {
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(23, 59, 59);
         POI poi = poiRepository.findById(poi_id).orElse(null);
-        List<User> users = usersRepository.getUsersByPOIAndByDay(poi, startOfDay, endOfDay);
+        List<User> users = usersRepository.findDistinctByPoiAndDateStartBetween(poi, startOfDay, endOfDay);
         List<String> usernames = users.stream()
                 .map(User::getUsername)
                 .collect(Collectors.toList());
@@ -68,10 +72,38 @@ public class UsersService {
         return usernames;
     }
 
+    public UserDTO login(String email, String password) {
+        User user = usersRepository.findByEmail(email)
+                .orElseThrow(InvalidCredentialsException::new);
 
-    public User getUserByMail(String mail) {
-        return usersRepository.findByMail(mail);
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new InvalidCredentialsException();
+        }
+
+        return UserDTO.fromUser(user);
     }
+    public UserDTO register(RegisterRequest request) {
+        if (usersRepository.findByEmail(request.email()).isPresent()) {
+            throw new EmailAlreadyUsedException(request.email());
+        }
+
+        if (usersRepository.findByUsername(request.username()).isPresent()) {
+            throw new UsernameAlreadyUsedException(request.username());
+        }
+
+        User user = new User();
+        user.setUsername(request.username());
+        user.setEmail(request.email());
+        user.setPassword(passwordEncoder.encode(request.password()));
+
+        usersRepository.save(user);
+
+        return UserDTO.fromUser(user);
+    }
+    public Optional<User> getUserByEmail(String mail) {
+        return usersRepository.findByEmail(mail);
+    }
+    public Optional<User> getUserByUsername(String username) { return usersRepository.findByUsername(username); }
 
     public String addFriend(Long senderId, Long receiverId) {
         if (senderId.equals(receiverId)) {
@@ -107,7 +139,7 @@ public class UsersService {
                 .map(friend -> new UserDTO(
                         friend.getId() != null ? friend.getId() : null,
                         friend.getUsername(),
-                        friend.getMail()
+                        friend.getEmail()
                 ))
                 .collect(Collectors.toList());
 

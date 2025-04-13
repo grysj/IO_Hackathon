@@ -1,8 +1,8 @@
 package ki.agh.aghub.controller;
 
 import ki.agh.aghub.dto.ClassesDTO;
-import ki.agh.aghub.dto.EventsDTO;
 import ki.agh.aghub.dto.CalendarDTO;
+import ki.agh.aghub.dto.EventDTO;
 import ki.agh.aghub.dto.UnavailabilityDTO;
 import ki.agh.aghub.service.ClassesService;
 import ki.agh.aghub.service.EventService;
@@ -34,7 +34,7 @@ public class ScheduleController {
 
     @GetMapping("/schedule/{user_id}/{date}")
     public CalendarDTO getScheduleByUserAndDate(@PathVariable String user_id, @PathVariable LocalDateTime date) {
-        List<EventsDTO> events = this.eventsService.getUserEventsByDate(user_id, date);
+        List<EventDTO> events = this.eventsService.getUserEventsByDate(user_id, date);
         List<ClassesDTO> classes = this.classesService.getUserClassesByDate(user_id, date);
         List<UnavailabilityDTO> unavailability = this.unavailabilitiesService.getUserUnavailabilitiesByDate(user_id, date);
 

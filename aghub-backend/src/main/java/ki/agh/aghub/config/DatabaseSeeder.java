@@ -34,14 +34,14 @@ public class DatabaseSeeder {
             User user1 = new User();
             user1.setUsername("john_doe");
             user1.setPassword("password");
-            user1.setMail("john@example.com");
+            user1.setEmail("john@example.com");
             user1.setRole(role);
             userRepo.save(user1);
 
             User user2 = new User();
             user2.setUsername("jane_doe");
             user2.setPassword("password");
-            user2.setMail("jane@example.com");
+            user2.setEmail("jane@example.com");
             user2.setRole(role);
             userRepo.save(user2);
 
