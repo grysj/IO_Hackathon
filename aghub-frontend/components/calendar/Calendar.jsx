@@ -28,8 +28,9 @@ const Calendar = ({ user }) => {
     const fetchSchedule = async (userId, startDate, endDate) => {
         // Zakomentowany przykład requestu:
 
+
         try {
-          const response = await fetch('https://your-api-url/api/calendar', {
+          const response = await fetch('http://34.116.250.33:8080/api/schedule', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
