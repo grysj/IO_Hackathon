@@ -25,18 +25,18 @@ jobs:
           cd aghub-backend
           docker compose up --build -d
 
-      - name: Wait for backend to be healthy
-        run: |
-          echo "Waiting for backend to be ready..."
-          for i in {1..30}; do
-            if curl -s http://localhost:3000/healthcheck | grep "ok"; then
-              echo "Backend is ready!"
-              break
-            fi
-            echo "Still waiting..."
-            sleep 5
-          done
-        continue-on-error: false
+      # - name: Wait for backend to be healthy
+      #   run: |
+      #     echo "Waiting for backend to be ready..."
+      #     for i in {1..30}; do
+      #       if curl -s http://localhost:3000/healthcheck | grep "ok"; then
+      #         echo "Backend is ready!"
+      #         break
+      #       fi
+      #       echo "Still waiting..."
+      #       sleep 2
+      #     done
+      #   continue-on-error: false
 
       - name: Show running containers
         run: docker ps
