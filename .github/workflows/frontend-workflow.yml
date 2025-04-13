@@ -31,5 +31,5 @@ jobs:
       - name: TypeScript compile check
         run: npx tsc --noEmit
 
-      - name: Lint check (optional, if you use ESLint)
+      - name: Lint check
         run: npx eslint . --ext .ts,.tsx || true
