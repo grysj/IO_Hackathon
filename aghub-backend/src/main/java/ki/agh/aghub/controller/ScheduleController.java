@@ -36,7 +36,7 @@ public class ScheduleController {
         this.unavailabilitiesService = unavailabilitiesService;
     }
 
-    @GetMapping("")
+    @PostMapping("")
     public CalendarDTO getScheduleByUserAndDate(
             @RequestBody ScheduleRequest scheduleRequest
             ) {

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import ki.agh.aghub.model.Classes;
 
 public record ClassesDTO(
+    Long id,
     String name,
     String room,
     LocalDateTime startDate,
@@ -15,6 +16,7 @@ public record ClassesDTO(
 
     public static ClassesDTO fromClasses(Classes classes) {
         return new ClassesDTO(
+            classes.getId(),
             classes.getName(),
             classes.getRoom(),
             classes.getDateStart(),

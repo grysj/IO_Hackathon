@@ -5,6 +5,8 @@ import jakarta.persistence.EntityNotFoundException;
 
 import ki.agh.aghub.model.Classes;
 
+import ki.agh.aghub.model.POI;
+import ki.agh.aghub.model.User;
 import ki.agh.aghub.repository.ClassesRepository;
 import ki.agh.aghub.repository.PoiRepository;
 import ki.agh.aghub.repository.UsersRepository;
@@ -26,6 +28,8 @@ import java.time.format.DateTimeFormatter;
 public class ClassesService {
 
     private final ClassesRepository classesRepository;
+    private final PoiRepository poiRepository;
+    private final UsersRepository usersRepository;
 
     // zhardkodowane kordy lokacji
     private static final Map<String, double[]> LOCATION_COORDINATES = Map.of(
@@ -47,6 +51,8 @@ public class ClassesService {
         UsersRepository usersRepository
     ) { 
         this.classesRepository = classesRepository;
+        this.poiRepository = poiRepository;
+        this.usersRepository = usersRepository;
     }
 
     public List<ClassesDTO> findAllClasses() {
@@ -64,8 +70,19 @@ public class ClassesService {
     }
 
     public ClassesDTO saveClasses(ClassesDTO classesDTO) {
-        return ClassesDTO.fromClasses(classesRepository.save(ClassesDTO.toClasses(classesDTO)));
+        Classes classes = ClassesDTO.toClasses(classesDTO);
+
+        POI poi = poiRepository.findById(classesDTO.poiId())
+                .orElseThrow(() -> new RuntimeException("POI not found"));
+        User user = usersRepository.findById(classesDTO.userId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        classes.setPoi(poi);
+        classes.setUser(user);
+
+        return ClassesDTO.fromClasses(classesRepository.save(classes));
     }
+
 
     public void deleteClasses(Long id) {
         this.classesRepository.deleteById(id);
@@ -98,24 +115,22 @@ public class ClassesService {
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
 
-            // Mapowanie eventów na listę ClassesDTO
             List<ClassesDTO> dtos = events.stream()
                     .map(event -> {
-                        // 1. Nazwa = summary
+                        Long id = null;
+
                         String name = event.getSummary();
 
-                        // 2. Room = parseRoom z description
                         String rawDesc = event.getDescription();
-                        String roomParsed = parseRoom(rawDesc); // nasza metoda
+                        String roomParsed = parseRoom(rawDesc);
 
-                        // 3. Daty
                         LocalDateTime startDate = LocalDateTime.parse(event.getDtstart(), formatter);
                         LocalDateTime endDate = LocalDateTime.parse(event.getDtend(), formatter);
 
-                        // 4. POI ID – sprawdzamy location
                         Long poiId = LOCATION_TO_POI_ID.getOrDefault(event.getLocation(), null);
 
                         return new ClassesDTO(
+                                id,
                                 name,
                                 roomParsed,
                                 startDate,
