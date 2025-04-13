@@ -3,7 +3,6 @@ package ki.agh.aghub.service;
 import ki.agh.aghub.dto.ClassesDTO;
 import jakarta.persistence.EntityNotFoundException;
 
-import ki.agh.aghub.mapper.ClassesMapper;
 import ki.agh.aghub.model.Classes;
 
 import ki.agh.aghub.repository.ClassesRepository;
@@ -142,7 +141,7 @@ public class ClassesService {
 
             // Mapowanie DTO na encje przy użyciu mappera
             List<Classes> classesEntities = dtos.stream()
-                    .map(dto -> classesMapper.fromDto(dto))
+                    .map(ClassesDTO::toClasses)
                     .collect(Collectors.toList());
 
             // Zapis encji do bazy danych za pomocą repository
