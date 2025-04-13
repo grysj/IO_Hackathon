@@ -5,11 +5,7 @@ import { useAuth } from "@/contexts/authContext";
 
 export default function HomeScreen() {
   const router = useRouter();
-<<<<<<< HEAD
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
-=======
   const { isLoggedIn, logout } = useAuth();
->>>>>>> main
 
   return (
     <View style={styles.container}>
