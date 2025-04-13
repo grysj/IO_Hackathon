@@ -40,8 +40,12 @@ public class ClassesService {
                 );
     }
 
-    public void saveClasses(ClassesDTO classesDTO) {
-        classesRepository.save(ClassesDTO.toClasses(classesDTO));
+    public ClassesDTO saveClasses(ClassesDTO classesDTO) {
+        return ClassesDTO.fromClasses(classesRepository.save(ClassesDTO.toClasses(classesDTO)));
+    }
+
+    public void deleteClasses(Long id) {
+        this.classesRepository.deleteById(id);
     }
 
     public List<ClassesDTO> getUserClassesByDate(Long userId, LocalDateTime date) {

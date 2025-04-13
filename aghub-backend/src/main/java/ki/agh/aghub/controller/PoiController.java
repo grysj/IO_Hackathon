@@ -15,25 +15,30 @@ import java.util.List;
 @RequestMapping("/api/poi")
 public class PoiController {
 
-    private PoiService PoiService;
+    private PoiService poiService;
 
     public PoiController(PoiService PoiService) {
-        this.PoiService = PoiService;
+        this.poiService = PoiService;
     }
 
     @GetMapping("")
     public List<POIDTO> findAllPOI() {
-        return this.PoiService.findAllPOI();
+        return this.poiService.findAllPOI();
     }
 
     @GetMapping("/{id}")
     public POIDTO findByIdPOI(@PathVariable Long id) {
-        return this.PoiService.findByIdPOI(id);
+        return this.poiService.findByIdPOI(id);
     }
 
     @PostMapping("")
-    public void savePOI(@RequestBody POIDTO poiDTO) {
-        this.PoiService.savePOI(poiDTO);
+    public POIDTO savePOI(@RequestBody POIDTO poiDTO) {
+        return this.poiService.savePOI(poiDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePOI(@PathVariable Long id) {
+        this.poiService.deletePOI(id);
     }
 
 }

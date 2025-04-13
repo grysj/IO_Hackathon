@@ -66,6 +66,11 @@ public class EventService {
         return EventDTO.fromEvent(savedEvent);
     }
 
+    @Transactional
+    public void deleteEvent(Long id) {
+        this.eventRepository.deleteById(id);
+    }
+
     public List<EventDTO> getUserEventsByDate(Long userId, LocalDateTime date) {
         if (userId == null) {
             throw new IllegalArgumentException("User ID cannot be null");

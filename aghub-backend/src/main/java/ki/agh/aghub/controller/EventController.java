@@ -31,4 +31,9 @@ public class EventController {
         this.eventsService.saveEvent(eventDto);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteEvent(@PathVariable Long id) {
+        this.eventsService.deleteEvent(id);
+    }
+
 }

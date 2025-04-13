@@ -29,8 +29,12 @@ public class PoiService {
                 );
     }
 
-    public void savePOI(POIDTO poiDTO) {
-        this.poiRepository.save(POIDTO.toPOI(poiDTO));
+    public POIDTO savePOI(POIDTO poiDTO) {
+        return POIDTO.fromPOI(this.poiRepository.save(POIDTO.toPOI(poiDTO)));
+    }
+
+    public void deletePOI(Long id) {
+        this.poiRepository.deleteById(id);
     }
 
 }

@@ -27,8 +27,13 @@ public class ClassesController {
     }
 
     @PostMapping("")
-    public void saveClass(@RequestBody ClassesDTO classesDTO) {
-        this.classesService.saveClasses(classesDTO);
+    public ClassesDTO saveClass(@RequestBody ClassesDTO classesDTO) {
+        return this.classesService.saveClasses(classesDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteClasses(@PathVariable Long id) {
+        this.classesService.deleteClasses(id);
     }
 }
 
