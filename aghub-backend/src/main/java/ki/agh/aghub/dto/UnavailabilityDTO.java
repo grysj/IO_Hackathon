@@ -1,25 +1,36 @@
 package ki.agh.aghub.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
-@Getter
-@Setter
-public class UnavailabilityDTO {
 
-    private String title;
+import ki.agh.aghub.model.Unavailability;
 
-    private String description;
+public record UnavailabilityDTO (
+    String title,
+    String description,
+    LocalDateTime dateStart,
+    LocalDateTime dateEnd
+) {
 
-    private LocalDateTime dateStart;
-    private LocalDateTime dateEnd;
+    public static UnavailabilityDTO fromUnavailability(
+        Unavailability unavailability
+    ) {
+        return new UnavailabilityDTO(
+            unavailability.getName(),
+            unavailability.getDescription(),
+            unavailability.getDateStart(),
+            unavailability.getDateEnd()
+        );
+    }
 
-    public UnavailabilityDTO(String title, String description, LocalDateTime dateStart, LocalDateTime dateEnd) {
-        this.title = title;
-        this.description = description;
-        this.dateStart = dateStart;
-        this.dateEnd = dateEnd;
+    public static Unavailability toUnavailability(
+        UnavailabilityDTO unavailabilityDTO
+    ) {
+        return Unavailability.builder()
+            .name(unavailabilityDTO.title())
+            .description(unavailabilityDTO.description())
+            .dateStart(unavailabilityDTO.dateStart())
+            .dateEnd(unavailabilityDTO.dateEnd())
+            .build();
     }
 
 }

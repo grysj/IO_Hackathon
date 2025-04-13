@@ -18,23 +18,22 @@ public class UnavailabilitiesService {
     }
 
     public List<UnavailabilityDTO> getUserUnavailabilitiesByDate(Long userId, LocalDateTime date) {
-    try {
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+
+        if (date == null) {
+            throw new IllegalArgumentException("Date cannot be null");
+        }
+        
         LocalDateTime startOfDay = date.toLocalDate().atStartOfDay();
         LocalDateTime endOfDay = date.toLocalDate().atTime(23, 59, 59);
 
         return unavailabilitiesRepository.findByUserIdAndDate(userId, startOfDay, endOfDay)
-                .stream()
-                .map(u -> new UnavailabilityDTO(
-                        u.getName(),
-                        u.getDescription(),
-                        u.getDate_start(),
-                        u.getDate_end()
-                ))
-                .collect(Collectors.toList());
+            .stream()
+            .map(UnavailabilityDTO::fromUnavailability)
+            .collect(Collectors.toList());
 
-    } catch (Exception e) {
-        throw new IllegalArgumentException("Invalid userId or date format. Expected format: yyyy-MM-dd", e);
-    }
 }
 
 }
