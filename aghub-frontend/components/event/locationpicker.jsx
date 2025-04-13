@@ -123,7 +123,6 @@ export default function LocationPickerScreen({ onConfirmLocation }) {
                 initialRegion={initialRegion}
                 onPress={handleMapPress}
             >
-                {/* Twoja lokalizacja */}
                 {currentLocation && (
                     <Marker coordinate={currentLocation} pinColor="#ca8a04">
                         <Callout tooltip>
@@ -137,7 +136,6 @@ export default function LocationPickerScreen({ onConfirmLocation }) {
                     </Marker>
                 )}
 
-                {/* Wybrana lokalizacja */}
                 {selectedLocation && (
                     <Marker coordinate={selectedLocation} pinColor="green">
                         <Callout tooltip>
