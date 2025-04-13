@@ -29,11 +29,11 @@ public class UsersController {
 
     @PostMapping("")
     public UserDTO saveUser(@RequestBody UserDTO userDTO) {
-        return this.usersService.saveUser(userDTO, new Role());
+        return this.usersService.saveUser(userDTO, new Role(1L, "Admin"));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(Long id) {
+    public void deleteUser(@PathVariable Long id) {
         this.usersService.deleteUser(id);
     }
 
