@@ -3,6 +3,8 @@ name: Backend deployment
 on:
   push:
     branches: [main]
+    paths:
+      - "aghub-backend/**"
 
 jobs:
   deploy:
