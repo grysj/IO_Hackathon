@@ -2,7 +2,8 @@
 import { Stack } from "expo-router";
 import "@/global.css";
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
-import { AuthProvider } from "../contexts/authContext"; // zakładam, że authContext jest w app/
+import {AuthProvider} from "../contexts/authContext";
+  // zakładam, że authContext jest w app/
 
 export default function RootLayout() {
   return (
@@ -12,12 +13,9 @@ export default function RootLayout() {
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen
             name="(auth)/login"
-            options={{ headerTitle: "Log In" }}
+            options={{ headerTitle: "Login" }}
           />
-          <Stack.Screen
-            name="(auth)/signup"
-            options={{ headerTitle: "Sign Up" }}
-          />
+
           <Stack.Screen name="(pages)" options={{ headerShown: false }} />
         </Stack>
       </AuthProvider>

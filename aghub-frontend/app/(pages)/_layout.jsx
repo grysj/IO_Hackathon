@@ -6,7 +6,9 @@ import NavigationBar from "../../components/NavigationBar";
 const Layout = () => {
   const navigationBarItems = [
       { path: "/map", name: "Map", icon: "map" },
-      {path: "/calendar", name:"Calendar", icon:"calendar"}
+      {path: "/eventcreate", name: "New Event", icon:"add-circle"},
+      {path: "/calendar", name:"Calendar", icon:"calendar"},
+      {path: "/friends", name:"Friends", icon:"people"}
   ];
 
   return (

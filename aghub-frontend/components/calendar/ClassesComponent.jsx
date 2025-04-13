@@ -15,7 +15,7 @@ const CalendarClass = ({ title, start, end, color = 'bg-primary-600', zIndex = 1
 
     return (
         <Box
-            className={`absolute left-[60px] w-[70%] rounded-md px-3 py-2 ${color}`}
+            className={`absolute left-[60px] w-[70%] rounded-md px-3 py-2 bg-yellow-600`}
             style={{
                 top,
                 height,
