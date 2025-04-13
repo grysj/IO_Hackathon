@@ -3,10 +3,10 @@ name: Backend Docker Compose Up
 on:
   push:
     paths:
-      - "backend/**"
+      - "aghub-backend/**"
   pull_request:
     paths:
-      - "backend/**"
+      - "aghub-backend/**"
 
 jobs:
   backend-up:
@@ -22,7 +22,7 @@ jobs:
 
       - name: Set up Docker Compose
         run: |
-          cd backend
+          cd aghub-backend
           docker-compose up --build -d
 
       - name: Wait for backend to be healthy
