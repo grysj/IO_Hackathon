@@ -6,14 +6,30 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { format } from "date-fns";
+
+// Format helpers
+const formatTime = (dateString) => {
+  const date = new Date(dateString);
+  return format(date, "HH:mm");
+};
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return format(date, "d MMMM yyyy"); // This will give you e.g., "4 April 2025"
+};
 
 export default function EventDetails() {
   const { id } = useLocalSearchParams();
   const [event, setEvent] = useState(null);
+  const [poi, setPoi] = useState(null);
+  const [participants, setParticipants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -23,15 +39,35 @@ export default function EventDetails() {
       setError(null);
 
       try {
-        console.log(`http://localhost:8080/api/events/${id}`);
-        const response = await fetch(`http://localhost:8080/api/events/${id}`, {
-          signal: abortController.signal,
-        });
-        if (!response.ok) {
-          throw new Error(response.statusText || "Unknown error");
+        // Fetch event
+        const eventRes = await fetch(
+          `http://34.116.250.33:8080/api/events/${id}`,
+          { signal: abortController.signal }
+        );
+        if (!eventRes.ok) throw new Error(eventRes.statusText || "Event error");
+        const eventData = await eventRes.json();
+        setEvent(eventData);
+
+        // Fetch POI
+        if (eventData.poiId) {
+          const poiRes = await fetch(
+            `http://34.116.250.33:8080/api/poi/${eventData.poiId}`,
+            { signal: abortController.signal }
+          );
+          if (!poiRes.ok) throw new Error(poiRes.statusText || "POI error");
+          const poiData = await poiRes.json();
+          setPoi(poiData);
         }
-        const data = await response.json();
-        setEvent(data);
+
+        // Fetch Participants
+        const partRes = await fetch(
+          `http://34.116.250.33:8080/api/events/participant/${id}`,
+          { signal: abortController.signal }
+        );
+        if (!partRes.ok)
+          throw new Error(partRes.statusText || "Participants error");
+        const partData = await partRes.json();
+        setParticipants(partData);
       } catch (err) {
         if (err.name !== "AbortError") {
           setError(err.message);
@@ -48,12 +84,12 @@ export default function EventDetails() {
     };
   }, [id]);
 
-  const handleFriendPress = (friend) => {
-    console.log(`Pressed on friend: ${friend}`);
+  const handleLocationPress = () => {
+    console.log(`Pressed on location: ${poi ? poi.name : "Unknown location"}`);
   };
 
-  const handleLocationPress = () => {
-    console.log(`Pressed on location: ${event.location}`);
+  const handleParticipantPress = (participant) => {
+    console.log(`Pressed on participant: ${participant.name}`);
   };
 
   if (loading) {
@@ -98,12 +134,14 @@ export default function EventDetails() {
           <View className="flex-row items-center gap-2 mb-2">
             <Ionicons name="time" size={22} color="#ca8a04" />
             <Text className="text-white text-lg">
-              {event.start} - {event.end}
+              {formatTime(event.dateStart)} - {formatTime(event.dateEnd)}
             </Text>
           </View>
           <View className="flex-row items-center gap-2">
             <Ionicons name="calendar" size={24} color="#ca8a04" />
-            <Text className="text-white text-lg">{event.date}</Text>
+            <Text className="text-white text-lg">
+              {formatDate(event.dateStart)}
+            </Text>
           </View>
         </View>
 
@@ -118,26 +156,32 @@ export default function EventDetails() {
           >
             <Ionicons name="location-sharp" size={22} color="#ca8a04" />
             <Text className="text-white text-lg font-medium">
-              {event.location}
+              {poi ? poi.name : "Loading POI..."}
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Friends Going */}
-        <View>
+        {/* Participants */}
+        <View className="mb-8">
           <Text className="text-yellow-600 font-semibold text-2xl mb-3">
-            Friends Going
+            Participants
           </Text>
-          {event.friends.map((friend, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => handleFriendPress(friend)}
-              className="flex-row items-center gap-3 bg-white/10 px-5 py-3 rounded-xl mb-3"
-            >
-              <MaterialIcons name="person" size={22} color="#ca8a04" />
-              <Text className="text-white text-lg font-medium">{friend}</Text>
-            </TouchableOpacity>
-          ))}
+          {participants.length === 0 ? (
+            <Text className="text-white text-base">No participants yet.</Text>
+          ) : (
+            participants.map((p) => (
+              <TouchableOpacity
+                key={p.id}
+                onPress={() => handleParticipantPress(p)}
+                className="flex-row items-center gap-3 bg-white/10 px-5 py-3 rounded-xl mb-3"
+              >
+                <MaterialIcons name="person" size={22} color="#ca8a04" />
+                <Text className="text-white text-lg font-medium">
+                  {p.username}
+                </Text>
+              </TouchableOpacity>
+            ))
+          )}
         </View>
       </View>
     </ScrollView>
