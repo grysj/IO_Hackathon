@@ -58,6 +58,21 @@ public class DatabaseSeeder {
             poi.setLng(19.93658);
             poiRepo.save(poi);
 
+            // D-12
+            POI poi2 = new POI();
+            poi2.setName("D-12");
+            poi2.setLat(50.067882830735854);
+            poi2.setLng(19.909353710436637);
+            poiRepo.save(poi2);
+
+
+            // D-17
+            POI poi3 = new POI();
+            poi3.setName("D-17");
+            poi3.setLat(50.06811457595547);
+            poi3.setLng(19.91242912733053);
+            poiRepo.save(poi3);
+
             // Create Class
             Classes klass = Classes.builder()
                 .name("AI Fundamentals")

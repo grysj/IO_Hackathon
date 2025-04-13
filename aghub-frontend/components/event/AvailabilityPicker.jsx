@@ -1,23 +1,14 @@
-import React, { useEffect, useState } from "react";
-import {
-    Box,
-    Text,
-    VStack,
-    HStack,
-    Pressable,
-    ScrollView,
-    Input,
-    InputField,
-} from "@gluestack-ui/themed";
-import { Platform, StatusBar } from "react-native";
+import React, {useEffect, useState} from "react";
+import {Box, Button, HStack, Input, InputField, Pressable, ScrollView, Text, VStack,} from "@gluestack-ui/themed";
+import {Platform, StatusBar} from "react-native";
 
 const HARDCODED_AVAILABILITY = [
-    { start: "2025-04-14T10:00:00", end: "2025-04-14T11:00:00" },
-    { start: "2025-04-14T14:00:00", end: "2025-04-14T15:00:00" },
-    { start: "2025-04-14T19:00:00", end: "2025-04-14T20:00:00" },
-    { start: "2025-04-15T09:00:00", end: "2025-04-15T10:00:00" },
-    { start: "2025-04-15T12:00:00", end: "2025-04-15T13:00:00" },
-    { start: "2025-04-16T16:00:00", end: "2025-04-16T17:00:00" },
+    {start: "2025-04-14T10:00:00", end: "2025-04-14T11:00:00"},
+    {start: "2025-04-14T14:00:00", end: "2025-04-14T15:00:00"},
+    {start: "2025-04-14T19:00:00", end: "2025-04-14T20:00:00"},
+    {start: "2025-04-15T09:00:00", end: "2025-04-15T10:00:00"},
+    {start: "2025-04-15T12:00:00", end: "2025-04-15T13:00:00"},
+    {start: "2025-04-16T16:00:00", end: "2025-04-16T17:00:00"},
 ];
 
 const getFormattedDate = (offset) => {
@@ -26,43 +17,43 @@ const getFormattedDate = (offset) => {
     return date.toISOString().split("T")[0];
 };
 
-const AvailabilityPicker = ({ friendIds = [], onConfirm }) => {
+const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
     const [minDuration, setMinDuration] = useState("60");
-    const [timeRange, setTimeRange] = useState({ from: "08:00", to: "23:00" });
+    const [timeRange, setTimeRange] = useState({from: "08:00", to: "23:00"});
     const [selectedDate, setSelectedDate] = useState(getFormattedDate(0));
     const [availableSlots, setAvailableSlots] = useState([]);
     const [selectedSlot, setSelectedSlot] = useState(null);
 
     const dates = [getFormattedDate(0), getFormattedDate(1), getFormattedDate(2)];
+    const fetchAvailabilities =  (friendsId) => {
+        try {
+            const response =  fetch("http://34.116.250.33:8080/api/availability/find", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    usersId: friendsId,
+                    startDate: timeRange.from.toISOString(),
+                    endDate: timeRange.to.toISOString(),
+                    minDuration: `PT${minDuration}M`
+                })
+            });
 
-    useEffect(() => {
-        if (Array.isArray(friendIds)) {
-            filterAvailability();
+            if (!response.ok) {
+                const err =  response.text();
+                throw new Error(err);
+            }
+
+            const data =  response.json();
+            setAvailableSlots(data);
+        } catch (err) {
+            console.error("Błąd podczas pobierania dostępności:", err.message);
         }
-    }, [friendIds, selectedDate, minDuration, timeRange]);
-
-    const filterAvailability = () => {
-        const [fromHour] = timeRange.from.split(":").map(Number);
-        const [toHour] = timeRange.to.split(":").map(Number);
-        const minMs = parseInt(minDuration) * 60 * 1000;
-
-        const filtered = HARDCODED_AVAILABILITY.filter((slot) => {
-            const start = new Date(slot.start);
-            const end = new Date(slot.end);
-            const duration = end - start;
-            const hour = start.getHours();
-            const dateStr = slot.start.split("T")[0];
-
-            return (
-                dateStr === selectedDate &&
-                hour >= fromHour &&
-                hour < toHour &&
-                duration >= minMs
-            );
-        });
-
-        setAvailableSlots(filtered);
     };
+
+
+
 
     const handleConfirm = () => {
         if (selectedSlot) {
@@ -92,7 +83,7 @@ const AvailabilityPicker = ({ friendIds = [], onConfirm }) => {
                         value={minDuration}
                         onChangeText={setMinDuration}
                         placeholder="Np. 60"
-                        style={{ color: "#fff" }}
+                        style={{color: "#fff"}}
                         placeholderTextColor="#aaa"
                     />
                 </Input>
@@ -109,10 +100,10 @@ const AvailabilityPicker = ({ friendIds = [], onConfirm }) => {
                                 keyboardType={Platform.OS === "ios" ? "numbers-and-punctuation" : "default"}
                                 value={timeRange.from}
                                 onChangeText={(text) =>
-                                    setTimeRange((prev) => ({ ...prev, from: text }))
+                                    setTimeRange((prev) => ({...prev, from: text}))
                                 }
                                 placeholder="08:00"
-                                style={{ color: "#fff" }}
+                                style={{color: "#fff"}}
                                 placeholderTextColor="#aaa"
                             />
                         </Input>
@@ -124,10 +115,10 @@ const AvailabilityPicker = ({ friendIds = [], onConfirm }) => {
                                 keyboardType={Platform.OS === "ios" ? "numbers-and-punctuation" : "default"}
                                 value={timeRange.to}
                                 onChangeText={(text) =>
-                                    setTimeRange((prev) => ({ ...prev, to: text }))
+                                    setTimeRange((prev) => ({...prev, to: text}))
                                 }
                                 placeholder="23:00"
-                                style={{ color: "#fff" }}
+                                style={{color: "#fff"}}
                                 placeholderTextColor="#aaa"
                             />
                         </Input>
@@ -161,15 +152,16 @@ const AvailabilityPicker = ({ friendIds = [], onConfirm }) => {
                     ))}
                 </HStack>
 
+
                 <Pressable
-                    onPress={filterAvailability}
+                    onPress={()=>fetchAvailabilities(friendIds)}
                     className="bg-yellow-600 p-4 rounded-lg items-center mt-4"
                 >
                     <Text className="text-white font-bold">Odśwież dostępność</Text>
                 </Pressable>
             </VStack>
 
-            <ScrollView className="mb-4" style={{ flexGrow: 0 }}>
+            <ScrollView className="mb-4" style={{flexGrow: 0}}>
                 <VStack space="md">
                     {availableSlots.map((slot, index) => {
                         const isSelected = selectedSlot?.start === slot.start;

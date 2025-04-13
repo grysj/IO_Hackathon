@@ -35,8 +35,8 @@ public class ClassesService {
 
     // Zhardkodowana mapa: lokalizacja z ICS → ID punktu POI
     private static final Map<String, Long> LOCATION_TO_POI_ID = Map.of(
-            "ul. Kawiory 40, 30-055 Kraków, Polska", 1L,
-            "ul. Kawiory 21, 30-055 Kraków, Polska", 2L
+            "ul. Kawiory 40, 30-055 Kraków, Polska", 2L,
+            "ul. Kawiory 21, 30-055 Kraków, Polska", 3L
     );
 
 

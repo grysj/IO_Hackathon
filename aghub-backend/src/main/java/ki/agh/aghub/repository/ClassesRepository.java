@@ -13,7 +13,7 @@ public interface ClassesRepository extends JpaRepository<Classes, Long> {
             "AND c.dateStart BETWEEN :startDate AND :endDate")
     List<Classes> findByUserIdAndDateStartBetween(@Param("userId") Long userId,
                                                        @Param("startDate") LocalDateTime startDate,
-                                                       @Param("endDate") LocalDateTime endDate);
+                                                         @Param("endDate") LocalDateTime endDate);
 
     @Query("""
     SELECT c FROM Classes c 
