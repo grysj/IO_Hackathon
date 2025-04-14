@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Box, Text, ScrollView, HStack } from "@gluestack-ui/themed";
 import CalendarComponent from "./CalendarComponent";
 import WeekDayBar from "./WeekDayBar";
-import { mockSchedule } from "../../mock/MockedData";
 
 const hours = Array.from(
   { length: 24 },
   (_, i) => `${i.toString().padStart(2, "0")}:00`
 );
+
 const getWeekDays = (referenceDate = new Date()) => {
   const day = referenceDate.getDay();
   const diffToMonday = (day + 6) % 7;
@@ -21,72 +21,38 @@ const getWeekDays = (referenceDate = new Date()) => {
     return date;
   });
 };
+
+const cropScheduleToPickedDay = (items, pickedDay) => {
+  const startOfDay = new Date(pickedDay);
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date(pickedDay);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  return items
+    .filter(
+      (item) =>
+        new Date(item.dateEnd) >= startOfDay &&
+        new Date(item.dateStart) <= endOfDay
+      // Should be dateEnd?
+    )
+    .map((item) => ({
+      ...item,
+      dateStart: new Date(Math.max(new Date(item.dateStart), startOfDay)),
+      dateEnd: new Date(Math.min(new Date(item.dateEnd), endOfDay)),
+    }));
+};
+
+const formatDate = (date) => {
+  const string = date.toString().split(" ");
+  return `${string[1]} ${string[2]} ${string[3]}`;
+};
+
 const Calendar = ({ user }) => {
   const [schedule, setSchedule] = useState(null);
   const [pickedDay, setPickedDay] = useState(new Date());
   const [weekDays, setWeekDays] = useState(getWeekDays());
-  const [classesPicked, setClassesPicked] = useState([]);
-  const [eventsPicked, setEventsPicked] = useState([]);
-  const [unavailabilityPicked, setUnavailabilityPicked] = useState([]);
-  const fetchSchedule = async (userId, startDate, endDate) => {
-    try {
-      const response = await fetch("http://34.116.250.33:8080/api/schedule", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: userId,
-          startDate: startDate.toISOString(),
-          endDate: new Date(endDate).toISOString(),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch schedule");
-      }
-
-      const data = await response.json(); // Zakładamy, że data = { events: [], classes: [], unavailability: [] }
-      console.log(data);
-      setSchedule(data);
-    } catch (error) {
-      console.error("Error fetching schedule:", error);
-    }
-
-    // Tymczasowo używamy mocka
-    //setSchedule(mockSchedule)
-  };
-  const getSchedule = (userId) => {
-    const startDate = weekDays[0];
-    const endDate = new Date(weekDays[6]);
-    endDate.setHours(23, 59, 59, 999);
-    fetchSchedule(userId, startDate, endDate);
-  };
-  useEffect(() => {
-    if (user?.id) {
-      getSchedule(user.id);
-    }
-  }, [user, weekDays]);
-
-  const cropScheduleToPickedDay = (schedule, pickedDay) => {
-    const startOfDay = new Date(pickedDay);
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(pickedDay);
-    endOfDay.setHours(23, 59, 59, 999);
-
-    return schedule
-      .filter((e) => e.endDate >= startOfDay && e.startDate <= endOfDay)
-      .map((e) => {
-        const startDate = e.startDate < startOfDay ? startOfDay : e.startDate;
-        const endDate = e.endDate > endOfDay ? endOfDay : e.endDate;
-        return { ...e, startDate, endDate };
-      });
-  };
-
-  const changePickedDay = (day) => {
-    setPickedDay(day);
-  };
+  const [error, setError] = useState(null);
 
   const shiftWeek = (direction) => {
     const newPicked = new Date(pickedDay);
@@ -95,38 +61,62 @@ const Calendar = ({ user }) => {
     const newWeekDays = getWeekDays(newPicked);
     setPickedDay(newPicked);
     setWeekDays(newWeekDays);
-
-    if (!schedule) return;
-
-    setClassesPicked(
-      cropScheduleToPickedDay(schedule.classes || [], newPicked)
-    );
-    setEventsPicked(cropScheduleToPickedDay(schedule.events || [], newPicked));
-    setUnavailabilityPicked(
-      cropScheduleToPickedDay(schedule.unavailability || [], newPicked)
-    );
-  };
-
-  const formatDate = (date) => {
-    const string = date.toString().split(" ");
-    return string[1] + " " + string[2] + " " + string[3];
   };
 
   useEffect(() => {
-    if (!schedule) return;
+    const controller = new AbortController();
 
-    setClassesPicked(
-      cropScheduleToPickedDay(schedule.classes || [], pickedDay)
-    );
-    setEventsPicked(cropScheduleToPickedDay(schedule.events || [], pickedDay));
-    setUnavailabilityPicked(
-      cropScheduleToPickedDay(schedule.unavailability || [], pickedDay)
-    );
-  }, [pickedDay, schedule]);
+    const fetchSchedule = async () => {
+      if (!user?.id) return;
+
+      const dateStart = weekDays[0];
+      const dateEnd = new Date(weekDays[6]);
+      dateEnd.setHours(23, 59, 59, 999);
+
+      try {
+        const response = await fetch("http://34.116.250.33:8080/api/schedule", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: user.id,
+            dateStart: dateStart.toISOString(),
+            dateEnd: dateEnd.toISOString(),
+          }),
+          signal: controller.signal,
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch schedule");
+
+        const data = await response.json();
+        setSchedule(data);
+        console.log(data);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          setError(err.message);
+          console.error(err);
+        }
+      }
+    };
+
+    fetchSchedule();
+
+    return () => controller.abort();
+  }, [user, weekDays]);
+
+  const classesPicked = schedule?.classes
+    ? cropScheduleToPickedDay(schedule.classes, pickedDay)
+    : [];
+  const eventsPicked = schedule?.events
+    ? cropScheduleToPickedDay(schedule.events, pickedDay)
+    : [];
+  const unavailabilityPicked = schedule?.unavailability
+    ? cropScheduleToPickedDay(schedule.unavailability, pickedDay)
+    : [];
 
   return (
-    <Box className="flex-1 bg-background-50 ">
-      {/* Nagłówek */}
+    <Box className="flex-1 bg-background-50">
       <Box className="px-4 py-2 bg-background-50">
         <Text className="text-xl font-bold text-typography-950">
           {`${formatDate(weekDays[0])} - ${formatDate(weekDays[6])}`}
@@ -136,12 +126,12 @@ const Calendar = ({ user }) => {
       <WeekDayBar
         weekDays={weekDays}
         pickedDay={pickedDay}
-        onClickDay={changePickedDay}
+        onClickDay={setPickedDay}
         shift={shiftWeek}
       />
 
       <ScrollView>
-        <Box className="px-4 py-2 min-h-[1440px] ">
+        <Box className="px-4 py-2 min-h-[1440px]">
           {hours.map((hour, i) => (
             <HStack
               key={i}
