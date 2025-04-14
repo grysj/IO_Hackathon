@@ -99,8 +99,8 @@ public class EventService {
         this.eventRepository.deleteById(id);
     }
 
-    public List<EventDTO> getUserEventsByDate(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
-        return eventRepository.findEventsByUserIdBetweenDates(userId, startDate, endDate)
+    public List<EventDTO> getUserEventsByDate(Long userId, LocalDateTime dateStart, LocalDateTime dateEnd) {
+        return eventRepository.findEventsByUserIdAndDateRange(userId, dateStart, dateEnd)
             .stream()
             .map(EventDTO::fromEvent)
             .collect(Collectors.toList());

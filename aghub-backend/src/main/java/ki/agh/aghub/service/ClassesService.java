@@ -88,8 +88,8 @@ public class ClassesService {
         this.classesRepository.deleteById(id);
     }
 
-    public List<ClassesDTO> getUserClassesByDate(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
-        return classesRepository.findByUserIdAndDateStartBetween(userId, startDate, endDate)
+    public List<ClassesDTO> getUserClassesByDate(Long userId, LocalDateTime dateStart, LocalDateTime dateEnd) {
+        return classesRepository.findByUserIdAndDateStartBetween(userId, dateStart, dateEnd)
             .stream()
             .map(ClassesDTO::fromClasses)
             .collect(Collectors.toList());
