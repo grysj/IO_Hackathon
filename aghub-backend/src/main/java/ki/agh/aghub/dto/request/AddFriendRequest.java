@@ -1,6 +1,7 @@
 package ki.agh.aghub.dto.request;
 
-public record AddFriendRequest(
+public record
+AddFriendRequest(
         Long user,
         Long friend
 ) {

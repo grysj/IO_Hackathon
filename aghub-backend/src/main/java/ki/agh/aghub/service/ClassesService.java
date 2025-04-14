@@ -39,8 +39,6 @@ public class ClassesService {
             "ul. Kawiory 21, 30-055 Kraków, Polska", 2L
     );
 
-
-
     public ClassesService(
         ClassesRepository classesRepository, 
         PoiRepository poiRepository, 
@@ -108,14 +106,12 @@ public class ClassesService {
                         String rawDesc = event.getDescription();
                         String roomParsed = parseRoom(rawDesc); // nasza metoda
 
-                        // 3. Daty
                         LocalDateTime startDate = LocalDateTime.parse(event.getDtstart(), formatter);
                         LocalDateTime endDate = LocalDateTime.parse(event.getDtend(), formatter);
 
-                        // 4. POI ID – sprawdzamy location
-                        Long poiId = LOCATION_TO_POI_ID.getOrDefault(event.getLocation(), null);
+                        Long poiId = null;
 
-                        return new ClassesDTO(
+                        ClassesDTO classesDTO = new ClassesDTO(
                                 name,
                                 roomParsed,
                                 startDate,
@@ -123,31 +119,14 @@ public class ClassesService {
                                 poiId,
                                 userId
                         );
+                        System.out.println(classesDTO);
+                        return classesDTO;
                     })
                     .toList();
 
-
-            // Obliczenie najwcześniejszej daty zajęć w otrzymanym batchu
-            dtos.stream()
-                    .map(ki.agh.aghub.dto.ClassesDTO::startDate)
-                    .min(LocalDateTime::compareTo)
-                    .ifPresent(earliestDate ->
-                            System.out.println("Najwcześniejsza data zajęć: " + earliestDate)
-                    );
-
-            // DEBUG: wypisanie każdej DTO w konsoli
-            dtos.forEach(dto -> System.out.println("DTO: " + dto));
-
-
-            // Mapowanie DTO na encje przy użyciu mappera
-            List<Classes> classesEntities = dtos.stream()
-                    .map(ClassesDTO::toClasses)
-                    .collect(Collectors.toList());
-
-            // Zapis encji do bazy danych za pomocą repository
-            classesRepository.saveAll(classesEntities);
-
-            System.out.println("Zapisano " + classesEntities.size() + " encji Classes do bazy.");
+            for(ClassesDTO classesDTO : dtos) {
+                this.saveClasses(classesDTO);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

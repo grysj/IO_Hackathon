@@ -18,6 +18,7 @@ import lombok.Builder;
 @Entity
 @Table(name = "classes")
 public class Classes {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -30,7 +31,7 @@ public class Classes {
 
     @Column(name = "date_end")
     private LocalDateTime dateEnd;
-    
+
     @ManyToOne
     @JoinColumn(name = "poi_id")
     private POI poi;

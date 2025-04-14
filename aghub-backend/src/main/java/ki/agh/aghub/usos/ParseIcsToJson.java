@@ -95,6 +95,7 @@ public class ParseIcsToJson {
 
             // Dla każdej VEVENT w kalendarzu
             for (Component component : calendar.getComponents(Component.VEVENT)) {
+                System.out.println("Parsing EVENT/CLASS");
                 VEvent vEvent = (VEvent) component;
                 Event event = new Event();
 
