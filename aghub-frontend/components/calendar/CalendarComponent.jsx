@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text } from "@gluestack-ui/themed";
+import { Pressable, View, Text } from "react-native";
 const shift = 8;
 
 const hourToTopOffset = (date) => {
@@ -14,35 +14,64 @@ const CalendarComponent = ({
   name,
   color = "bg-primary-600",
   zIndex = 10,
+  onPress: handlePress,
 }) => {
   const top = hourToTopOffset(dateStart);
   const bottom = hourToTopOffset(dateEnd);
   const height = bottom - top;
 
   return (
-    <Box
-      className={` ${color} absolute left-[60px] w-[70%] rounded-md px-3 py-2 `}
+    <Pressable
+      onPress={handlePress}
+      className={`absolute left-[60px] w-[70%] ${color} rounded-md px-3 py-2`}
       style={{
         top,
         height,
         zIndex,
       }}
     >
-      <Text className="text-background-light font-bold">{name}</Text>
-      <Text className="text-background-100 text-xs">
-        {`${dateStart.getHours().toString().padStart(2, "0")}:${dateStart
-          .getMinutes()
-          .toString()
-          .padStart(2, "0")} - ${dateEnd
-          .getHours()
-          .toString()
-          .padStart(2, "0")}:${dateEnd
-          .getMinutes()
-          .toString()
-          .padStart(2, "0")}`}
-      </Text>
-    </Box>
+      <View>
+        <Text className="text-white font-bold">{name}</Text>
+        <Text className="text-gray-100 text-xs">
+          {`${dateStart.getHours().toString().padStart(2, "0")}:${dateStart
+            .getMinutes()
+            .toString()
+            .padStart(2, "0")} - ${dateEnd
+            .getHours()
+            .toString()
+            .padStart(2, "0")}:${dateEnd
+            .getMinutes()
+            .toString()
+            .padStart(2, "0")}`}
+        </Text>
+      </View>
+    </Pressable>
   );
+
+  // return (
+  //   <Box
+  //     className={` ${color} absolute left-[60px] w-[70%] rounded-md px-3 py-2 `}
+  //     style={{
+  //       top,
+  //       height,
+  //       zIndex,
+  //     }}
+  //   >
+  //     <Text className="text-background-light font-bold">{name}</Text>
+  //     <Text className="text-background-100 text-xs">
+  //       {`${dateStart.getHours().toString().padStart(2, "0")}:${dateStart
+  //         .getMinutes()
+  //         .toString()
+  //         .padStart(2, "0")} - ${dateEnd
+  //         .getHours()
+  //         .toString()
+  //         .padStart(2, "0")}:${dateEnd
+  //         .getMinutes()
+  //         .toString()
+  //         .padStart(2, "0")}`}
+  //     </Text>
+  //   </Box>
+  // );
 };
 
 export default CalendarComponent;
