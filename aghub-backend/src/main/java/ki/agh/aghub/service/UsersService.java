@@ -6,18 +6,18 @@ import ki.agh.aghub.dto.request.RegisterRequest;
 import ki.agh.aghub.exception.EmailAlreadyUsedException;
 import ki.agh.aghub.exception.InvalidCredentialsException;
 import ki.agh.aghub.exception.UsernameAlreadyUsedException;
-import ki.agh.aghub.model.POI;
+// import ki.agh.aghub.model.POI;
 import ki.agh.aghub.model.Role;
 import ki.agh.aghub.model.User;
-import ki.agh.aghub.repository.PoiRepository;
+// import ki.agh.aghub.repository.PoiRepository;
 import ki.agh.aghub.repository.UsersRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+// import java.time.LocalDate;
+// import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,12 +26,17 @@ import java.util.stream.Collectors;
 public class UsersService {
 
     private final UsersRepository usersRepository;
-    private final PoiRepository poiRepository;
+    // private final PoiRepository poiRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UsersService(UsersRepository usersRepository, PoiRepository poiRepository, PasswordEncoder passwordEncoder) {
+    // public UsersService(UsersRepository usersRepository, PoiRepository poiRepository, PasswordEncoder passwordEncoder) {
+    //     this.usersRepository = usersRepository;
+    //     this.poiRepository = poiRepository;
+    //     this.passwordEncoder = passwordEncoder;
+    // }
+
+    public UsersService(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
         this.usersRepository = usersRepository;
-        this.poiRepository = poiRepository;
         this.passwordEncoder = passwordEncoder;
     }
 

@@ -15,7 +15,6 @@ import ki.agh.aghub.usos.ParseIcsToJson;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,10 +31,10 @@ public class ClassesService {
     private final UsersRepository usersRepository;
 
     // zhardkodowane kordy lokacji
-    private static final Map<String, double[]> LOCATION_COORDINATES = Map.of(
-            "ul. Kawiory 40, 30-055 Kraków, Polska", new double[]{50.067882830735854, 19.909353710436637},
-            "ul. Kawiory 21, 30-055 Kraków, Polska", new double[]{50.06811457595547, 19.91242912733053}
-    );
+    // private static final Map<String, double[]> LOCATION_COORDINATES = Map.of(
+    //         "ul. Kawiory 40, 30-055 Kraków, Polska", new double[]{50.067882830735854, 19.909353710436637},
+    //         "ul. Kawiory 21, 30-055 Kraków, Polska", new double[]{50.06811457595547, 19.91242912733053}
+    // );
 
     // Zhardkodowana mapa: lokalizacja z ICS → ID punktu POI
     private static final Map<String, Long> LOCATION_TO_POI_ID = Map.of(

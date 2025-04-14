@@ -3,7 +3,6 @@ package ki.agh.aghub.controller;
 import ki.agh.aghub.dto.EventDTO;
 import ki.agh.aghub.dto.UserDTO;
 import ki.agh.aghub.dto.request.AddParticipantRequest;
-import ki.agh.aghub.model.User;
 import ki.agh.aghub.service.EventService;
 import org.springframework.web.bind.annotation.*;
 

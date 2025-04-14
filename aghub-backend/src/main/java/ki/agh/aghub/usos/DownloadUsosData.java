@@ -1,6 +1,5 @@
 package ki.agh.aghub.usos;
 
-import ki.agh.aghub.usos.ParseIcsToJson;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

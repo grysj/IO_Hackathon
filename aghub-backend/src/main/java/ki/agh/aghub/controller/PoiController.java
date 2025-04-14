@@ -1,7 +1,6 @@
 package ki.agh.aghub.controller;
 
 import ki.agh.aghub.dto.POIDTO;
-import ki.agh.aghub.repository.PoiRepository;
 import ki.agh.aghub.service.PoiService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

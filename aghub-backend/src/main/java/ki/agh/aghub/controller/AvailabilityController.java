@@ -3,7 +3,6 @@ package ki.agh.aghub.controller;
 import ki.agh.aghub.dto.AvailabilityDTO;
 import ki.agh.aghub.dto.request.AvailabilityRequest;
 import ki.agh.aghub.service.AvailabilityService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

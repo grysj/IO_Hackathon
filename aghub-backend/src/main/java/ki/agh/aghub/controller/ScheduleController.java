@@ -3,19 +3,16 @@ package ki.agh.aghub.controller;
 import ki.agh.aghub.dto.ClassesDTO;
 import ki.agh.aghub.dto.EventDTO;
 import ki.agh.aghub.dto.CalendarDTO;
-import ki.agh.aghub.dto.EventDTO;
 import ki.agh.aghub.dto.UnavailabilityDTO;
 import ki.agh.aghub.dto.request.ScheduleRequest;
 import ki.agh.aghub.service.ClassesService;
 import ki.agh.aghub.service.EventService;
 import ki.agh.aghub.service.UnavailabilitiesService;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
