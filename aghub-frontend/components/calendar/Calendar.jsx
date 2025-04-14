@@ -152,6 +152,12 @@ const Calendar = ({ user }) => {
               color="bg-info-400"
               zIndex={9}
               type="class"
+              onPress={() =>
+                router.push({
+                  pathname: "/classes/[id]",
+                  params: { id: c.id },
+                })
+              }
             />
           ))}
           {eventsPicked.map((e, i) => (
