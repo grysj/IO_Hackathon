@@ -61,18 +61,10 @@ public class EventService {
     public EventDTO saveEvent(EventDTO eventDTO) {
         Event event = EventDTO.toEvent(eventDTO);
         event.setPoi(this.poiRepository.findById(eventDTO.poiId())
-            .orElseThrow(() -> 
-                new EntityNotFoundException(
-                    "POI not found with id: " + eventDTO.poiId()
-                )
-            )
+            .orElse(null)
         );
         event.setCreatedBy(this.usersRepository.findById(eventDTO.createdById())
-            .orElseThrow(() -> 
-                new EntityNotFoundException(
-                    "User not found with id: " + eventDTO.createdById()
-                )
-            )
+            .orElse(null)
         );
 
         event.setParticipants(Set.of(event.getCreatedBy()));

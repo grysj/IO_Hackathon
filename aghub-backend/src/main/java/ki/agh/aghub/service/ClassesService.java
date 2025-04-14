@@ -95,7 +95,7 @@ public class ClassesService {
     }
 
     // Mapowanie planu do DataMappera
-
+    //TODO Refactor Debug
     public void mapUsosPlanToDto(String url, Long userId) {
 
         try {

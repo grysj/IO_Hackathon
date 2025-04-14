@@ -28,7 +28,7 @@ public class EventController {
     public EventDTO findEventById(@PathVariable Long id) {
         return this.eventsService.findEventById(id);
     }
-
+    //TODO change
     @PostMapping("")
     public void saveEvent(@RequestBody EventDTO eventDto) {
         this.eventsService.saveEvent(eventDto);

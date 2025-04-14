@@ -25,33 +25,42 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
     const [selectedSlot, setSelectedSlot] = useState(null);
 
     const dates = [getFormattedDate(0), getFormattedDate(1), getFormattedDate(2)];
-    const fetchAvailabilities =  (friendsId) => {
+    const fetchAvailabilities = async (friendsId) => {
         try {
-            const response =  fetch("http://34.116.250.33:8080/api/availability/find", {
+            const startDate = parseTimeToDate(selectedDate, timeRange.from);
+            const endDate = parseTimeToDate(selectedDate, timeRange.to);
+
+            const response = await fetch("http://34.116.250.33:8080/api/availability/find", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                     usersId: friendsId,
-                    startDate: timeRange.from.toISOString(),
-                    endDate: timeRange.to.toISOString(),
-                    minDuration: `PT${minDuration}M`
-                })
+                    startDate: startDate.toISOString(),
+                    endDate: endDate.toISOString(),
+                    minDuration: `PT${minDuration}M`,
+                }),
             });
 
             if (!response.ok) {
-                const err =  response.text();
+                const err = await response.text();
                 throw new Error(err);
             }
 
-            const data =  response.json();
+            const data = await response.json();
             setAvailableSlots(data);
         } catch (err) {
             console.error("Błąd podczas pobierania dostępności:", err.message);
         }
     };
 
+    const parseTimeToDate = (dateStr, timeStr) => {
+        const [hour, minute] = timeStr.split(":").map(Number);
+        const date = new Date(dateStr);
+        date.setHours(hour, minute, 0, 0);
+        return date;
+    };
 
 
 
@@ -164,7 +173,7 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
             <ScrollView className="mb-4" style={{flexGrow: 0}}>
                 <VStack space="md">
                     {availableSlots.map((slot, index) => {
-                        const isSelected = selectedSlot?.start === slot.start;
+                        const isSelected = selectedSlot?.startDate === slot.startDate;
                         return (
                             <Pressable
                                 key={index}
@@ -180,13 +189,13 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
                                         isSelected ? "text-white" : "text-typography-900"
                                     }`}
                                 >
-                                    {new Date(slot.start).toLocaleDateString()}{" "}
-                                    {new Date(slot.start).toLocaleTimeString([], {
+                                    {new Date(slot.startDate).toLocaleDateString()}{" "}
+                                    {new Date(slot.startDate).toLocaleTimeString([], {
                                         hour: "2-digit",
                                         minute: "2-digit",
                                     })}{" "}
                                     -{" "}
-                                    {new Date(slot.end).toLocaleTimeString([], {
+                                    {new Date(slot.endDate).toLocaleTimeString([], {
                                         hour: "2-digit",
                                         minute: "2-digit",
                                     })}
