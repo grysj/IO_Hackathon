@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Text, ScrollView, HStack } from "@gluestack-ui/themed";
 import CalendarComponent from "./CalendarComponent";
 import WeekDayBar from "./WeekDayBar";
+import { useRouter } from "expo-router";
 
 const hours = Array.from(
   { length: 24 },
@@ -53,6 +54,7 @@ const Calendar = ({ user }) => {
   const [pickedDay, setPickedDay] = useState(new Date());
   const [weekDays, setWeekDays] = useState(getWeekDays());
   const [error, setError] = useState(null);
+  const router = useRouter();
 
   const shiftWeek = (direction) => {
     const newPicked = new Date(pickedDay);
@@ -158,6 +160,12 @@ const Calendar = ({ user }) => {
               {...e}
               color="bg-success-500"
               type="event"
+              onPress={() =>
+                router.push({
+                  pathname: "/events/[id]",
+                  params: { id: e.id },
+                })
+              }
             />
           ))}
           {unavailabilityPicked.map((u, i) => (
