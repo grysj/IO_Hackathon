@@ -9,13 +9,29 @@ import {
 } from "@gluestack-ui/themed";
 import { MaterialIcons } from "@expo/vector-icons";
 import { mockFriends } from "../../mock/MockedData";
+import {useAuth} from "../../contexts/authContext";
 
 const FriendSelector = ({ onConfirm }) => {
     const [friends, setFriends] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
+    const {user} = useAuth()
+    const fetchFriends = async (userId) => {
+        try {
+            const response = await fetch(`http://34.116.250.33:8080/api/friends/${userId}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            });
 
+            if (!response.ok) throw new Error('Błąd pobierania znajomych');
+
+            const data = await response.json();
+            setFriends(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
     useEffect(() => {
-        setFriends(mockFriends);
+        fetchFriends(user.id)
     }, []);
 
     const toggleSelection = (id) => {

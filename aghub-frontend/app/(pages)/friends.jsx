@@ -12,9 +12,23 @@ const FriendsScreen = () => {
 
     const router = useRouter();
     const [friends, setFriends] = useState([]);
-    const fetchFriends = (userId) => {
-        setFriends(mockFriends);
-    }
+    const fetchFriends = async (userId) => {
+        try {
+            const response = await fetch(`http://34.116.250.33:8080/api/friends/${userId}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (!response.ok) throw new Error('Błąd pobierania znajomych');
+
+            const data = await response.json();
+            setFriends(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
     useEffect(() => {
         fetchFriends(user.id)
     }, []);
