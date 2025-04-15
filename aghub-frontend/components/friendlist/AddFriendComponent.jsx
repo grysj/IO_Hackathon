@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Box, Button, ButtonText, HStack, Pressable, Text} from "@gluestack-ui/themed";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-const AddFriendComponent = ({ friend }) => {
+const AddFriendComponent = ({ onClick, friend }) => {
     const [expanded, setExpanded] = useState(false);
 
     return (
@@ -47,7 +47,7 @@ const AddFriendComponent = ({ friend }) => {
                 <HStack className= "flex-1 flex-row gap-3 mb-3" >
 
                     <Button
-                        onPress={() => onClick(friend)}
+                        onPress={() => onClick(friend.id)}
                         className="bg-info-600 rounded-xl py-3 px-4 shadow-md flex-1"
                         justifyContent="center"
                         alignItems="center"

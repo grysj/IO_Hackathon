@@ -18,12 +18,12 @@ const FindFriendsScreen = () => {
 
     const fetchNewFriends = async (userId) => {
         try {
-            const response = await fetch(`http://34.116.250.33:8080/api/friends/${userId}`, {
+            const response = await fetch(`http://34.116.250.33:8080/api/friends/new/${userId}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
             });
 
-            if (!response.ok) throw new Error("Błąd pobierania znajomych");
+            if (!response.ok) throw new Error("Błąd pobierania nie znajomych");
 
             const data = await response.json();
             setNewFriends(data);
@@ -46,6 +46,34 @@ const FindFriendsScreen = () => {
         );
         setFilteredFriends(filtered);
     }, [searchQuery]);
+    const handleAddingFriends = async (friendId) => {
+        try {
+            const response = await fetch("http://34.116.250.33:8080/api/friends/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    user: user.id,
+                    friend: friendId
+                }),
+            });
+
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                throw new Error(errorMessage || "Błąd dodawania znajomego");
+            }
+
+            const data = await response.json();
+            console.log("Sukces:", data.message);
+            setSearchQuery("");
+            setNewFriends((prev) => prev.filter((f) => f.id !== friendId));
+            setFilteredFriends(newFriends);
+
+        } catch (error) {
+            console.error("Błąd:", error.message);
+        }
+    };
 
     return (
         <View style={styles.flex}>
@@ -62,7 +90,7 @@ const FindFriendsScreen = () => {
 
             <ScrollView contentContainerStyle={styles.container}>
                 {filteredFriends.map((friend) => (
-                    <AddFriendComponent key={friend.id} friend={friend} />
+                    <AddFriendComponent key={friend.id} friend={friend} onClick={handleAddingFriends}/>
                 ))}
             </ScrollView>
         </View>
