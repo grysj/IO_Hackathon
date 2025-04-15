@@ -5,12 +5,21 @@ import {useRouter} from "expo-router";
 import {useAuth} from "../../contexts/authContext";
 import {mockFriends} from "../../mock/MockedData";
 import FriendComponent from "../../components/friendlist/FriendComponent";
+import AddFriendButton from "../../components/friendlist/AddFriendButton";
+
 
 
 const FriendsScreen = () => {
     const {user} = useAuth();
 
     const router = useRouter();
+    const handlePress = () => {
+        router.push(
+            {
+                pathname: "/friends/find-friends"
+            }
+        )
+    }
     const [friends, setFriends] = useState([]);
     const fetchFriends = async (userId) => {
         try {
@@ -46,8 +55,11 @@ const FriendsScreen = () => {
         <Box className="flex-1 bg-background-50">
             <ScrollView>
                 <VStack space="md" className={"p-3"}>
+                    <AddFriendButton onClick={handlePress} />
                     {friends.map((friend) => {
-                        return (<FriendComponent key={friend.id} onClickRemove={removeFriend} onClickCalendar={goToCalendar} friend={friend}/>)
+                        return (
+                            <FriendComponent key={friend.id} onClickRemove={removeFriend} onClickCalendar={goToCalendar}
+                                             friend={friend}/>)
                     })}
                 </VStack>
             </ScrollView>
