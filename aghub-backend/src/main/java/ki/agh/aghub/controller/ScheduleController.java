@@ -40,9 +40,9 @@ public class ScheduleController {
     public CalendarDTO getScheduleByUserAndDate(
             @RequestBody ScheduleRequest scheduleRequest
             ) {
-        List<EventDTO> events = this.eventsService.getUserEventsByDate(scheduleRequest.id(), scheduleRequest.startDate(), scheduleRequest.endDate());
-        List<ClassesDTO> classes = this.classesService.getUserClassesByDate(scheduleRequest.id(), scheduleRequest.startDate(), scheduleRequest.endDate());
-        List<UnavailabilityDTO> unavailability = this.unavailabilitiesService.getUserUnavailabilitiesByDate(scheduleRequest.id(), scheduleRequest.startDate(), scheduleRequest.endDate());
+        List<EventDTO> events = this.eventsService.getUserEventsByDate(scheduleRequest.id(), scheduleRequest.dateStart(), scheduleRequest.dateEnd());
+        List<ClassesDTO> classes = this.classesService.getUserClassesByDate(scheduleRequest.id(), scheduleRequest.dateStart(), scheduleRequest.dateEnd());
+        List<UnavailabilityDTO> unavailability = this.unavailabilitiesService.getUserUnavailabilitiesByDate(scheduleRequest.id(), scheduleRequest.dateStart(), scheduleRequest.dateEnd());
 
         return new CalendarDTO(events, classes, unavailability);
     }

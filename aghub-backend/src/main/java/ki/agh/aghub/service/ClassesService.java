@@ -1,6 +1,7 @@
 package ki.agh.aghub.service;
 
 import ki.agh.aghub.dto.ClassesDTO;
+import ki.agh.aghub.mapper.ClassesMapper;
 import jakarta.persistence.EntityNotFoundException;
 
 import ki.agh.aghub.model.Classes;
@@ -26,6 +27,7 @@ import java.time.format.DateTimeFormatter;
 public class ClassesService {
 
     private final ClassesRepository classesRepository;
+    private final ClassesMapper classesMapper;
 
     // zhardkodowane kordy lokacji
     private static final Map<String, double[]> LOCATION_COORDINATES = Map.of(
@@ -42,9 +44,11 @@ public class ClassesService {
     public ClassesService(
         ClassesRepository classesRepository, 
         PoiRepository poiRepository, 
-        UsersRepository usersRepository
+        UsersRepository usersRepository,
+        ClassesMapper classesMapper
     ) { 
         this.classesRepository = classesRepository;
+        this.classesMapper = classesMapper;
     }
 
     public List<ClassesDTO> findAllClasses() {
@@ -62,15 +66,15 @@ public class ClassesService {
     }
 
     public ClassesDTO saveClasses(ClassesDTO classesDTO) {
-        return ClassesDTO.fromClasses(classesRepository.save(ClassesDTO.toClasses(classesDTO)));
+        return ClassesDTO.fromClasses(classesRepository.save(classesMapper.fromDto(classesDTO)));
     }
 
     public void deleteClasses(Long id) {
         this.classesRepository.deleteById(id);
     }
 
-    public List<ClassesDTO> getUserClassesByDate(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
-        return classesRepository.findByUserIdAndDateStartBetween(userId, startDate, endDate)
+    public List<ClassesDTO> getUserClassesByDate(Long userId, LocalDateTime dateStart, LocalDateTime dateEnd) {
+        return classesRepository.findByUserIdAndDateStartBetween(userId, dateStart, dateEnd)
             .stream()
             .map(ClassesDTO::fromClasses)
             .collect(Collectors.toList());
@@ -86,7 +90,6 @@ public class ClassesService {
 
             // Parsowanie ICS z podanego URL
             List<Event> events = ParseIcsToJson.parseFromUrl(url);
-            System.out.println("Liczba zdarzeń: " + events.size());
 
             // Hardkodowana mapa: lokalizacja z ICS => ID POI
 //            final Map<String, Long> LOCATION_TO_POI_ID = Map.of(
@@ -119,7 +122,6 @@ public class ClassesService {
                                 poiId,
                                 userId
                         );
-                        System.out.println(classesDTO);
                         return classesDTO;
                     })
                     .toList();

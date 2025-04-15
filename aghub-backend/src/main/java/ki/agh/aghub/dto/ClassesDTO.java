@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public record ClassesDTO(
     String name,
     String room,
-    LocalDateTime startDate,
-    LocalDateTime endDate,
+    LocalDateTime dateStart,
+    LocalDateTime dateEnd,
     Long poiId,
     Long userId
 ) {
@@ -34,8 +34,8 @@ public record ClassesDTO(
         return Classes.builder()
             .name(classesDTO.name())
             .room(classesDTO.room())
-            .dateStart(classesDTO.startDate())
-            .dateEnd(classesDTO.endDate())
+            .dateStart(classesDTO.dateStart())
+            .dateEnd(classesDTO.dateEnd())
             .user(UserDTO.toUser(usersService.findByIdUser(classesDTO.userId()), null))
             .build();
     }
