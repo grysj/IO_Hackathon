@@ -31,4 +31,8 @@ public class FriendsController {
         );
         return Map.of("message", result);
     }
+    @GetMapping("new/{id}")
+    public List<UserDTO> findNotFriends(@PathVariable Long id) {
+        return this.usersService.getNotFriends(id);
+    }
 }
