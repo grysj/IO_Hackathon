@@ -16,12 +16,12 @@ const WeekDayBar = ({ weekDays, pickedDay, onClickDay, shift }) => {
                 <Box className="p-2">
                     <AntDesign name="left" size={24} color={"white"} />
                 </Box>
-            </Pressable>
+            </Pressable >
             {weekDays.map((day, index) => (
                 <Pressable key={index} onPress={() => onClickDay(day)}>
                     <Box
-                        className={`p-2 rounded-full ${
-                            isTheSameDay(day, pickedDay) ? 'bg-yellow-600' : ''
+                        className={`w-8 h-8 mt-1 flex items-center justify-center align-middle ${
+                            isTheSameDay(day, pickedDay) ? 'bg-yellow-600 rounded-full' : ''
                         }`}
                     >
                         <Text

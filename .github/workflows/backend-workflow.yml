@@ -1,0 +1,47 @@
+name: Backend Docker Compose Up
+
+on:
+  push:
+    paths:
+      - "aghub-backend/**"
+  pull_request:
+    paths:
+      - "aghub-backend/**"
+
+jobs:
+  backend-up:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Compose
+        run: |
+          docker compose version
+
+      - name: Start backend using Docker Compose
+        run: |
+          cd aghub-backend
+          docker compose up --build -d
+
+      # - name: Wait for backend to be healthy
+      #   run: |
+      #     echo "Waiting for backend to be ready..."
+      #     for i in {1..30}; do
+      #       if curl -s http://localhost:3000/healthcheck | grep "ok"; then
+      #         echo "Backend is ready!"
+      #         break
+      #       fi
+      #       echo "Still waiting..."
+      #       sleep 2
+      #     done
+      #   continue-on-error: false
+
+      - name: Show running containers
+        run: docker ps
+
+      - name: Run Checkstyle on backend
+        run: |
+          cd aghub-backend
+          ./gradlew checkstyleMain

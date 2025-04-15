@@ -19,14 +19,13 @@ const formatTime = (dateString) => {
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return format(date, "d MMMM yyyy"); // e.g., "4 April 2025"
+  return format(date, "d MMMM yyyy"); // This will give you e.g., "4 April 2025"
 };
 
 export default function EventDetails() {
   const { id } = useLocalSearchParams();
-  const [event, setEvent] = useState(null);
+  const [classes, setClasses] = useState(null);
   const [poi, setPoi] = useState(null);
-  const [participants, setParticipants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -41,12 +40,12 @@ export default function EventDetails() {
       try {
         // Fetch event
         const eventRes = await fetch(
-          `http://34.116.250.33:8080/api/events/${id}`,
+          `http://34.116.250.33:8080/api/classes/${id}`,
           { signal: abortController.signal }
         );
         if (!eventRes.ok) throw new Error(eventRes.statusText || "Event error");
         const eventData = await eventRes.json();
-        setEvent(eventData);
+        setClasses(eventData);
 
         // Fetch POI
         if (eventData.poiId) {
@@ -58,16 +57,6 @@ export default function EventDetails() {
           const poiData = await poiRes.json();
           setPoi(poiData);
         }
-
-        // Fetch Participants
-        const partRes = await fetch(
-          `http://34.116.250.33:8080/api/events/participant/${id}`,
-          { signal: abortController.signal }
-        );
-        if (!partRes.ok)
-          throw new Error(partRes.statusText || "Participants error");
-        const partData = await partRes.json();
-        setParticipants(partData);
       } catch (err) {
         if (err.name !== "AbortError") {
           setError(err.message);
@@ -86,10 +75,6 @@ export default function EventDetails() {
 
   const handleLocationPress = () => {
     console.log(`Pressed on location: ${poi ? poi.name : "Unknown location"}`);
-  };
-
-  const handleParticipantPress = (participant) => {
-    console.log(`Pressed on participant: ${participant.name}`);
   };
 
   if (loading) {
@@ -116,13 +101,13 @@ export default function EventDetails() {
       <View className="px-6 py-8">
         {/* Title */}
         <Text className="text-yellow-600 text-4xl font-bold mb-2">
-          {event.name}
+          {classes.name}
         </Text>
 
-        {/* Description */}
+        {/* Room */}
         <View className="mb-8">
           <Text className="text-white text-base leading-relaxed">
-            {event.description}
+            Room {classes.room}
           </Text>
         </View>
 
@@ -134,13 +119,13 @@ export default function EventDetails() {
           <View className="flex-row items-center gap-2 mb-2">
             <Ionicons name="time" size={22} color="#ca8a04" />
             <Text className="text-white text-lg">
-              {formatTime(event.dateStart)} - {formatTime(event.dateEnd)}
+              {formatTime(classes.dateStart)} - {formatTime(classes.dateEnd)}
             </Text>
           </View>
           <View className="flex-row items-center gap-2">
             <Ionicons name="calendar" size={24} color="#ca8a04" />
             <Text className="text-white text-lg">
-              {formatDate(event.dateStart)}
+              {formatDate(classes.dateStart)}
             </Text>
           </View>
         </View>
@@ -159,29 +144,6 @@ export default function EventDetails() {
               {poi ? poi.name : "Loading POI..."}
             </Text>
           </Pressable>
-        </View>
-
-        {/* Participants */}
-        <View className="mb-8">
-          <Text className="text-yellow-600 font-semibold text-2xl mb-3">
-            Participants
-          </Text>
-          {participants.length === 0 ? (
-            <Text className="text-white text-base">No participants yet.</Text>
-          ) : (
-            participants.map((p) => (
-              <Pressable
-                key={p.id}
-                onPress={() => handleParticipantPress(p)}
-                className="flex-row items-center gap-3 bg-white/10 px-5 py-3 rounded-xl mb-3"
-              >
-                <MaterialIcons name="person" size={22} color="#ca8a04" />
-                <Text className="text-white text-lg font-medium">
-                  {p.username}
-                </Text>
-              </Pressable>
-            ))
-          )}
         </View>
       </View>
     </ScrollView>

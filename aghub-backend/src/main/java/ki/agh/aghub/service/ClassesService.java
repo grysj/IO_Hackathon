@@ -6,6 +6,8 @@ import jakarta.persistence.EntityNotFoundException;
 
 import ki.agh.aghub.model.Classes;
 
+import ki.agh.aghub.model.POI;
+import ki.agh.aghub.model.User;
 import ki.agh.aghub.repository.ClassesRepository;
 import ki.agh.aghub.repository.PoiRepository;
 import ki.agh.aghub.repository.UsersRepository;
@@ -14,7 +16,6 @@ import ki.agh.aghub.usos.ParseIcsToJson;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,17 +29,19 @@ public class ClassesService {
 
     private final ClassesRepository classesRepository;
     private final ClassesMapper classesMapper;
+    private final PoiRepository poiRepository;
+    private final UsersRepository usersRepository;
 
     // zhardkodowane kordy lokacji
-    private static final Map<String, double[]> LOCATION_COORDINATES = Map.of(
-            "ul. Kawiory 40, 30-055 Kraków, Polska", new double[]{50.067882830735854, 19.909353710436637},
-            "ul. Kawiory 21, 30-055 Kraków, Polska", new double[]{50.06811457595547, 19.91242912733053}
-    );
+    // private static final Map<String, double[]> LOCATION_COORDINATES = Map.of(
+    //         "ul. Kawiory 40, 30-055 Kraków, Polska", new double[]{50.067882830735854, 19.909353710436637},
+    //         "ul. Kawiory 21, 30-055 Kraków, Polska", new double[]{50.06811457595547, 19.91242912733053}
+    // );
 
     // Zhardkodowana mapa: lokalizacja z ICS → ID punktu POI
     private static final Map<String, Long> LOCATION_TO_POI_ID = Map.of(
-            "ul. Kawiory 40, 30-055 Kraków, Polska", 1L,
-            "ul. Kawiory 21, 30-055 Kraków, Polska", 2L
+            "ul. Kawiory 40, 30-055 Kraków, Polska", 2L,
+            "ul. Kawiory 21, 30-055 Kraków, Polska", 3L
     );
 
     public ClassesService(
@@ -49,6 +52,8 @@ public class ClassesService {
     ) { 
         this.classesRepository = classesRepository;
         this.classesMapper = classesMapper;
+        this.poiRepository = poiRepository;
+        this.usersRepository = usersRepository;
     }
 
     public List<ClassesDTO> findAllClasses() {
@@ -69,6 +74,7 @@ public class ClassesService {
         return ClassesDTO.fromClasses(classesRepository.save(classesMapper.fromDto(classesDTO)));
     }
 
+
     public void deleteClasses(Long id) {
         this.classesRepository.deleteById(id);
     }
@@ -81,7 +87,7 @@ public class ClassesService {
     }
 
     // Mapowanie planu do DataMappera
-
+    //TODO Refactor Debug
     public void mapUsosPlanToDto(String url, Long userId) {
 
         try {
@@ -99,15 +105,14 @@ public class ClassesService {
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
 
-            // Mapowanie eventów na listę ClassesDTO
             List<ClassesDTO> dtos = events.stream()
                     .map(event -> {
-                        // 1. Nazwa = summary
+                        Long id = null;
+
                         String name = event.getSummary();
 
-                        // 2. Room = parseRoom z description
                         String rawDesc = event.getDescription();
-                        String roomParsed = parseRoom(rawDesc); // nasza metoda
+                        String roomParsed = parseRoom(rawDesc);
 
                         LocalDateTime startDate = LocalDateTime.parse(event.getDtstart(), formatter);
                         LocalDateTime endDate = LocalDateTime.parse(event.getDtend(), formatter);
@@ -115,12 +120,13 @@ public class ClassesService {
                         Long poiId = null;
 
                         ClassesDTO classesDTO = new ClassesDTO(
-                                name,
-                                roomParsed,
-                                startDate,
-                                endDate,
-                                poiId,
-                                userId
+                            id,
+                            name,
+                            roomParsed,
+                            startDate,
+                            endDate,
+                            poiId,
+                            userId
                         );
                         return classesDTO;
                     })

@@ -8,6 +8,7 @@ import ki.agh.aghub.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public record ClassesDTO(
+    Long id,
     String name,
     String room,
     LocalDateTime dateStart,
@@ -20,6 +21,7 @@ public record ClassesDTO(
 
     public static ClassesDTO fromClasses(Classes classes) {
         return new ClassesDTO(
+            classes.getId(),
             classes.getName(),
             classes.getRoom(),
             classes.getDateStart(),

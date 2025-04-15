@@ -9,42 +9,40 @@ export const mockUser = {
     username: 'jan.kowalski',
     email: 'jan.kowalski@example.com',
 }
-export const mockEvents = [
-    {
-        title: 'PUMP',
-        start: new Date('2025-04-12T10:00:00'),
-        end: new Date('2025-04-12T12:00:00'),
-        color: 'bg-blue-600',
-    },
-    {
-        title: 'ZZZ',
-        start: new Date('2025-04-12T22:00:00'),
-        end: new Date('2025-04-13T05:00:00'),
-        color: 'bg-red-400',
-        zIndex: 5,
-    },
-    {
-        title: 'YOGA',
-        start: new Date('2025-04-12T08:30:00'),
-        end: new Date('2025-04-12T09:30:00'),
-        color: 'bg-green-500',
-    },
-    {
-        title: 'FROM YESTERDAY',
-        start: new Date('2025-04-11T23:00:00'),
-        end: new Date('2025-04-12T03:00:00'),
-        color: 'bg-yellow-500',
-    },
-    {
-        title: 'TO TOMORROW',
-        start: new Date('2025-04-12T23:00:00'),
-        end: new Date('2025-04-13T01:00:00'),
-        color: 'bg-purple-500',
-    },
-    {
-        title: 'MONDAY MEETING',
-        start: new Date('2025-04-14T09:00:00'),
-        end: new Date('2025-04-14T10:00:00'),
-        color: 'bg-orange-500',
-    },
-];
+export const mockSchedule = {
+    classes: [
+        {
+            name: 'PUMY',
+            startDate: new Date('2025-04-12T10:00:00'),
+            endDate: new Date('2025-04-12T12:00:00'),
+        },
+        {
+            name: 'MATMA',
+            startDate: new Date('2025-04-12T22:00:00'),
+            endDate: new Date('2025-04-13T05:00:00'),
+        },
+    ],
+    events: [
+        {
+            name: 'MONDAY MEETING',
+            startDate: new Date('2025-04-14T09:00:00'),
+            endDate: new Date('2025-04-14T10:00:00'),
+        },
+    ],
+    unavailability: [
+        {
+            name: 'ZZZZ',
+            startDate: new Date('2025-04-12T08:30:00'),
+            endDate: new Date('2025-04-12T09:30:00'),
+        },
+        {
+            name: 'FROM YESTERDAY',
+            startDate: new Date('2025-04-11T23:00:00'),
+            endDate: new Date('2025-04-12T03:00:00'),
+        },
+        {
+            name: 'TO TOMORROW',
+            startDate: new Date('2025-04-12T23:00:00'),
+            endDate: new Date('2025-04-13T01:00:00'),
+        },
+    ],}

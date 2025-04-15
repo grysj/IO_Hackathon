@@ -1,6 +1,5 @@
 package ki.agh.aghub.dto;
 
-import ki.agh.aghub.model.Classes;
 import ki.agh.aghub.model.POI;
 
 public record POIDTO(
