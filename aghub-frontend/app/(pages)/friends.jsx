@@ -28,7 +28,8 @@ const FriendsScreen = () => {
                 headers: { 'Content-Type': 'application/json' },
             });
 
-            if (!response.ok) throw new Error('Błąd pobierania znajomych');
+            const errorText = await response.text(); // lub response.json() jeśli API zwraca JSON
+            throw new Error(errorText || "Błąd pobierania znajomych");
 
             const data = await response.json();
             setFriends(data);
