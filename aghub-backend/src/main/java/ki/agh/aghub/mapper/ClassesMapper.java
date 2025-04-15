@@ -26,6 +26,7 @@ public class ClassesMapper {
 
     public static ClassesDTO toDto(Classes classes) {
         return new ClassesDTO(
+            classes.getId(),
             classes.getName(),
             classes.getRoom(),
             classes.getDateStart(),
