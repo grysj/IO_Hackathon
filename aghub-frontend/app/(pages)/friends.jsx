@@ -1,11 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Box, ScrollView, VStack} from '@gluestack-ui/themed'
+import {Box, ScrollView, VStack, Text, View} from '@gluestack-ui/themed'
 
 import {useRouter} from "expo-router";
 import {useAuth} from "../../contexts/authContext";
 import {mockFriends} from "../../mock/MockedData";
 import FriendComponent from "../../components/friendlist/FriendComponent";
 import AddFriendButton from "../../components/friendlist/AddFriendButton";
+
 
 
 
@@ -27,9 +28,10 @@ const FriendsScreen = () => {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
             });
-
-            const errorText = await response.text(); // lub response.json() jeśli API zwraca JSON
-            throw new Error(errorText || "Błąd pobierania znajomych");
+            if(!response.ok){
+                const errorText = await response.json(); // lub response.json() jeśli API zwraca JSON
+                throw new Error(errorText || "Błąd pobierania znajomych");
+            }
 
             const data = await response.json();
             setFriends(data);
@@ -54,9 +56,16 @@ const FriendsScreen = () => {
     return (
 
         <Box className="flex-1 bg-background-50">
+            <View justifyContent="space-between" className="flex-row ">
+                <Text className="text-white mt-2 text-lg px-4 py-2 font-semibold">
+                    Friends list:
+                </Text>
+                <AddFriendButton onClick={handlePress} />
+            </View>
+            <View className="h-[1px] bg-yellow-600 m-4 mt-2" />
             <ScrollView>
                 <VStack space="md" className={"p-3"}>
-                    <AddFriendButton onClick={handlePress} />
+
                     {friends.map((friend) => {
                         return (
                             <FriendComponent key={friend.id} onClickRemove={removeFriend} onClickCalendar={goToCalendar}

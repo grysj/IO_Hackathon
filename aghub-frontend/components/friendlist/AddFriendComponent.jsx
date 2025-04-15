@@ -9,7 +9,7 @@ const AddFriendComponent = ({ onClick, friend }) => {
         <Box>
             <Pressable
                 onPress={() => setExpanded(!expanded)}
-                className={`rounded-lg p-3 border mb-3 flex-row items-center justify-between ${
+                className={`rounded-lg p-3 border  flex-row items-center justify-between ${
                     expanded
                         ? 'bg-yellow-600 border-yellow-700'
                         : 'bg-background-100 border-outline-200'
@@ -48,7 +48,7 @@ const AddFriendComponent = ({ onClick, friend }) => {
 
                     <Button
                         onPress={() => onClick(friend.id)}
-                        className="bg-info-600 rounded-xl py-3 px-4 shadow-md flex-1"
+                        className="bg-info-600 mt-4 rounded-xl py-3 px-4 shadow-md flex-1"
                         justifyContent="center"
                         alignItems="center"
                     >

@@ -1,16 +1,11 @@
-import { useAuth } from "../../../contexts/authContext";
-import { useState, useEffect } from "react";
-import {
-    View,
-    ScrollView,
-    TextInput,
-    StyleSheet,
-    Text,
-} from "react-native";
+import {useAuth} from "../../../contexts/authContext";
+import {useEffect, useState} from "react";
+import {ScrollView, StyleSheet, TextInput, View,} from "react-native";
 import AddFriendComponent from "../../../components/friendlist/AddFriendComponent";
 
+
 const FindFriendsScreen = () => {
-    const { user } = useAuth();
+    const {user} = useAuth();
 
     const [newFriends, setNewFriends] = useState([]);
     const [filteredFriends, setFilteredFriends] = useState([]);
@@ -20,11 +15,13 @@ const FindFriendsScreen = () => {
         try {
             const response = await fetch(`http://34.116.250.33:8080/api/friends/new/${userId}`, {
                 method: "GET",
-                headers: { "Content-Type": "application/json" },
+                headers: {"Content-Type": "application/json"},
             });
 
-            const errorText = await response.text(); // lub response.json() jeśli API zwraca JSON
-            throw new Error(errorText || "Błąd pobierania nie znajomych");
+            if (!response.ok) {
+                const errorText = await response.json();
+                throw new Error(errorText || "Błąd pobierania znajomych");
+            }
 
             const data = await response.json();
             setNewFriends(data);
@@ -61,15 +58,16 @@ const FindFriendsScreen = () => {
             });
 
             if (!response.ok) {
-                const errorMessage = await response.text();
+                const errorMessage = await response.json();
                 throw new Error(errorMessage || "Błąd dodawania znajomego");
             }
 
             const data = await response.json();
             console.log("Sukces:", data.message);
+            const updatedFriends = newFriends.filter((f) => f.id !== friendId);
+            setNewFriends(updatedFriends);
+            setFilteredFriends(updatedFriends);
             setSearchQuery("");
-            setNewFriends((prev) => prev.filter((f) => f.id !== friendId));
-            setFilteredFriends(newFriends);
 
         } catch (error) {
             console.error("Błąd:", error.message);
@@ -78,7 +76,7 @@ const FindFriendsScreen = () => {
 
     return (
         <View style={styles.flex}>
-            <View style={styles.container}>
+            <View style={styles.header}>
                 <TextInput
 
                     style={styles.input}
@@ -89,10 +87,12 @@ const FindFriendsScreen = () => {
                 />
             </View>
 
-            <ScrollView contentContainerStyle={styles.container}>
+            <ScrollView >
+                <View style={styles.listContainer}>
                 {filteredFriends.map((friend) => (
                     <AddFriendComponent key={friend.id} friend={friend} onClick={handleAddingFriends}/>
                 ))}
+                </View>
             </ScrollView>
         </View>
     );
@@ -103,16 +103,27 @@ export default FindFriendsScreen;
 const styles = StyleSheet.create({
     flex: {
         flex: 1,
+        padding:10,
         backgroundColor: "#272625", // albo dynamicznie z theme
     },
+    header:{
+    },
     container: {
-        flexGrow: 1,
+        flex: 1,
         padding: 20,
+        backgroundColor: "#ca8a04",
+    },
+    listContainer: {
+
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        gap: 12
     },
     input: {
         borderWidth: 2,
         backgroundColor: "#e4e4e4",
-        borderColor:"#ca8a04",
+        borderColor: "#ca8a04",
         borderRadius: 12,
         paddingHorizontal: 12,
         height: 45,
