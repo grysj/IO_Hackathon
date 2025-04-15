@@ -1,6 +1,7 @@
 package ki.agh.aghub.service;
 
 import ki.agh.aghub.dto.ClassesDTO;
+import ki.agh.aghub.mapper.ClassesMapper;
 import jakarta.persistence.EntityNotFoundException;
 
 import ki.agh.aghub.model.Classes;
@@ -27,6 +28,7 @@ import java.time.format.DateTimeFormatter;
 public class ClassesService {
 
     private final ClassesRepository classesRepository;
+    private final ClassesMapper classesMapper;
     private final PoiRepository poiRepository;
     private final UsersRepository usersRepository;
 
@@ -42,14 +44,14 @@ public class ClassesService {
             "ul. Kawiory 21, 30-055 Kraków, Polska", 3L
     );
 
-
-
     public ClassesService(
         ClassesRepository classesRepository, 
         PoiRepository poiRepository, 
-        UsersRepository usersRepository
+        UsersRepository usersRepository,
+        ClassesMapper classesMapper
     ) { 
         this.classesRepository = classesRepository;
+        this.classesMapper = classesMapper;
         this.poiRepository = poiRepository;
         this.usersRepository = usersRepository;
     }
@@ -69,17 +71,7 @@ public class ClassesService {
     }
 
     public ClassesDTO saveClasses(ClassesDTO classesDTO) {
-        Classes classes = ClassesDTO.toClasses(classesDTO);
-
-        POI poi = poiRepository.findById(classesDTO.poiId())
-                .orElseThrow(() -> new RuntimeException("POI not found"));
-        User user = usersRepository.findById(classesDTO.userId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        classes.setPoi(poi);
-        classes.setUser(user);
-
-        return ClassesDTO.fromClasses(classesRepository.save(classes));
+        return ClassesDTO.fromClasses(classesRepository.save(classesMapper.fromDto(classesDTO)));
     }
 
 
@@ -104,7 +96,6 @@ public class ClassesService {
 
             // Parsowanie ICS z podanego URL
             List<Event> events = ParseIcsToJson.parseFromUrl(url);
-            System.out.println("Liczba zdarzeń: " + events.size());
 
             // Hardkodowana mapa: lokalizacja z ICS => ID POI
 //            final Map<String, Long> LOCATION_TO_POI_ID = Map.of(
@@ -126,47 +117,24 @@ public class ClassesService {
                         LocalDateTime startDate = LocalDateTime.parse(event.getDtstart(), formatter);
                         LocalDateTime endDate = LocalDateTime.parse(event.getDtend(), formatter);
 
-                        Long poiId = LOCATION_TO_POI_ID.getOrDefault(event.getLocation(), null);
+                        Long poiId = null;
 
-                        return new ClassesDTO(
-                                id,
-                                name,
-                                roomParsed,
-                                startDate,
-                                endDate,
-                                poiId,
-                                userId
+                        ClassesDTO classesDTO = new ClassesDTO(
+                            id,
+                            name,
+                            roomParsed,
+                            startDate,
+                            endDate,
+                            poiId,
+                            userId
                         );
+                        return classesDTO;
                     })
                     .toList();
 
-
-            // Obliczenie najwcześniejszej daty zajęć w otrzymanym batchu
-            dtos.stream()
-                    .map(ki.agh.aghub.dto.ClassesDTO::dateStart)
-                    .min(LocalDateTime::compareTo)
-                    .ifPresent(earliestDate ->
-                            System.out.println("Najwcześniejsza data zajęć: " + earliestDate)
-                    );
-
-            // DEBUG: wypisanie każdej DTO w konsoli
-            //dtos.forEach(dto -> System.out.println("DTO: " + dto));
-
-
-            // Mapowanie DTO na encje przy użyciu mappera
-            List<Classes> classesEntities = dtos.stream()
-                    .map(ClassesDTO::toClasses)
-                    .collect(Collectors.toList());
-
-            // Zapis encji do bazy danych za pomocą repository
-            //classesRepository.saveAll(classesEntities);
-
-            classesEntities.forEach(entity -> {
-                classesRepository.save(entity);
-                //System.out.println("Zapisano encję: " + entity);
-            });
-
-            //System.out.println("Zapisano " + classesEntities.size() + " encji Classes do bazy.");
+            for(ClassesDTO classesDTO : dtos) {
+                this.saveClasses(classesDTO);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

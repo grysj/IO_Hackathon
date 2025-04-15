@@ -54,6 +54,8 @@ public class ClassesController {
         String url = payload.get("url");
         Long userId = Long.parseLong(payload.get("userId"));
 
+        System.out.println(userId);
+
         // Wywołujemy nową metodę w service, która ma mapować plan z USOS do DTO
         classesService.mapUsosPlanToDto(url, userId);
 
