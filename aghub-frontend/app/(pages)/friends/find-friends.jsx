@@ -23,7 +23,8 @@ const FindFriendsScreen = () => {
                 headers: { "Content-Type": "application/json" },
             });
 
-            if (!response.ok) throw new Error("Błąd pobierania nie znajomych");
+            const errorText = await response.text(); // lub response.json() jeśli API zwraca JSON
+            throw new Error(errorText || "Błąd pobierania nie znajomych");
 
             const data = await response.json();
             setNewFriends(data);
