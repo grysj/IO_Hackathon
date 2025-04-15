@@ -3,6 +3,8 @@ package ki.agh.aghub.repository;
 // import ki.agh.aghub.model.POI;
 import ki.agh.aghub.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 // import org.springframework.data.jpa.repository.Query;
 // import org.springframework.data.repository.query.Param;
 
@@ -23,5 +25,13 @@ public interface UsersRepository extends JpaRepository<User, Long> {
 //    List<User> findDistinctByPoiAndDateStartBetween(POI poi, LocalDateTime startOfDay, LocalDateTime endOfDay);
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
+    @Query("""
+        SELECT u FROM User u
+        WHERE u.id != :userId
+        AND u.id NOT IN
+        (SELECT f.id FROM User u2
+        JOIN u2.friends f
+        WHERE u2.id = :userId)""")
+    List<User> findAllNotFriends(@Param("userId") Long userId);
 }
 

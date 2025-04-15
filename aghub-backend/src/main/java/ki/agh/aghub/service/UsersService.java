@@ -5,6 +5,7 @@ import ki.agh.aghub.dto.UserDTO;
 import ki.agh.aghub.dto.request.RegisterRequest;
 import ki.agh.aghub.exception.EmailAlreadyUsedException;
 import ki.agh.aghub.exception.InvalidCredentialsException;
+import ki.agh.aghub.exception.UserNotFoundException;
 import ki.agh.aghub.exception.UsernameAlreadyUsedException;
 // import ki.agh.aghub.model.POI;
 import ki.agh.aghub.model.Role;
@@ -144,6 +145,12 @@ public class UsersService {
         return user.getFriends().stream()
             .map(UserDTO::fromUser)
             .collect(Collectors.toList());
+
+    }
+    public List<UserDTO> getNotFriends(Long userId){
+        usersRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+        return usersRepository.findAllNotFriends(userId).stream().map(UserDTO::fromUser).collect(Collectors.toList());
 
     }
 
