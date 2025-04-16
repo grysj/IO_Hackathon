@@ -1,31 +1,26 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
-  const router = useRouter();
+  const isLoggedIn = !!user;
 
   useEffect(() => {
-    const checkLoggedInStatus = async () => {
+    const getStoredUser = async () => {
       try {
         const storedUser = await AsyncStorage.getItem("user");
-        const storedIsLoggedIn = await AsyncStorage.getItem("isLoggedIn");
 
-        if (storedIsLoggedIn === "true" && storedUser) {
+        if (storedUser) {
           setUser(JSON.parse(storedUser));
-          setIsLoggedIn(true);
-          router.push("/map"); // Redirect to the map page if already logged in
         }
       } catch (error) {
-        console.error("Error checking login status:", error);
+        console.error("Error getting stored user:", error);
       }
     };
 
-    checkLoggedInStatus();
+    getStoredUser();
   }, []);
 
   const signup = async (username, email, password) => {
@@ -43,16 +38,13 @@ export function AuthProvider({ children }) {
       }
 
       const userData = await response.json();
-
       setUser(userData);
-      setIsLoggedIn(true);
-
       await AsyncStorage.setItem("user", JSON.stringify(userData));
-      await AsyncStorage.setItem("isLoggedIn", "true");
 
-      router.push("/map");
+      return true;
     } catch (error) {
       console.error("Error signing up:", error);
+      return false;
     }
   };
 
@@ -71,31 +63,23 @@ export function AuthProvider({ children }) {
       }
 
       const userData = await response.json();
-
       setUser(userData);
-      setIsLoggedIn(true);
-
       await AsyncStorage.setItem("user", JSON.stringify(userData));
-      await AsyncStorage.setItem("isLoggedIn", "true");
 
-      router.push("/map");
+      return true;
     } catch (error) {
       console.error("Error logging in:", error);
+      return false;
     }
   };
 
   const logout = async () => {
     setUser(null);
-    setIsLoggedIn(false);
-
     await AsyncStorage.removeItem("user");
-    await AsyncStorage.removeItem("isLoggedIn");
-
-    router.push("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, isLoggedIn, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );
