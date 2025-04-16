@@ -8,7 +8,6 @@ const FindFriendsScreen = () => {
     const {user} = useAuth();
 
     const [newFriends, setNewFriends] = useState([]);
-    const [filteredFriends, setFilteredFriends] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
 
     const fetchNewFriends = async (userId) => {
@@ -25,7 +24,6 @@ const FindFriendsScreen = () => {
 
             const data = await response.json();
             setNewFriends(data);
-            setFilteredFriends(data);
             setSearchQuery("");
         } catch (error) {
             console.error(error);
@@ -36,14 +34,13 @@ const FindFriendsScreen = () => {
         fetchNewFriends(user.id);
     }, []);
 
-    useEffect(() => {
-        const query = searchQuery.toLowerCase();
-        const filtered = newFriends.filter((friend) =>
-            friend.username.toLowerCase().includes(query) ||
-            friend.email.toLowerCase().includes(query)
-        );
-        setFilteredFriends(filtered);
-    }, [searchQuery]);
+
+    const query = searchQuery.toLowerCase();
+    const filteredFriends = newFriends.filter((friend) =>
+        friend.username.toLowerCase().includes(query) ||
+        friend.email.toLowerCase().includes(query)
+    );
+
     const handleAddingFriends = async (friendId) => {
         try {
             const response = await fetch("http://34.116.250.33:8080/api/friends/add", {
@@ -66,7 +63,6 @@ const FindFriendsScreen = () => {
             console.log("Sukces:", data.message);
             const updatedFriends = newFriends.filter((f) => f.id !== friendId);
             setNewFriends(updatedFriends);
-            setFilteredFriends(updatedFriends);
             setSearchQuery("");
 
         } catch (error) {
@@ -87,11 +83,11 @@ const FindFriendsScreen = () => {
                 />
             </View>
 
-            <ScrollView >
+            <ScrollView>
                 <View style={styles.listContainer}>
-                {filteredFriends.map((friend) => (
-                    <AddFriendComponent key={friend.id} friend={friend} onClick={handleAddingFriends}/>
-                ))}
+                    {filteredFriends.map((friend) => (
+                        <AddFriendComponent key={friend.id} friend={friend} onClick={handleAddingFriends}/>
+                    ))}
                 </View>
             </ScrollView>
         </View>
@@ -103,11 +99,10 @@ export default FindFriendsScreen;
 const styles = StyleSheet.create({
     flex: {
         flex: 1,
-        padding:10,
+        padding: 10,
         backgroundColor: "#272625", // albo dynamicznie z theme
     },
-    header:{
-    },
+    header: {},
     container: {
         flex: 1,
         padding: 20,

@@ -93,7 +93,6 @@ const Calendar = ({ user }) => {
 
         const data = await response.json();
         setSchedule(data);
-        console.log(data);
       } catch (err) {
         if (err.name !== "AbortError") {
           setError(err.message);
