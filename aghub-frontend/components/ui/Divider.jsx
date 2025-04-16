@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 
 const Divider = ({
+
                      height = 1,
                      color = "#ca8a04",
                      marginVertical = 8,
