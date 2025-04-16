@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useRouter } from "expo-router";
-import { useAuth } from "@/contexts/authContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function HomeScreen() {
   const router = useRouter();
   const { isLoggedIn, logout } = useAuth();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/calendar");
+    }
+  }, [isLoggedIn]);
 
   return (
     <View style={styles.container}>

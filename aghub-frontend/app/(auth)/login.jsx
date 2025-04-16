@@ -10,20 +10,23 @@ import {
   ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useAuth } from "@/contexts/authContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginScreen() {
-  const router = useRouter();
-  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { login } = useAuth();
+  const router = useRouter();
 
-  const handleLogin = () => {
-    login(email, password);
-  };
-
-  const handleSignUp = () => {
-    router.push("/signup"); // Navigate to the Sign Up screen
+  const handleLogin = async () => {
+    setError("");
+    try {
+      await login(email, password);
+      router.replace("/calendar");
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -36,6 +39,9 @@ export default function LoginScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <Text style={styles.title}>Welcome back!</Text>
+
+        {error && <Text className="text-error-500">{error}</Text>}
+
         <View style={styles.fieldContainer}>
           <Text style={styles.label}>E-mail</Text>
           <TextInput
@@ -72,7 +78,10 @@ export default function LoginScreen() {
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>
             Don't have an account yet?{" "}
-            <Text style={styles.signupLink} onPress={handleSignUp}>
+            <Text
+              style={styles.signupLink}
+              onPress={() => router.replace("/(auth)/signup")}
+            >
               Sign Up
             </Text>
           </Text>

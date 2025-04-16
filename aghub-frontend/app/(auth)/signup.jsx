@@ -10,7 +10,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useAuth } from "@/contexts/authContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState("");
@@ -28,7 +28,9 @@ export default function RegisterScreen() {
     return regex.test(email);
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
+    setError("");
+
     if (!validateEmail(email)) {
       setError("Please provide a valid email address.");
       return;
@@ -46,8 +48,13 @@ export default function RegisterScreen() {
       return;
     }
     setError("");
-    // Connect registration logic here (e.g., API call)
-    signup(username, email, password);
+
+    try {
+      await signup(username, email, password);
+      router.replace("/calendar");
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -60,7 +67,7 @@ export default function RegisterScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <Text style={styles.header}>Create an account</Text>
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        {error && <Text className="text-error-500">{error}</Text>}
 
         {/* Email Field */}
         <View style={styles.fieldContainer}>
