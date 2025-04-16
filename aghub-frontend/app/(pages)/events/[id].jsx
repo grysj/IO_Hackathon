@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,10 +5,12 @@ import {
   ScrollView,
   Pressable,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
 import { format } from "date-fns";
+import { getEvent, getEventParticipants } from "@/api/aghub/events";
+import { getPoi } from "@/api/aghub/poi";
+import { useQuery } from "@tanstack/react-query";
 
 // Format helpers
 const formatTime = (dateString) => {
@@ -19,80 +20,53 @@ const formatTime = (dateString) => {
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return format(date, "d MMMM yyyy"); // e.g., "4 April 2025"
+  return format(date, "d MMMM yyyy");
 };
 
 export default function EventDetails() {
   const { id } = useLocalSearchParams();
-  const [event, setEvent] = useState(null);
-  const [poi, setPoi] = useState(null);
-  const [participants, setParticipants] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const router = useRouter();
 
-  useEffect(() => {
-    const abortController = new AbortController();
+  const {
+    data: event,
+    isLoading: isEventLoading,
+    error: eventError,
+  } = useQuery({
+    queryKey: ["event", id],
+    queryFn: ({ signal }) => getEvent(id, signal),
+    refetchInterval: 1000 * 60,
+    enabled: !!id,
+  });
 
-    const fetchEvent = async () => {
-      setLoading(true);
-      setError(null);
+  const {
+    data: participants = [],
+    isLoading: isParticipantsLoading,
+    error: participantsError,
+  } = useQuery({
+    queryKey: ["participants", id],
+    queryFn: ({ signal }) => getEventParticipants(id, signal),
+    refetchInterval: 1000 * 60,
+    enabled: !!id,
+  });
 
-      try {
-        // Fetch event
-        const eventRes = await fetch(
-          `http://34.116.250.33:8080/api/events/${id}`,
-          { signal: abortController.signal }
-        );
-        if (!eventRes.ok) throw new Error(eventRes.statusText || "Event error");
-        const eventData = await eventRes.json();
-        setEvent(eventData);
-
-        // Fetch POI
-        if (eventData.poiId) {
-          const poiRes = await fetch(
-            `http://34.116.250.33:8080/api/poi/${eventData.poiId}`,
-            { signal: abortController.signal }
-          );
-          if (!poiRes.ok) throw new Error(poiRes.statusText || "POI error");
-          const poiData = await poiRes.json();
-          setPoi(poiData);
-        }
-
-        // Fetch Participants
-        const partRes = await fetch(
-          `http://34.116.250.33:8080/api/events/participant/${id}`,
-          { signal: abortController.signal }
-        );
-        if (!partRes.ok)
-          throw new Error(partRes.statusText || "Participants error");
-        const partData = await partRes.json();
-        setParticipants(partData);
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          setError(err.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvent();
-
-    return () => {
-      abortController.abort();
-    };
-  }, [id]);
+  const {
+    data: poi,
+    isLoading: isPoiLoading,
+    error: poiError,
+  } = useQuery({
+    queryKey: ["poi", event?.poiId],
+    queryFn: ({ signal }) => getPoi(event.poiId, signal),
+    enabled: !!event?.poiId,
+  });
 
   const handleLocationPress = () => {
-    console.log(`Pressed on location: ${poi ? poi.name : "Unknown location"}`);
+    console.log(`Pressed on location: ${poi?.name || "Unknown POI"}`);
   };
 
   const handleParticipantPress = (participant) => {
-    console.log(`Pressed on participant: ${participant.name}`);
+    console.log(`Pressed on participant: ${participant.username}`);
   };
 
-  if (loading) {
+  if (isEventLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-background-50">
         <ActivityIndicator color="white" size="large" />
@@ -101,11 +75,11 @@ export default function EventDetails() {
     );
   }
 
-  if (error) {
+  if (eventError) {
     return (
       <View className="flex-1 justify-center items-center bg-background-50">
         <Text className="text-white text-2xl font-semibold">
-          Error: {error}
+          Error loading event: {eventError.message}
         </Text>
       </View>
     );
@@ -150,15 +124,24 @@ export default function EventDetails() {
           <Text className="text-yellow-600 font-semibold text-2xl mb-3">
             Location
           </Text>
-          <Pressable
-            onPress={handleLocationPress}
-            className="flex-row items-center gap-3 bg-white/10 px-5 py-3 rounded-xl"
-          >
-            <Ionicons name="location-sharp" size={22} color="#ca8a04" />
-            <Text className="text-white text-lg font-medium">
-              {poi ? poi.name : "Loading POI..."}
+
+          {isPoiLoading ? (
+            <Text className="text-white text-base">Loading location...</Text>
+          ) : poiError ? (
+            <Text className="text-red-400 text-base">
+              Failed to load location: {poiError.message}
             </Text>
-          </Pressable>
+          ) : (
+            <Pressable
+              onPress={handleLocationPress}
+              className="flex-row items-center gap-3 bg-white/10 px-5 py-3 rounded-xl"
+            >
+              <Ionicons name="location-sharp" size={22} color="#ca8a04" />
+              <Text className="text-white text-lg font-medium">
+                {poi?.name || "Unknown location"}
+              </Text>
+            </Pressable>
+          )}
         </View>
 
         {/* Participants */}
@@ -166,7 +149,16 @@ export default function EventDetails() {
           <Text className="text-yellow-600 font-semibold text-2xl mb-3">
             Participants
           </Text>
-          {participants.length === 0 ? (
+
+          {isParticipantsLoading ? (
+            <Text className="text-white text-base">
+              Loading participants...
+            </Text>
+          ) : participantsError ? (
+            <Text className="text-red-400 text-base">
+              Failed to load participants: {participantsError.message}
+            </Text>
+          ) : participants.length === 0 ? (
             <Text className="text-white text-base">No participants yet.</Text>
           ) : (
             participants.map((p) => (
@@ -175,7 +167,7 @@ export default function EventDetails() {
                 onPress={() => handleParticipantPress(p)}
                 className="flex-row items-center gap-3 bg-white/10 px-5 py-3 rounded-xl mb-3"
               >
-                <MaterialIcons name="person" size={22} color="#ca8a04" />
+                <Ionicons name="person" size={22} color="#ca8a04" />
                 <Text className="text-white text-lg font-medium">
                   {p.username}
                 </Text>
