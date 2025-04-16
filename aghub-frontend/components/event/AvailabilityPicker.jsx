@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Box, HStack, Input, InputField, Pressable, Text, VStack, View} from "@gluestack-ui/themed";
 import {Platform, StatusBar} from "react-native";
 import DateTimePickerBox from "./DateTimePickerBox";
+import Divider from "../ui/Divider";
 
 
 
@@ -78,7 +79,7 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
             </Text>
 
             <VStack space="lg" className="mb-4">
-                <Text className="text-base font-semibold text-white">
+                <Text className="text-xl font-semibold text-white">
                     Minimal duration of event (minutes)
                 </Text>
                 <Input className="bg-background-200 px-4 py-4 rounded-lg w-full">
@@ -87,18 +88,21 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
                         value={minDuration}
                         onChangeText={setMinDuration}
                         placeholder="Np. 60"
-                        style={{color: "#fff"}}
+                        style={{color: "#ca8a40"}}
                         placeholderTextColor="#aaa"
                     />
                 </Input>
+                <Divider/>
                 <Text className="text-xl font-semibold text-white mt-2">
                     Dates range:
                 </Text>
+
 
                 <HStack space="md" className="flex-row gap-2">
                     <DateTimePickerBox type={"date"} value={dateStart} onChange={setDateStart} visible={showDateStart} setVisible={setShowDateStart} ></DateTimePickerBox>
                     <DateTimePickerBox label={"To"} type={"date"} value={dateEnd} onChange={setDateEnd} visible={showDateEnd} setVisible={setShowDateEnd} ></DateTimePickerBox>
                 </HStack>
+                <Divider/>
 
                 <Text className="text-xl font-semibold text-white">
                     Hours range:
@@ -108,6 +112,7 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
                     <DateTimePickerBox value={dateStart} onChange={setDateStart} visible={showTimeStart} setVisible={setShowTimeStart} ></DateTimePickerBox>
                     <DateTimePickerBox label={"To"} value={dateEnd} onChange={setDateEnd} visible={showTimeEnd} setVisible={setShowTimeEnd} ></DateTimePickerBox>
                 </HStack>
+                <Divider/>
 
 
 
