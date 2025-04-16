@@ -1,16 +1,22 @@
 import React, {useState} from "react";
 import {Box, HStack, Input, InputField, Pressable, Text, VStack, View} from "@gluestack-ui/themed";
-import {Platform, StatusBar} from "react-native";
+import {Platform, StatusBar, ScrollView} from "react-native";
 import DateTimePickerBox from "./DateTimePickerBox";
 import Divider from "../ui/Divider";
 
 
-
+//TODO Sprawdzić czy w friendsID jest user id
 const getFormattedDate = (offset) => {
     const date = new Date();
     date.setDate(date.getDate() + offset);
     return date.toISOString().split("T")[0];
 };
+
+function formatDate(newDate) {
+    const date = new Date(newDate.toString())
+    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+    return date.toISOString()
+}
 
 const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
     const [minDuration, setMinDuration] = useState("60");
@@ -21,12 +27,10 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
     const [dateStart, setDateStart] = useState(new Date())
     const [dateEnd, setDateEnd] = useState(new Date())
 
-    const dates = [getFormattedDate(0), getFormattedDate(1), getFormattedDate(2)];
+    const [selectedSlot, setSelectedSlot] = useState()
+    const [availableSlots, setAvailableSlots] = useState([])
     const fetchAvailabilities = async (friendsId) => {
         try {
-            const startDate = parseTimeToDate(selectedDate, timeRange.from);
-            const endDate = parseTimeToDate(selectedDate, timeRange.to);
-
             const response = await fetch("http://34.116.250.33:8080/api/availability/find", {
                 method: "POST",
                 headers: {
@@ -34,8 +38,8 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
                 },
                 body: JSON.stringify({
                     usersId: friendsId,
-                    startDate: startDate.toISOString(),
-                    endDate: endDate.toISOString(),
+                    dateStart: formatDate(dateStart),
+                    dateEnd: formatDate(dateEnd),
                     minDuration: `PT${minDuration}M`,
                 }),
             });
@@ -46,6 +50,7 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
             }
 
             const data = await response.json();
+            console.log(data)
             setAvailableSlots(data);
         } catch (err) {
             console.error("Błąd podczas pobierania dostępności:", err.message);
@@ -125,41 +130,42 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
                 </Pressable>
             </VStack>
 
-            {/*<ScrollView className="mb-4" style={{flexGrow: 0}}>*/}
-            {/*    <VStack space="md">*/}
-            {/*        {availableSlots.map((slot, index) => {*/}
-            {/*            const isSelected = selectedSlot?.startDate === slot.startDate;*/}
-            {/*            return (*/}
-            {/*                <Pressable*/}
-            {/*                    key={index}*/}
-            {/*                    onPress={() => setSelectedSlot(slot)}*/}
-            {/*                    className={`w-full p-4 rounded-lg border ${*/}
-            {/*                        isSelected*/}
-            {/*                            ? "bg-yellow-600 border-yellow-700"*/}
-            {/*                            : "bg-background-100 border-outline-200"*/}
-            {/*                    }`}*/}
-            {/*                >*/}
-            {/*                    <Text*/}
-            {/*                        className={`text-lg font-semibold ${*/}
-            {/*                            isSelected ? "text-white" : "text-typography-900"*/}
-            {/*                        }`}*/}
-            {/*                    >*/}
-            {/*                        {new Date(slot.startDate).toLocaleDateString()}{" "}*/}
-            {/*                        {new Date(slot.startDate).toLocaleTimeString([], {*/}
-            {/*                            hour: "2-digit",*/}
-            {/*                            minute: "2-digit",*/}
-            {/*                        })}{" "}*/}
-            {/*                        -{" "}*/}
-            {/*                        {new Date(slot.endDate).toLocaleTimeString([], {*/}
-            {/*                            hour: "2-digit",*/}
-            {/*                            minute: "2-digit",*/}
-            {/*                        })}*/}
-            {/*                    </Text>*/}
-            {/*                </Pressable>*/}
-            {/*            );*/}
-            {/*        })}*/}
-            {/*    </VStack>*/}
-            {/*</ScrollView>*/}
+            <ScrollView className="mb-4" style={{flexGrow: 0}}>
+                <VStack space="md">
+                    {availableSlots.map((slot, index) => {
+                        const isSelected = selectedSlot?.startDate === slot.startDate;
+                        return (
+                            <Pressable
+                                key={index}
+                                onPress={() => setSelectedSlot(slot)}
+                                className={`w-full p-4 rounded-lg border ${
+                                    isSelected
+                                        ? "bg-yellow-600 border-yellow-700"
+                                        : "bg-background-100 border-outline-200"
+                                }`}
+                            >
+                                <Text
+                                    className={`text-lg font-semibold ${
+                                        isSelected ? "text-white" : "text-typography-900"
+                                    }`}
+                                >
+                                    {new Date(slot.startDate).toLocaleDateString()}{" "}
+                                    {new Date(slot.startDate).toLocaleTimeString([], {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                    })}{" "}
+                                    -{" "}
+                                    {new Date(slot.startDate).toLocaleDateString()}{" "}
+                                    {new Date(slot.endDate).toLocaleTimeString([], {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                    })}
+                                </Text>
+                            </Pressable>
+                        );
+                    })}
+                </VStack>
+            </ScrollView>
 
 
             <Box className="mt-4">

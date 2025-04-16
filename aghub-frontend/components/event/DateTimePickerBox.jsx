@@ -17,7 +17,8 @@ const DateTimePickerBox = ({label ="From", type = "time", value, onChange, visib
             }
 
             case "date": {
-                const newDate = new Date(date);
+                const newDate = new Date(value);
+                newDate.setFullYear(newDate.getFullYear())
                 onChange(newDate);
                 break;
             }
@@ -54,7 +55,7 @@ const DateTimePickerBox = ({label ="From", type = "time", value, onChange, visib
                 <View className="bg-background-200 py-4 rounded-lg">
                     {visible && (
                         <RNDateTimePicker
-                            value={new Date()}
+                            value={value}
                             mode={type}
                             display="spinner"
                             is24Hour={true}
