@@ -9,9 +9,9 @@ import java.util.List;
 
 public record AvailabilityRequest (
         @NotNull
-        LocalDateTime startDate,
+        LocalDateTime dateStart,
         @NotNull
-        LocalDateTime endDate,
+        LocalDateTime dateEnd,
         @NotNull
         Duration minDuration,
         @NotEmpty

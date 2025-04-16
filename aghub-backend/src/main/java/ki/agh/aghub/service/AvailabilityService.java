@@ -55,10 +55,9 @@ public class AvailabilityService {
 
         List<AvailabilityDTO> mergedBusy = mergeTimeRanges(busyTimes);
 
-        // 3. Wyszukaj wolne przedziały między zajętościami
+
         List<AvailabilityDTO> freeSlots = findFreeSlotsBetween(mergedBusy, from, to);
 
-        // 4. Zwróć tylko te dłuższe niż `minDuration`
         return freeSlots.stream()
                 .filter(slot -> Duration.between(slot.dateStart(), slot.dateEnd()).compareTo(minDuration) >= 0)
                 .map(slot -> new AvailabilityDTO(slot.dateStart(), slot.dateEnd()))
