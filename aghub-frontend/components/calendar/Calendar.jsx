@@ -3,6 +3,7 @@ import { Box, Text, ScrollView, HStack } from "@gluestack-ui/themed";
 import CalendarComponent from "./CalendarComponent";
 import WeekDayBar from "./WeekDayBar";
 import { useRouter } from "expo-router";
+import CalendarTimeLine from "./CalendarTimeLine";
 
 const hours = Array.from(
   { length: 24 },
@@ -132,6 +133,7 @@ const Calendar = ({ user }) => {
       />
 
       <ScrollView>
+        <CalendarTimeLine />
         <Box className="px-4 py-2 min-h-[1440px]">
           {hours.map((hour, i) => (
             <HStack
@@ -180,6 +182,7 @@ const Calendar = ({ user }) => {
               color="bg-red-600"
               zIndex={8}
               type="unavailability"
+
             />
           ))}
         </Box>

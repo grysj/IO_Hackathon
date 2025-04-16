@@ -15,6 +15,10 @@ const CalendarComponent = ({
   color = "bg-primary-600",
   zIndex = 10,
   onPress: handlePress,
+    opacity = 0.8,
+    borderWidth = 1,
+    borderColor = "bg-primary-600",
+    style ={}
 }) => {
   const top = hourToTopOffset(dateStart);
   const bottom = hourToTopOffset(dateEnd);
@@ -25,9 +29,13 @@ const CalendarComponent = ({
       onPress={handlePress}
       className={`absolute left-[60px] w-[70%] ${color} rounded-md px-3 py-2`}
       style={{
+        opacity,
+        borderWidth,
+        borderColor,
         top,
         height,
         zIndex,
+        ...style,
       }}
     >
       <View>
