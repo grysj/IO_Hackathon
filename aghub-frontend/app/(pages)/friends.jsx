@@ -3,9 +3,10 @@ import {Box, ScrollView, VStack, Text, View} from '@gluestack-ui/themed'
 
 import {useRouter} from "expo-router";
 import {useAuth} from "../../contexts/authContext";
-import {mockFriends} from "../../mock/MockedData";
+
 import FriendComponent from "../../components/friendlist/FriendComponent";
 import AddFriendButton from "../../components/friendlist/AddFriendButton";
+import Divider from "../../components/ui/Divider";
 
 
 
@@ -62,7 +63,7 @@ const FriendsScreen = () => {
                 </Text>
                 <AddFriendButton onClick={handlePress} />
             </View>
-            <View className="h-[1px] bg-yellow-600 m-4 mt-2" />
+            <Divider marginHorizontal={4}/>
             <ScrollView>
                 <VStack space="md" className={"p-3"}>
 
