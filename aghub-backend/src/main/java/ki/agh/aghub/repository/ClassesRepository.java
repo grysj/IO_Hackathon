@@ -16,8 +16,8 @@ public interface ClassesRepository extends JpaRepository<Classes, Long> {
                                                        @Param("dateEnd") LocalDateTime dateEnd);
 
     @Query("""
-    SELECT c FROM Classes c 
-    WHERE c.user.id = :userId 
+    SELECT c FROM Classes c
+    WHERE c.user.id = :userId
     AND (
         (:dateStart BETWEEN c.dateStart AND c.dateEnd)
         OR (:dateEnd BETWEEN c.dateStart AND c.dateEnd)

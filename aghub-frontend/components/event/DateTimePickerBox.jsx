@@ -9,7 +9,7 @@ const DateTimePickerBox = ({label ="From", type = "time", value, onChange, visib
 
         switch (type) {
             case "time": {
-                const newDate = new Date(value);
+                const newDate = new Date(value.toString());
                 newDate.setHours(date.getHours());
                 newDate.setMinutes(date.getMinutes());
                 onChange(newDate);
@@ -17,11 +17,14 @@ const DateTimePickerBox = ({label ="From", type = "time", value, onChange, visib
             }
 
             case "date": {
-                const newDate = new Date(value);
-                newDate.setFullYear(newDate.getFullYear())
+                const newDate = new Date(value.toString());
+                newDate.setFullYear(date.getFullYear());
+                newDate.setMonth(date.getMonth());
+                newDate.setDate(date.getDate());
                 onChange(newDate);
                 break;
             }
+
 
             default:
                 break;
@@ -40,7 +43,7 @@ const DateTimePickerBox = ({label ="From", type = "time", value, onChange, visib
             case "date": {
                 return `${value.getDate()
                     .toString()
-                    .padStart(2, "0")}-${value.getMonth()
+                    .padStart(2, "0")}-${(value.getMonth() + 1)
                     .toString()
                     .padStart(2, "0")}-${value.getFullYear()
                 }`

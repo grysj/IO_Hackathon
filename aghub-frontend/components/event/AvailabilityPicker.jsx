@@ -14,7 +14,7 @@ const getFormattedDate = (offset) => {
 
 function formatDate(newDate) {
     const date = new Date(newDate.toString())
-    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+    date.setMinutes(newDate.getMinutes() - newDate.getTimezoneOffset());
     return date.toISOString()
 }
 
@@ -31,18 +31,22 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
     const [availableSlots, setAvailableSlots] = useState([])
     const fetchAvailabilities = async (friendsId) => {
         try {
+            console.log(formatDate(dateStart))
+            console.log(formatDate(dateEnd))
+            console.log(`PT${minDuration}M`)
             const response = await fetch("http://34.116.250.33:8080/api/availability/find", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    usersId: friendsId,
                     dateStart: formatDate(dateStart),
                     dateEnd: formatDate(dateEnd),
                     minDuration: `PT${minDuration}M`,
+                    usersId: friendsId,
                 }),
             });
+            console.log(friendsId)
 
             if (!response.ok) {
                 const err = await response.text();

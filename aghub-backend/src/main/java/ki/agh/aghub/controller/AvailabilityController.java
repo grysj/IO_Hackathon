@@ -18,6 +18,6 @@ public class AvailabilityController {
 
     @PostMapping("/find")
     public List<AvailabilityDTO> find(@RequestBody AvailabilityRequest request) {
-        return availabilityService.findAllAvailabilities(request.usersId(), request.startDate(), request.endDate(),request.minDuration());
+        return availabilityService.findAllAvailabilities(request.usersId(), request.dateStart(), request.dateEnd(),request.minDuration());
     }
 }
