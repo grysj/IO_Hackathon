@@ -29,6 +29,8 @@ export default function RegisterScreen() {
   };
 
   const handleRegister = async () => {
+    setError("");
+
     if (!validateEmail(email)) {
       setError("Please provide a valid email address.");
       return;
@@ -47,11 +49,11 @@ export default function RegisterScreen() {
     }
     setError("");
 
-    const success = await signup(username, email, password);
-    if (success) {
+    try {
+      await signup(username, email, password);
       router.replace("/calendar");
-    } else {
-      // TODO: Display an error message if signup fails
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -65,7 +67,7 @@ export default function RegisterScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <Text style={styles.header}>Create an account</Text>
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        {error && <Text className="text-error-500">{error}</Text>}
 
         {/* Email Field */}
         <View style={styles.fieldContainer}>

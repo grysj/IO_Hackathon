@@ -15,15 +15,17 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const { login } = useAuth();
   const router = useRouter();
 
   const handleLogin = async () => {
-    const success = await login(email, password);
-    if (success) {
+    setError("");
+    try {
+      await login(email, password);
       router.replace("/calendar");
-    } else {
-      // TODO: Display an error message if login fails
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -37,6 +39,9 @@ export default function LoginScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <Text style={styles.title}>Welcome back!</Text>
+
+        {error && <Text className="text-error-500">{error}</Text>}
+
         <View style={styles.fieldContainer}>
           <Text style={styles.label}>E-mail</Text>
           <TextInput

@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
 
   const signup = async (username, email, password) => {
     try {
-      const response = await fetch("http://34.116.250.33:8080/auth/register", {
+      const res = await fetch("http://34.116.250.33:8080/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,24 +33,27 @@ export function AuthProvider({ children }) {
         body: JSON.stringify({ username, email, password }), // Adjust this body to match your RegisterRequest structure
       });
 
-      if (!response.ok) {
-        throw new Error("Signup failed. Please try again.");
+      if (!res.ok) {
+        if (res.status === 409) {
+          const data = await res.json();
+          throw new Error(data.error || "User already exists");
+        } else {
+          throw new Error("Something went wrong");
+        }
       }
 
-      const userData = await response.json();
+      const userData = await res.json();
       setUser(userData);
       await AsyncStorage.setItem("user", JSON.stringify(userData));
-
-      return true;
-    } catch (error) {
-      console.error("Error signing up:", error);
-      return false;
+    } catch (err) {
+      // console.error("Error signing up:", error);
+      throw err;
     }
   };
 
   const login = async (email, password) => {
     try {
-      const response = await fetch("http://34.116.250.33:8080/auth/login", {
+      const res = await fetch("http://34.116.250.33:8080/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,18 +61,21 @@ export function AuthProvider({ children }) {
         body: JSON.stringify({ email, password }),
       });
 
-      if (!response.ok) {
-        throw new Error("Login failed. Please check your credentials.");
+      if (!res.ok) {
+        if (res.status === 401) {
+          const data = await res.json();
+          throw new Error(data.error || "Invalid credentials");
+        } else {
+          throw new Error("Something went wrong");
+        }
       }
 
-      const userData = await response.json();
+      const userData = await res.json();
       setUser(userData);
       await AsyncStorage.setItem("user", JSON.stringify(userData));
-
-      return true;
-    } catch (error) {
-      console.error("Error logging in:", error);
-      return false;
+    } catch (err) {
+      // console.error("Error logging in:", err);
+      throw err;
     }
   };
 
