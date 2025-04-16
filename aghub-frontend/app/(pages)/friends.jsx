@@ -1,14 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Box, ScrollView, VStack, Text, View} from '@gluestack-ui/themed'
 
-<<<<<<< HEAD
+
 import { useRouter } from "expo-router";
 import { useAuth } from "../../contexts/AuthContext";
-=======
-import {useRouter} from "expo-router";
-import {useAuth} from "../../contexts/authContext";
 
->>>>>>> 0c72d37da409f89bd2d5c5ddfc3b999593d8728b
 import FriendComponent from "../../components/friendlist/FriendComponent";
 import AddFriendButton from "../../components/friendlist/AddFriendButton";
 import Divider from "../../components/ui/Divider";

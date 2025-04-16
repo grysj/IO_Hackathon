@@ -127,7 +127,7 @@ const Calendar = ({user}) => {
         <Box className="flex-1 bg-background-50">
             <Box className="px-4 py-2 bg-background-50">
                 <Text className="text-xl font-bold text-typography-950">
-                    {`${formatDateLabe(weekDays[0])} - ${formatDateLabel(weekDays[6])}`}
+                    {`${formatDateLabel(weekDays[0])} - ${formatDateLabel(weekDays[6])}`}
                 </Text>
             </Box>
 
