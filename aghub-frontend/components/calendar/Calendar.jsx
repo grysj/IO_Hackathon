@@ -167,6 +167,8 @@ const Calendar = ({ user }) => {
               {...e}
               color="bg-success-500"
               type="event"
+              borderColor="bg-succes-600"
+              opacity={0.6}
               onPress={() =>
                 router.push({
                   pathname: "/events/[id]",
@@ -180,6 +182,8 @@ const Calendar = ({ user }) => {
               key={`unavail-${i}`}
               {...u}
               color="bg-red-600"
+              opacity={0.4}
+              borderColor="bg-red-600"
               zIndex={8}
               type="unavailability"
 
