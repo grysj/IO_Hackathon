@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, TextInput, View } from "react-native";
 import AddFriendComponent from "../../../components/friendlist/AddFriendComponent";
 
+
 const FindFriendsScreen = () => {
   const { user } = useAuth();
 
-  const [newFriends, setNewFriends] = useState([]);
-  const [filteredFriends, setFilteredFriends] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+    const [newFriends, setNewFriends] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
 
   const fetchNewFriends = async (userId) => {
     try {
@@ -25,59 +25,53 @@ const FindFriendsScreen = () => {
         throw new Error(errorText || "Błąd pobierania znajomych");
       }
 
-      const data = await response.json();
-      setNewFriends(data);
-      setFilteredFriends(data);
-      setSearchQuery("");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+            const data = await response.json();
+            setNewFriends(data);
+            setSearchQuery("");
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
   useEffect(() => {
     fetchNewFriends(user.id);
   }, []);
 
-  useEffect(() => {
+
     const query = searchQuery.toLowerCase();
-    const filtered = newFriends.filter(
-      (friend) =>
+    const filteredFriends = newFriends.filter((friend) =>
         friend.username.toLowerCase().includes(query) ||
         friend.email.toLowerCase().includes(query)
     );
-    setFilteredFriends(filtered);
-  }, [searchQuery]);
-  const handleAddingFriends = async (friendId) => {
-    try {
-      const response = await fetch(
-        "http://34.116.250.33:8080/api/friends/add",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user: user.id,
-            friend: friendId,
-          }),
-        }
-      );
+
+    const handleAddingFriends = async (friendId) => {
+        try {
+            const response = await fetch("http://34.116.250.33:8080/api/friends/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    user: user.id,
+                    friend: friendId
+                }),
+            });
 
       if (!response.ok) {
         const errorMessage = await response.json();
         throw new Error(errorMessage || "Błąd dodawania znajomego");
       }
 
-      const data = await response.json();
-      console.log("Sukces:", data.message);
-      const updatedFriends = newFriends.filter((f) => f.id !== friendId);
-      setNewFriends(updatedFriends);
-      setFilteredFriends(updatedFriends);
-      setSearchQuery("");
-    } catch (error) {
-      console.error("Błąd:", error.message);
-    }
-  };
+            const data = await response.json();
+            console.log("Sukces:", data.message);
+            const updatedFriends = newFriends.filter((f) => f.id !== friendId);
+            setNewFriends(updatedFriends);
+            setSearchQuery("");
+
+        } catch (error) {
+            console.error("Błąd:", error.message);
+        }
+    };
 
   return (
     <View style={styles.flex}>
