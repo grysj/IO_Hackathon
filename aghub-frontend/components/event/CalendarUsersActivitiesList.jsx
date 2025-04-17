@@ -31,6 +31,7 @@ const CalendarUsersActivitiesList = ({schedule, pickedDay, user}) => {
                     zIndex={9}
                     type="class"
                     showDate={false}
+                    username={user.username}
                 />
             ))}
 
@@ -41,8 +42,8 @@ const CalendarUsersActivitiesList = ({schedule, pickedDay, user}) => {
                     backgroundColor={"#991b1b"}
                     type="event"
                     borderColor={"#dc2626"}
+                    username={user.username}
                     opacity={0.2}
-                    showDate={false}
                 />
             ))}
 
@@ -54,8 +55,8 @@ const CalendarUsersActivitiesList = ({schedule, pickedDay, user}) => {
                     opacity={0.2}
                     borderColor={"#dc2626"}
                     zIndex={8}
+                    username={user.username}
                     type="unavailability"
-                    showDate={false}
                 />
             ))}
         </>

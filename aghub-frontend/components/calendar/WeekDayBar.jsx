@@ -24,13 +24,14 @@ const WeekDayBar = ({ weekDays, pickedDay, onClickDay, shift, specialDays =[] })
                 <Pressable key={index} onPress={() => onClickDay(day)}>
                     <Box
                         className={`w-8 h-8 mt-1 flex items-center justify-center align-middle ${
-                            isSpecialDay(day) ? "bg-green-500 border-2 border-green-700" :""} ${
-                            isTheSameDay(day, pickedDay) ? 'bg-yellow-600 rounded-full' : ''
-                        }`}
+                             
+                            isTheSameDay(day, pickedDay) ? 'bg-yellow-600 rounded-full' : 
+                                isSpecialDay(day) ? "bg-green-500 rounded-full border-2 border-green-700" :""}
+                             ${isTheSameDay(day, pickedDay)&& isSpecialDay(day)?"border-2 border-green-700":""}`}
                     >
                         <Text
                             className={`${
-                                isTheSameDay(day, pickedDay)
+                                isTheSameDay(day, pickedDay) || isSpecialDay(day)
                                     ? 'font-bold'
                                     : 'text-typography-900 font-normal'
                             }`}

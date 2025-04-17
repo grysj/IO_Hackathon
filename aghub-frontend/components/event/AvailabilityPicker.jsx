@@ -72,7 +72,7 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
 
     return showCalendar ? (
         <EventCreationCalendar usersId={friendIds} dateStart={dateStart} dateEnd={dateEnd} goBack={()=> setShowCalendar(false)}
-                               availabilities={availableSlots}/> // ← zamień na swój komponent kalendarza
+                               availabilities={availableSlots}/>
     ) : (<Box
             className="flex-1 bg-background-50"
             style={

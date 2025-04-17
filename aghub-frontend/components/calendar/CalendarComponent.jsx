@@ -13,6 +13,7 @@ const hourToTopOffset = (date) => {
 const CalendarComponent = ({
                                dateStart,
                                dateEnd,
+                               username = "",
                                showDate = true,
                                name = "",
                                backgroundColor = "bg-primary-600",
@@ -44,9 +45,12 @@ const CalendarComponent = ({
         >
             <View>
                 <Text className="text-white font-bold">{name}</Text>
-                <Text className="text-gray-100 text-xs">
-                    {showDate && `${formatTime(dateStart)} - ${formatTime(dateEnd)}`}
-                </Text>
+                {showDate && (<Text className="text-gray-100 text-xs">
+                    {formatTime(dateStart)} - {formatTime(dateEnd)}
+                </Text>)}
+                {username &&(<Text className="text-gray-100 text-xs">
+                     {username}
+                </Text>)}
             </View>
         </Pressable>
     );

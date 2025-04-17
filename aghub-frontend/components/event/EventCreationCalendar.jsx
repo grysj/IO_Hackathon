@@ -18,7 +18,20 @@ function filterHiddenUsers(usersCalendars = [], hiddenUsers = []) {
     );
 }
 
+const generateSpecialDays = (start, end) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
 
+    const days = [];
+    const current = new Date(startDate);
+
+    while (current <= endDate) {
+        days.push(new Date(current)); // kopia obiektu
+        current.setDate(current.getDate() + 1);
+    }
+
+    return days;
+};
 
 const EventCreationCalendar= ({availabilities, dateStart, dateEnd, usersId, goBack}) =>{
     const { user } = useAuth();
@@ -75,6 +88,7 @@ const EventCreationCalendar= ({availabilities, dateStart, dateEnd, usersId, goBa
 
         return () => controller.abort();
     }, [user, weekDays]);
+    const specialDays = generateSpecialDays(dateStart, dateEnd);
     const pickedCalendars = filterHiddenUsers(usersCalendars, hiddenUsers)
     const availabilitiesPicked = availabilities
         ? cropScheduleToPickedDay(availabilities, pickedDay)
@@ -98,6 +112,7 @@ const EventCreationCalendar= ({availabilities, dateStart, dateEnd, usersId, goBa
                 pickedDay={pickedDay}
                 onClickDay={setPickedDay}
                 shift={shiftWeek}
+                specialDays={specialDays}
             />
 
             <CalendarField>
