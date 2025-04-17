@@ -73,6 +73,7 @@ const DateTimePickerBox = ({
                             mode={type}
                             display="spinner"
                             is24Hour={true}
+                            minimumDate={value}
                             timeZoneName="Europe/Warsaw"
                             positiveButton={{textColor: "white"}}
                             negativeButton={{textColor: "white"}}

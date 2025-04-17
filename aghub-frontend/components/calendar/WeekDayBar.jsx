@@ -1,7 +1,7 @@
 import { Box, HStack, Pressable, Text } from "@gluestack-ui/themed";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import React from "react";
-
+//TODO poprawienie tego parszywego stylowania i wywalenie gluestacka as usuall
 const WeekDayBar = ({ weekDays, pickedDay, onClickDay, shift, specialDays =[] }) => {
 
     const isTheSameDay = (day1, day2) => {
@@ -24,7 +24,6 @@ const WeekDayBar = ({ weekDays, pickedDay, onClickDay, shift, specialDays =[] })
                 <Pressable key={index} onPress={() => onClickDay(day)}>
                     <Box
                         className={`w-8 h-8 mt-1 flex items-center justify-center align-middle ${
-                             
                             isTheSameDay(day, pickedDay) ? 'bg-yellow-600 rounded-full' : 
                                 isSpecialDay(day) ? "bg-green-500 rounded-full border-2 border-green-700" :""}
                              ${isTheSameDay(day, pickedDay)&& isSpecialDay(day)?"border-2 border-green-700":""}`}
