@@ -6,6 +6,7 @@ import DateTimePickerBox from "./DateTimePickerBox";
 import CustomDivider from "../ui/CustomDivider";
 import React, {useState} from "react";
 import {formatDateTimeToLocalDateTime} from "../../app/functions/format/FormatDateTime";
+import EventSlotCustomizer from "./EventSlotCustomizer";
 
 const DateTimeRangePicker = ({
                                  friendIds,
@@ -24,6 +25,7 @@ const DateTimeRangePicker = ({
     const [showTimeEnd, setShowTimeEnd] = useState(false)
     const [showDateStart, setShowDateStart] = useState(false)
     const [showDateEnd, setShowDateEnd] = useState(false)
+    const [showSlotCustomizer, setShowSlotCustomizer] = useState(false)
     const [disableCalendarButton, setDisableCalendarButton] = useState(true)
     const fetchAvailabilities = async (friendsId) => {
         try {
@@ -170,16 +172,21 @@ const DateTimeRangePicker = ({
                     })}
                 </VStack>
                 <Divider style={{height: 2}}/>
-                <TouchableOpacity className="bg-yellow-600 p-4 rounded-lg items-center">
-                    <Text className="text-white font-bold">Customize Availability</Text>
-                </TouchableOpacity>
-                <CustomDivider style={{height: 2}} marginVertical={12}>
-                    <Text style={{color: "white"}}>OR</Text>
-                </CustomDivider>
                 <TouchableOpacity disabled={disableCalendarButton} onPress={() => setShowCalendar(true)}
                                   className="bg-yellow-600 p-4 rounded-lg items-center">
                     <Text className="text-white font-bold">Check On Calendar</Text>
                 </TouchableOpacity>
+                <CustomDivider style={{height: 2}} marginVertical={12}>
+                    <Text style={{color: "white"}}>OR</Text>
+                </CustomDivider>
+
+                {showSlotCustomizer? <EventSlotCustomizer minDate={dateStart}
+                                                          dateMax={dateEnd}
+                                                          dateEnd={}
+                /> :<TouchableOpacity onPress={() => setShowSlotCustomizer(true)}
+                                   className="bg-yellow-600 p-4 rounded-lg items-center">
+                    <Text className="text-white font-bold">Customize Availability</Text>
+                </TouchableOpacity>}
             </ScrollView>
 
         </Box>
