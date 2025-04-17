@@ -1,8 +1,10 @@
 import React, {useState} from "react";
-import {Box, HStack, Input, InputField, Pressable, Text, VStack, View} from "@gluestack-ui/themed";
-import {Platform, StatusBar, ScrollView} from "react-native";
+import {Box, HStack, Input, InputField, Pressable, Text, VStack} from "@gluestack-ui/themed";
+import {Platform, ScrollView, StatusBar, TouchableOpacity, View} from "react-native";
 import DateTimePickerBox from "./DateTimePickerBox";
 import Divider from "../ui/Divider";
+import CustomDivider from "../ui/CustomDivider";
+import {Ionicons} from "@expo/vector-icons";
 
 
 //TODO Sprawdzić czy w friendsID jest user id
@@ -31,9 +33,7 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
     const [availableSlots, setAvailableSlots] = useState([])
     const fetchAvailabilities = async (friendsId) => {
         try {
-            console.log(formatDate(dateStart))
-            console.log(formatDate(dateEnd))
-            console.log(`PT${minDuration}M`)
+
             const response = await fetch("http://34.116.250.33:8080/api/availability/find", {
                 method: "POST",
                 headers: {
@@ -46,7 +46,7 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
                     usersId: friendsId,
                 }),
             });
-            console.log(friendsId)
+
 
             if (!response.ok) {
                 const err = await response.text();
@@ -54,7 +54,6 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
             }
 
             const data = await response.json();
-            console.log(data)
             setAvailableSlots(data);
         } catch (err) {
             console.error("Błąd podczas pobierania dostępności:", err.message);
@@ -80,64 +79,75 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
             className="flex-1 bg-background-50 px-4"
             style={{
                 paddingTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
-                paddingBottom: 20,
             }}
         >
-            <Text className="text-2xl font-bold mb-4 text-white">
-                Check time range
-            </Text>
+            <ScrollView>
+                <View className="flex-row items-center gap-2 mb-2">
+                    <Ionicons name="time" size={30} color="#ca8a04"/>
+                    <Text className="text-2xl font-bold text-white">
+                        Check time range
+                    </Text>
+                </View>
 
-            <VStack space="lg" className="mb-4">
-                <Text className="text-xl font-semibold text-white">
-                    Minimal duration of event (minutes)
-                </Text>
-                <Input className="bg-background-200 px-4 py-4 rounded-lg w-full">
-                    <InputField
-                        keyboardType="numeric"
-                        value={minDuration}
-                        onChangeText={setMinDuration}
-                        placeholder="Np. 60"
-                        style={{color: "#ca8a40"}}
-                        placeholderTextColor="#aaa"
-                    />
-                </Input>
-                <Divider/>
-                <Text className="text-xl font-semibold text-white mt-2">
-                    Dates range:
-                </Text>
-
-
-                <HStack space="md" className="flex-row gap-2">
-                    <DateTimePickerBox type={"date"} value={dateStart} onChange={setDateStart} visible={showDateStart} setVisible={setShowDateStart} ></DateTimePickerBox>
-                    <DateTimePickerBox label={"To"} type={"date"} value={dateEnd} onChange={setDateEnd} visible={showDateEnd} setVisible={setShowDateEnd} ></DateTimePickerBox>
-                </HStack>
-                <Divider/>
-
-                <Text className="text-xl font-semibold text-white">
-                    Hours range:
-                </Text>
-
-                <HStack space="md" className="flex-row gap-2">
-                    <DateTimePickerBox value={dateStart} onChange={setDateStart} visible={showTimeStart} setVisible={setShowTimeStart} ></DateTimePickerBox>
-                    <DateTimePickerBox label={"To"} value={dateEnd} onChange={setDateEnd} visible={showTimeEnd} setVisible={setShowTimeEnd} ></DateTimePickerBox>
-                </HStack>
-                <Divider/>
+                <VStack space="lg" className="mb-4">
+                    <Text className="text-xl font-semibold text-white">
+                        Minimal duration of event (minutes)
+                    </Text>
+                    <Input className="bg-background-200 px-4 py-4 rounded-lg w-full">
+                        <InputField
+                            keyboardType="numeric"
+                            value={minDuration}
+                            onChangeText={setMinDuration}
+                            placeholder="Np. 60"
+                            style={{color: "#ca8a40"}}
+                            placeholderTextColor="#aaa"
+                        />
+                    </Input>
+                    <Divider/>
+                    <View className="flex-row alifne items-center gap-2 mb-2">
+                        <Ionicons name="calendar-number" size={24} color="#ca8a40"/>
+                        <Text className="text-xl font-semibold text-white">
+                            Dates range:
+                        </Text>
+                    </View>
 
 
+                    <HStack space="md" className="flex-row gap-2">
+                        <DateTimePickerBox type={"date"} value={dateStart} onChange={setDateStart}
+                                           visible={showDateStart}
+                                           setVisible={setShowDateStart}></DateTimePickerBox>
+                        <DateTimePickerBox label={"To"} type={"date"} value={dateEnd} onChange={setDateEnd}
+                                           visible={showDateEnd} setVisible={setShowDateEnd}></DateTimePickerBox>
+                    </HStack>
+                    <Divider/>
+                    <View className="flex-row alifne items-center gap-2 mb-2">
+                        <Ionicons name="timer" size={28} color="#ca8a04"/>
+                        <Text className="text-xl font-semibold text-white">
+                            Hours range:
+                        </Text>
+                    </View>
+
+                    <HStack space="md" className="flex-row gap-2">
+                        <DateTimePickerBox value={dateStart} onChange={setDateStart} visible={showTimeStart}
+                                           setVisible={setShowTimeStart}></DateTimePickerBox>
+                        <DateTimePickerBox label={"To"} value={dateEnd} onChange={setDateEnd} visible={showTimeEnd}
+                                           setVisible={setShowTimeEnd}></DateTimePickerBox>
+                    </HStack>
+                    <Divider/>
 
 
-                <Pressable
-                    onPress={() => fetchAvailabilities(friendIds)}
-                    className="bg-yellow-600 p-4 rounded-lg items-center mt-4"
-                >
-                    <Text className="text-white font-bold">Refresh Availability</Text>
-                </Pressable>
-            </VStack>
+                    <TouchableOpacity
+                        onPress={() => fetchAvailabilities(friendIds)}
+                        className="bg-yellow-600 p-4 rounded-lg items-center"
+                    >
+                        <Text className="text-white font-bold">Refresh Availability</Text>
+                    </TouchableOpacity>
+                </VStack>
 
-            <ScrollView className="mb-4" style={{flexGrow: 0}}>
-                <VStack space="md">
+
+                <VStack space="md" className={"gap-2"}>
                     {availableSlots.map((slot, index) => {
-                        const isSelected = selectedSlot?.startDate === slot.startDate;
+                        const isSelected = selectedSlot?.dateStart === slot.dateStart;
                         return (
                             <Pressable
                                 key={index}
@@ -153,14 +163,14 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
                                         isSelected ? "text-white" : "text-typography-900"
                                     }`}
                                 >
-                                    {new Date(slot.startDate).toLocaleDateString()}{" "}
-                                    {new Date(slot.startDate).toLocaleTimeString([], {
+                                    {new Date(slot.dateStart).toLocaleDateString()}{" "}
+                                    {new Date(slot.dateStart).toLocaleTimeString([], {
                                         hour: "2-digit",
                                         minute: "2-digit",
                                     })}{" "}
                                     -{" "}
-                                    {new Date(slot.startDate).toLocaleDateString()}{" "}
-                                    {new Date(slot.endDate).toLocaleTimeString([], {
+                                    {new Date(slot.dateEnd).toLocaleDateString()}{" "}
+                                    {new Date(slot.dateEnd).toLocaleTimeString([], {
                                         hour: "2-digit",
                                         minute: "2-digit",
                                     })}
@@ -169,24 +179,36 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
                         );
                     })}
                 </VStack>
+                <Divider style={{height:2}}/>
+                {/*TODO powyciągać takie przyciski do jednego pliku*/}
+                <TouchableOpacity className="bg-yellow-600 p-4 rounded-lg items-center">
+                    <Text className="text-white font-bold">Customize Availability</Text>
+                </TouchableOpacity>
+                <CustomDivider style={{height:2}} marginVertical={12}>
+                    <Text style={{color: "white"}}>OR</Text>
+                </CustomDivider>
+                <TouchableOpacity className="bg-yellow-600 p-4 rounded-lg items-center">
+                    <Text className="text-white font-bold">Check On Calendar</Text>
+                </TouchableOpacity>
             </ScrollView>
 
 
-            <Box className="mt-4">
-                {/*<Pressable*/}
-                {/*    onPress={handleConfirm}*/}
-                {/*    disabled={!selectedSlot}*/}
-                {/*    className={`py-4 rounded-xl items-center ${*/}
-                {/*        selectedSlot ? "bg-green-600" : "bg-background-muted"*/}
-                {/*    }`}*/}
-                {/*>*/}
-                {/*    <Text className="text-white font-bold text-lg">*/}
-                {/*        {selectedSlot ? "Wybierz lokalizację ➡️" : "Zaznacz termin"}*/}
-                {/*    </Text>*/}
-                {/*</Pressable>*/}
-            </Box>
+            {/*<Box className="mt-4">*/}
+            {/*    /!*<Pressable*!/*/}
+            {/*    /!*    onPress={handleConfirm}*!/*/}
+            {/*    /!*    disabled={!selectedSlot}*!/*/}
+            {/*    /!*    className={`py-4 rounded-xl items-center ${*!/*/}
+            {/*    /!*        selectedSlot ? "bg-green-600" : "bg-background-muted"*!/*/}
+            {/*    /!*    }`}*!/*/}
+            {/*    /!*>*!/*/}
+            {/*    /!*    <Text className="text-white font-bold text-lg">*!/*/}
+            {/*    /!*        {selectedSlot ? "Wybierz lokalizację ➡️" : "Zaznacz termin"}*!/*/}
+            {/*    /!*    </Text>*!/*/}
+            {/*    /!*</Pressable>*!/*/}
+            {/*</Box>*/}
         </Box>
-    );
+    )
+        ;
 };
 
 export default AvailabilityPicker;
