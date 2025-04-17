@@ -9,7 +9,7 @@ const hourToTopOffset = (date) => {
     const minutes = date.getMinutes();
     return hours * 60 + minutes + shift;
 };
-
+//TODO style do porpawienia tak żeby zgadzało się z react native i może jeszcze zamiast tylu zmiennych przekazywać komponent style
 const CalendarComponent = ({
                                dateStart,
                                dateEnd,
