@@ -3,7 +3,15 @@ import {Pressable, Text, View} from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 
-const DateTimePickerBox = ({label ="From", type = "time", value, onChange, visible, setVisible}) => {
+const DateTimePickerBox = ({
+                               label = "From",
+                               type = "time",
+                               value,
+                               onChange,
+                               visible,
+                               setVisible,
+                               setButtons
+                           }) => {
     const setDate = (date) => {
         if (!date) return;
 
@@ -54,7 +62,10 @@ const DateTimePickerBox = ({label ="From", type = "time", value, onChange, visib
         <View className="flex-1 min-w-[100px]">
             <Text className="text-white mb-1 font-semibold">{label}:</Text>
 
-            <Pressable onPress={() => setVisible(true)}>
+            <Pressable onPress={() => {
+                setVisible(true)
+                setButtons()
+            }}>
                 <View className="bg-background-200 py-4 rounded-lg">
                     {visible && (
                         <RNDateTimePicker

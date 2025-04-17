@@ -101,7 +101,7 @@ const Calendar = ({user}) => {
                     <CalendarComponent
                         key={`class-${i}`}
                         {...c}
-                        color="bg-info-400"
+                        backgroundColor="#3b82f6"
                         zIndex={9}
                         type="class"
                         onPress={() =>
@@ -116,7 +116,7 @@ const Calendar = ({user}) => {
                     <CalendarComponent
                         key={`event-${i}`}
                         {...e}
-                        color="bg-success-500"
+                        backgroundColor="bg-success-500"
                         type="event"
                         borderColor="bg-succes-600"
                         opacity={0.6}
@@ -132,7 +132,7 @@ const Calendar = ({user}) => {
                     <CalendarComponent
                         key={`unavail-${i}`}
                         {...u}
-                        color="bg-red-600"
+                        backgroundColor="bg-red-600"
                         opacity={0.4}
                         borderColor="bg-red-600"
                         zIndex={8}

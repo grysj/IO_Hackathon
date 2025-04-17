@@ -1,5 +1,5 @@
 import {cropScheduleToPickedDay, getWeekDays} from "../util/calendarUtils";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useAuth} from "../../contexts/AuthContext";
 import {formatDateTimeToLocalDateTime} from "../../app/functions/format/FormatDateTime";
 import CalendarLabel from "../calendar/CalendarLabel";
@@ -7,8 +7,10 @@ import WeekDayBar from "../calendar/WeekDayBar";
 import CalendarField from "../calendar/CalendarField";
 import CalendarTimeLine from "../calendar/CalendarTimeLine";
 import CalendarComponent from "../calendar/CalendarComponent";
-import {View} from "react-native";
+import {TouchableOpacity, View} from "react-native";
 import CalendarUsersActivitiesList from "./CalendarUsersActivitiesList";
+import {Text} from "@gluestack-ui/themed";
+import {Ionicons} from "@expo/vector-icons";
 
 function filterHiddenUsers(usersCalendars = [], hiddenUsers = []) {
     return usersCalendars.filter(
@@ -18,12 +20,13 @@ function filterHiddenUsers(usersCalendars = [], hiddenUsers = []) {
 
 
 
-const EventCreationCalendar= ({availabilities, dateStart, dateEnd, usersId}) =>{
+const EventCreationCalendar= ({availabilities, dateStart, dateEnd, usersId, goBack}) =>{
     const { user } = useAuth();
+    //TODO obsługa wyświetlania niedostępnych terminów po userze taka chcek lista z odznaczaniem userów
     const [hiddenUsers, setHiddenUsers] = useState([])
     const [usersCalendars, setUsersCalendars] = useState([])
     const [pickedDay, setPickedDay] = useState(new Date(dateStart));
-    const [weekDays, setWeekDays] = useState(getWeekDays());
+    const [weekDays, setWeekDays] = useState(getWeekDays(new Date(dateStart)));
     const [error, setError] = useState(null);
 
 
@@ -73,10 +76,22 @@ const EventCreationCalendar= ({availabilities, dateStart, dateEnd, usersId}) =>{
         return () => controller.abort();
     }, [user, weekDays]);
     const pickedCalendars = filterHiddenUsers(usersCalendars, hiddenUsers)
-
+    const availabilitiesPicked = availabilities
+        ? cropScheduleToPickedDay(availabilities, pickedDay)
+        : [];
     return (
-        <View className="flex-1 bg-background-50">
-            <CalendarLabel dateStart={weekDays[0]} dateEnd={weekDays[6]}/>
+        <View className="flex-1  bg-background-50">
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding:4}}>
+                <CalendarLabel dateStart={weekDays[0]} dateEnd={weekDays[6]} />
+
+                <TouchableOpacity onPress={goBack} className="bg-yellow-600 px-3 py-2 rounded-lg" style={{ justifyContent: "center", alignItems: "center" }}>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Ionicons name="arrow-back" size={15} color="white"  />
+                        <Text className="text-white font-bold">Go Back</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+
 
             <WeekDayBar
                 weekDays={weekDays}
@@ -95,8 +110,8 @@ const EventCreationCalendar= ({availabilities, dateStart, dateEnd, usersId}) =>{
                         schedule={entry.calendar}
                     />
                 ))}
-                {availabilities.map((entry, i)=>(
-                    <CalendarComponent key={`avail-${entry.id}`} opacity={0.8} {...entry}/>
+                {availabilitiesPicked.map((entry, i)=>(
+                    <CalendarComponent key={`avail-${i}`} backgroundColor={"#16a34a"} borderColor={"#14532d"} opacity={0.8} name={`Event slot ${i+1}`} {...entry}/>
                 ))}
             </CalendarField>
         </View>

@@ -1,10 +1,9 @@
 import React from "react";
-import { View } from "react-native";
-import { useRouter } from "expo-router";
+import {useRouter} from "expo-router";
 import CalendarComponent from "../calendar/CalendarComponent";
-import { cropScheduleToPickedDay } from "../util/calendarUtils";
+import {cropScheduleToPickedDay} from "../util/calendarUtils";
 
-const CalendarUsersActivitiesList = ({ schedule, pickedDay, user }) => {
+const CalendarUsersActivitiesList = ({schedule, pickedDay, user}) => {
     const router = useRouter();
 
     const classesPicked = schedule?.classes
@@ -24,10 +23,11 @@ const CalendarUsersActivitiesList = ({ schedule, pickedDay, user }) => {
         <>
             {classesPicked.map((c, i) => (
                 <CalendarComponent
-                    key={`class-${i}`}
+                    key={`class-${i}-${user?.id}`}
                     {...c}
-                    color="bg-red-600"
-                    borderColor="bg-red-600"
+                    backgroundColor={"#991b1b"}
+                    borderColor={"#dc2626"}
+                    opacity={0.2}
                     zIndex={9}
                     type="class"
                     showDate={false}
@@ -36,30 +36,30 @@ const CalendarUsersActivitiesList = ({ schedule, pickedDay, user }) => {
 
             {eventsPicked.map((e, i) => (
                 <CalendarComponent
-                    key={`event-${i}`}
+                    key={`event-${i}-${user?.id}`}
                     {...e}
-                    color="bg-red-600"
+                    backgroundColor={"#991b1b"}
                     type="event"
-                    borderColor="bg-red-600"
-                    opacity={0.1}
+                    borderColor={"#dc2626"}
+                    opacity={0.2}
                     showDate={false}
                 />
             ))}
 
             {unavailabilityPicked.map((u, i) => (
                 <CalendarComponent
-                    key={`unavail-${i}`}
+                    key={`unavail-${i}-${user?.id}`}
                     {...u}
-                    color="bg-red-600"
-                    opacity={0.1}
-                    borderColor="bg-red-600"
+                    backgroundColor={"#991b1b"}
+                    opacity={0.2}
+                    borderColor={"#dc2626"}
                     zIndex={8}
                     type="unavailability"
                     showDate={false}
                 />
             ))}
         </>
-    );
+    )
 };
 
 export default CalendarUsersActivitiesList;
