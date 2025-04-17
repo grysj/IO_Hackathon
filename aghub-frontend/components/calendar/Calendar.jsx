@@ -4,17 +4,14 @@ import CalendarComponent from "./CalendarComponent";
 import WeekDayBar from "./WeekDayBar";
 import {useRouter} from "expo-router";
 import CalendarTimeLine from "./CalendarTimeLine";
+import {formatDateTimeToLocalDateTime} from "../../app/functions/format/FormatDateTime";
 
 const hours = Array.from(
     {length: 24},
     (_, i) => `${i.toString().padStart(2, "0")}:00`
 );
 
-function formatDate(startDate) {
-    const date = new Date(startDate.toString())
-    date.setMinutes(startDate.getMinutes() - startDate.getTimezoneOffset());
-    return date.toISOString()
-}
+
 
 const getWeekDays = (referenceDate = new Date()) => {
     const day = referenceDate.getDay();
@@ -51,10 +48,7 @@ const cropScheduleToPickedDay = (items, pickedDay) => {
         }));
 };
 
-const formatDateLabel = (date) => {
-    const string = date.toString().split(" ");
-    return `${string[1]} ${string[2]} ${string[3]}`;
-};
+
 
 const Calendar = ({user}) => {
     const [schedule, setSchedule] = useState(null);
@@ -90,8 +84,8 @@ const Calendar = ({user}) => {
                     },
                     body: JSON.stringify({
                         id: user.id,
-                        dateStart: formatDate(dateStart),
-                        dateEnd: formatDate(dateEnd),
+                        dateStart: formatDateTimeToLocalDateTime(dateStart),
+                        dateEnd: formatDateTimeToLocalDateTime(dateEnd),
                     }),
                     signal: controller.signal,
                 });
