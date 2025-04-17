@@ -33,8 +33,14 @@ const generateSpecialDays = (start, end) => {
     return days;
 };
 
-const EventCreationCalendar= ({availabilities, dateStart, dateEnd, usersId, goBack}) =>{
-    const { user } = useAuth();
+const EventCreationCalendar = ({
+                                   availabilities,
+                                   dateStart,
+                                   dateEnd,
+                                   usersId,
+                                   goBack,
+                               }) => {
+    const {user} = useAuth();
     //TODO obsługa wyświetlania niedostępnych terminów po userze taka chcek lista z odznaczaniem userów
     const [hiddenUsers, setHiddenUsers] = useState([])
     const [usersCalendars, setUsersCalendars] = useState([])
@@ -95,17 +101,18 @@ const EventCreationCalendar= ({availabilities, dateStart, dateEnd, usersId, goBa
         : [];
     return (
         <View className="flex-1  bg-background-50">
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding:4}}>
-                <CalendarLabel dateStart={weekDays[0]} dateEnd={weekDays[6]} />
+            <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 4}}>
+                <CalendarLabel dateStart={weekDays[0]} dateEnd={weekDays[6]}/>
 
-                <TouchableOpacity onPress={goBack} className="bg-yellow-600 px-3 py-2 rounded-lg" style={{ justifyContent: "center", alignItems: "center" }}>
-                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                        <Ionicons name="arrow-back" size={15} color="white"  />
+                <TouchableOpacity onPress={goBack} className="bg-yellow-600 px-3 py-2 rounded-lg"
+                                  style={{justifyContent: "center", alignItems: "center"}}>
+                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                        <Ionicons name="arrow-back" size={15} color="white"/>
                         <Text className="text-white font-bold">Go Back</Text>
                     </View>
                 </TouchableOpacity>
-            </View>
 
+            </View>
 
             <WeekDayBar
                 weekDays={weekDays}
@@ -114,6 +121,7 @@ const EventCreationCalendar= ({availabilities, dateStart, dateEnd, usersId, goBa
                 shift={shiftWeek}
                 specialDays={specialDays}
             />
+
 
             <CalendarField>
                 <CalendarTimeLine/>
@@ -125,8 +133,9 @@ const EventCreationCalendar= ({availabilities, dateStart, dateEnd, usersId, goBa
                         schedule={entry.calendar}
                     />
                 ))}
-                {availabilitiesPicked.map((entry, i)=>(
-                    <CalendarComponent key={`avail-${i}`} backgroundColor={"#16a34a"} borderColor={"#14532d"} opacity={0.8} name={`Event slot ${i+1}`} {...entry}/>
+                {availabilitiesPicked.map((entry, i) => (
+                    <CalendarComponent key={`avail-${i}`} backgroundColor={"#16a34a"} borderColor={"#14532d"}
+                                       opacity={0.8} name={`Event slot ${i + 1}`} {...entry}/>
                 ))}
             </CalendarField>
         </View>
