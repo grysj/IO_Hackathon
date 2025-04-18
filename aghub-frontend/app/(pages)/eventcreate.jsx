@@ -4,6 +4,8 @@ import FriendSelector from "../../components/event/FriendSelector";
 import AvailabilityPicker from "../../components/event/AvailabilityPicker";
 import LocationPickerScreen from "../../components/event/locationpicker";
 import { useAuth } from "../../contexts/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import { addEvent } from "@/api/aghub";
 
 const EventCreateScreen = () => {
   const [friends, setFriends] = useState([]);
@@ -11,6 +13,34 @@ const EventCreateScreen = () => {
   const [location, setLocation] = useState(null);
   const [step, setStep] = useState("friends");
   const { user } = useAuth();
+
+  const addEventMutation = useMutation({
+    mutationFn: ({
+      name,
+      description,
+      dateStart,
+      dateEnd,
+      latitude,
+      longitude,
+      poiId,
+      userId,
+    }) => {
+      return addEvent(
+        name,
+        description,
+        dateStart,
+        dateEnd,
+        latitude,
+        longitude,
+        poiId,
+        userId
+      );
+    },
+    onSettled: () => {
+      setStep("done");
+    },
+  });
+
   const handleFriendsConfirm = (ids) => {
     setFriends(ids);
     setStep("availability");
@@ -20,55 +50,20 @@ const EventCreateScreen = () => {
     setSlot(slot);
     setStep("location");
   };
-  const fetchEvent = async ({ userId, slot, location }) => {
-    try {
-      const eventDto = {
-        name: "Nowe wydarzenie",
-        description: "Wydarzenie utworzone z aplikacji",
-        dateStart: slot.startDate,//TODO tu jest błąd pewnie z formatem danych dlatego to nie chciało się wysyłać
-        dateEnd: slot.endDate,
-        latitude: location.latitude,
-        longitude: location.longitude,
-        poiId: null,
-        createdById: userId,
-      };
-
-      const response = await fetch("http://34.116.250.33:8080/api/events", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(eventDto),
-      });
-
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`Błąd zapisu wydarzenia: ${errText}`);
-      }
-
-      console.log("Wydarzenie zapisane pomyślnie");
-    } catch (err) {
-      console.error("Błąd podczas zapisu eventu:", err.message);
-    }
-  };
 
   const handleLocationConfirm = (location) => {
     setLocation(location);
 
-    const eventData = {
-      friends,
-      slot,
-      location,
-    };
-
-    // Tutaj będzie wysłanie do prawdziwego backendu, gdy go dodasz
-    console.log("📦 Gotowe dane do wysłania:", eventData);
-
-    fetchEvent({
+    addEventMutation.mutate({
+      name: "Nowe wydarzenie",
+      description: "Wydarzenie utworzone z aplikacji",
+      dateStart: slot.dateStart,
+      dateEnd: slot.dateEnd,
+      latitude: location.latitude,
+      longitude: location.longitude,
+      poiId: null,
       userId: user.id,
-      slot,
-      location,
-    }).then(setStep("done"));
+    });
   };
 
   return (

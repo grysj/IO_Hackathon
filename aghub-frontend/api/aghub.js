@@ -76,6 +76,44 @@ export const getEventParticipants = async (eventId, signal = null) => {
   return res.json();
 };
 
+export const addEvent = async (
+  name,
+  description,
+  dateStart,
+  dateEnd,
+  latitude,
+  longitude,
+  poiId,
+  createdById,
+  signal = null
+) => {
+  const res = await fetch(`${API_URL}/api/events`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name,
+      description,
+      dateStart,
+      dateEnd,
+      latitude,
+      longitude,
+      poiId,
+      createdById,
+    }),
+    signal,
+  });
+
+  if (!res.ok) {
+    const error = new Error(res.statusText || "Error while creating event");
+    error.status = res.status;
+    throw error;
+  }
+
+  return res.json();
+};
+
 // CLASSES API
 
 export const getClass = async (classId, signal = null) => {
