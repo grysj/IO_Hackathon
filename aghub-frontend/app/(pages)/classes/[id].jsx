@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,91 +5,58 @@ import {
   ScrollView,
   Pressable,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
 import { format } from "date-fns";
+import { getPoi, getClass } from "@/api/aghub";
+import { useQuery } from "@tanstack/react-query";
 
 // Format helpers
-const formatTime = (dateString) => {
-  const date = new Date(dateString);
-  return format(date, "HH:mm");
-};
+const formatTime = (dateString) => format(new Date(dateString), "HH:mm");
+const formatDate = (dateString) => format(new Date(dateString), "d MMMM yyyy");
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return format(date, "d MMMM yyyy"); // This will give you e.g., "4 April 2025"
-};
-
-export default function EventDetails() {
+export default function ClassDetails() {
   const { id } = useLocalSearchParams();
-  const [classes, setClasses] = useState(null);
-  const [poi, setPoi] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const router = useRouter();
 
-  useEffect(() => {
-    const abortController = new AbortController();
+  const {
+    data: classEvent,
+    isLoading: isClassLoading,
+    error: classError,
+  } = useQuery({
+    queryKey: ["classEvent", id],
+    queryFn: ({ signal }) => getClass(id, signal),
+    refetchInterval: 1000 * 60,
+    enabled: !!id,
+  });
 
-    const fetchEvent = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        // Fetch event
-        const eventRes = await fetch(
-          `http://34.116.250.33:8080/api/classes/${id}`,
-          { signal: abortController.signal }
-        );
-        if (!eventRes.ok) throw new Error(eventRes.statusText || "Event error");
-        const eventData = await eventRes.json();
-        setClasses(eventData);
-
-        // Fetch POI
-        if (eventData.poiId) {
-          const poiRes = await fetch(
-            `http://34.116.250.33:8080/api/poi/${eventData.poiId}`,
-            { signal: abortController.signal }
-          );
-          if (!poiRes.ok) throw new Error(poiRes.statusText || "POI error");
-          const poiData = await poiRes.json();
-          setPoi(poiData);
-        }
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          setError(err.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvent();
-
-    return () => {
-      abortController.abort();
-    };
-  }, [id]);
+  const {
+    data: poi,
+    isLoading: isPoiLoading,
+    error: poiError,
+  } = useQuery({
+    queryKey: ["poi", classEvent?.poiId],
+    queryFn: ({ signal }) => getPoi(classEvent.poiId, signal),
+    enabled: !!classEvent?.poiId,
+  });
 
   const handleLocationPress = () => {
-    console.log(`Pressed on location: ${poi ? poi.name : "Unknown location"}`);
+    console.log(`Pressed on location: ${poi?.name || "Unknown location"}`);
   };
 
-  if (loading) {
+  if (isClassLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-background-50">
         <ActivityIndicator color="white" size="large" />
-        <Text className="text-white mt-4 text-lg">Loading event...</Text>
+        <Text className="text-white mt-4 text-lg">Loading class...</Text>
       </View>
     );
   }
 
-  if (error) {
+  if (classError) {
     return (
       <View className="flex-1 justify-center items-center bg-background-50">
         <Text className="text-white text-2xl font-semibold">
-          Error: {error}
+          Error loading class: {classError.message}
         </Text>
       </View>
     );
@@ -101,13 +67,13 @@ export default function EventDetails() {
       <View className="px-6 py-8">
         {/* Title */}
         <Text className="text-yellow-600 text-4xl font-bold mb-2">
-          {classes.name}
+          {classEvent.name}
         </Text>
 
         {/* Room */}
         <View className="mb-8">
           <Text className="text-white text-base leading-relaxed">
-            Room {classes.room}
+            Room {classEvent.room}
           </Text>
         </View>
 
@@ -119,13 +85,14 @@ export default function EventDetails() {
           <View className="flex-row items-center gap-2 mb-2">
             <Ionicons name="time" size={22} color="#ca8a04" />
             <Text className="text-white text-lg">
-              {formatTime(classes.dateStart)} - {formatTime(classes.dateEnd)}
+              {formatTime(classEvent.dateStart)} -{" "}
+              {formatTime(classEvent.dateEnd)}
             </Text>
           </View>
           <View className="flex-row items-center gap-2">
             <Ionicons name="calendar" size={24} color="#ca8a04" />
             <Text className="text-white text-lg">
-              {formatDate(classes.dateStart)}
+              {formatDate(classEvent.dateStart)}
             </Text>
           </View>
         </View>
@@ -135,15 +102,23 @@ export default function EventDetails() {
           <Text className="text-yellow-600 font-semibold text-2xl mb-3">
             Location
           </Text>
-          <Pressable
-            onPress={handleLocationPress}
-            className="flex-row items-center gap-3 bg-white/10 px-5 py-3 rounded-xl"
-          >
-            <Ionicons name="location-sharp" size={22} color="#ca8a04" />
-            <Text className="text-white text-lg font-medium">
-              {poi ? poi.name : "Loading POI..."}
+          {isPoiLoading ? (
+            <Text className="text-white text-base">Loading location...</Text>
+          ) : poiError ? (
+            <Text className="text-red-400 text-base">
+              Failed to load location: {poiError.message}
             </Text>
-          </Pressable>
+          ) : (
+            <Pressable
+              onPress={handleLocationPress}
+              className="flex-row items-center gap-3 bg-white/10 px-5 py-3 rounded-xl"
+            >
+              <Ionicons name="location-sharp" size={22} color="#ca8a04" />
+              <Text className="text-white text-lg font-medium">
+                {poi?.name || "Unknown location"}
+              </Text>
+            </Pressable>
+          )}
         </View>
       </View>
     </ScrollView>

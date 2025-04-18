@@ -1,148 +1,141 @@
-import React, {useEffect, useState} from "react";
-import {Box, Text} from "@gluestack-ui/themed";
+import React, { useEffect, useState } from "react";
+import { Box } from "@gluestack-ui/themed";
 import CalendarComponent from "./CalendarComponent";
 import WeekDayBar from "./WeekDayBar";
-import {useRouter} from "expo-router";
+import { useRouter } from "expo-router";
 import CalendarTimeLine from "./CalendarTimeLine";
-import { formatDateTimeToLocalDateTime} from "../../app/functions/format/FormatDateTime";
+import { formatDateTimeToLocalDateTime } from "@/util/format/FormatDateTime";
 import CalendarField from "./CalendarField";
 
 import CalendarLabel from "./CalendarLabel";
-import {cropScheduleToPickedDay, getWeekDays} from "../util/calendarUtils";
+import { cropScheduleToPickedDay, getWeekDays } from "../util/calendarUtils";
 
+const Calendar = ({ user }) => {
+  const [schedule, setSchedule] = useState(null);
+  const [pickedDay, setPickedDay] = useState(new Date());
+  const [weekDays, setWeekDays] = useState(getWeekDays());
+  const [error, setError] = useState(null);
+  const router = useRouter();
 
+  const shiftWeek = (direction) => {
+    const newPicked = new Date(pickedDay);
+    newPicked.setDate(pickedDay.getDate() + direction * 7);
 
+    const newWeekDays = getWeekDays(newPicked);
+    setPickedDay(newPicked);
+    setWeekDays(newWeekDays);
+  };
 
+  useEffect(() => {
+    const controller = new AbortController();
 
+    const fetchSchedule = async () => {
+      if (!user?.id) return;
 
+      const dateStart = weekDays[0];
+      const dateEnd = new Date(weekDays[6]);
+      dateEnd.setHours(23, 59, 59, 999);
 
-const Calendar = ({user}) => {
-    const [schedule, setSchedule] = useState(null);
-    const [pickedDay, setPickedDay] = useState(new Date());
-    const [weekDays, setWeekDays] = useState(getWeekDays());
-    const [error, setError] = useState(null);
-    const router = useRouter();
+      try {
+        const response = await fetch("http://34.116.250.33:8080/api/schedule", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: user.id,
+            dateStart: formatDateTimeToLocalDateTime(dateStart),
+            dateEnd: formatDateTimeToLocalDateTime(dateEnd),
+          }),
+          signal: controller.signal,
+        });
 
-    const shiftWeek = (direction) => {
-        const newPicked = new Date(pickedDay);
-        newPicked.setDate(pickedDay.getDate() + direction * 7);
+        if (!response.ok) throw new Error("Failed to fetch schedule");
 
-        const newWeekDays = getWeekDays(newPicked);
-        setPickedDay(newPicked);
-        setWeekDays(newWeekDays);
+        const data = await response.json();
+        setSchedule(data);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          setError(err.message);
+          console.error(err);
+        }
+      }
     };
 
-    useEffect(() => {
-        const controller = new AbortController();
+    fetchSchedule();
 
-        const fetchSchedule = async () => {
-            if (!user?.id) return;
+    return () => controller.abort();
+  }, [user, weekDays]);
 
-            const dateStart = weekDays[0];
-            const dateEnd = new Date(weekDays[6]);
-            dateEnd.setHours(23, 59, 59, 999);
+  const classesPicked = schedule?.classes
+    ? cropScheduleToPickedDay(schedule.classes, pickedDay)
+    : [];
+  const eventsPicked = schedule?.events
+    ? cropScheduleToPickedDay(schedule.events, pickedDay)
+    : [];
+  const unavailabilityPicked = schedule?.unavailability
+    ? cropScheduleToPickedDay(schedule.unavailability, pickedDay)
+    : [];
 
-            try {
-                const response = await fetch("http://34.116.250.33:8080/api/schedule", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        id: user.id,
-                        dateStart: formatDateTimeToLocalDateTime(dateStart),
-                        dateEnd: formatDateTimeToLocalDateTime(dateEnd),
-                    }),
-                    signal: controller.signal,
-                });
+  return (
+    <Box className="flex-1 bg-background-50">
+      <CalendarLabel dateStart={weekDays[0]} dateEnd={weekDays[6]} />
 
-                if (!response.ok) throw new Error("Failed to fetch schedule");
+      <WeekDayBar
+        weekDays={weekDays}
+        pickedDay={pickedDay}
+        onClickDay={setPickedDay}
+        shift={shiftWeek}
+      />
 
-                const data = await response.json();
-                setSchedule(data);
-            } catch (err) {
-                if (err.name !== "AbortError") {
-                    setError(err.message);
-                    console.error(err);
-                }
+      <CalendarField>
+        <CalendarTimeLine />
+
+        {classesPicked.map((c, i) => (
+          <CalendarComponent
+            key={`class-${i}`}
+            {...c}
+            backgroundColor="#3b82f6"
+            zIndex={9}
+            type="class"
+            onPress={() =>
+              router.push({
+                pathname: "/classes/[id]",
+                params: { id: c.id },
+              })
             }
-        };
-
-        fetchSchedule();
-
-        return () => controller.abort();
-    }, [user, weekDays]);
-
-    const classesPicked = schedule?.classes
-        ? cropScheduleToPickedDay(schedule.classes, pickedDay)
-        : [];
-    const eventsPicked = schedule?.events
-        ? cropScheduleToPickedDay(schedule.events, pickedDay)
-        : [];
-    const unavailabilityPicked = schedule?.unavailability
-        ? cropScheduleToPickedDay(schedule.unavailability, pickedDay)
-        : [];
-
-    return (
-        <Box className="flex-1 bg-background-50">
-            <CalendarLabel dateStart={weekDays[0]} dateEnd={weekDays[6]}/>
-
-            <WeekDayBar
-                weekDays={weekDays}
-                pickedDay={pickedDay}
-                onClickDay={setPickedDay}
-                shift={shiftWeek}
-            />
-
-            <CalendarField>
-                <CalendarTimeLine/>
-
-                {classesPicked.map((c, i) => (
-                    <CalendarComponent
-                        key={`class-${i}`}
-                        {...c}
-                        backgroundColor="#3b82f6"
-                        zIndex={9}
-                        type="class"
-                        onPress={() =>
-                            router.push({
-                                pathname: "/classes/[id]",
-                                params: {id: c.id},
-                            })
-                        }
-                    />
-                ))}
-                {eventsPicked.map((e, i) => (
-                    <CalendarComponent
-                        key={`event-${i}`}
-                        {...e}
-                        backgroundColor="bg-success-500"
-                        type="event"
-                        borderColor="bg-succes-600"
-                        opacity={0.6}
-                        onPress={() =>
-                            router.push({
-                                pathname: "/events/[id]",
-                                params: {id: e.id},
-                            })
-                        }
-                    />
-                ))}
-                {unavailabilityPicked.map((u, i) => (
-                    <CalendarComponent
-                        key={`unavail-${i}`}
-                        {...u}
-                        backgroundColor="bg-red-600"
-                        opacity={0.4}
-                        borderColor="bg-red-600"
-                        zIndex={8}
-                        type="unavailability"
-
-                    />
-                ))}
-            </CalendarField>
-        </Box>
-    );
+          />
+        ))}
+        {eventsPicked.map((e, i) => (
+          <CalendarComponent
+            key={`event-${i}`}
+            {...e}
+            backgroundColor="#ff0000"
+            type="event"
+            borderColor="bg-succes-600"
+            opacity={0.6}
+            onPress={() =>
+              router.push({
+                pathname: "/events/[id]",
+                params: { id: e.id },
+              })
+            }
+          />
+        ))}
+        {unavailabilityPicked.map((u, i) => (
+          <CalendarComponent
+            key={`unavail-${i}`}
+            {...u}
+            backgroundColor="bg-red-600"
+            opacity={0.4}
+            borderColor="bg-red-600"
+            zIndex={8}
+            type="unavailability"
+          />
+        ))}
+      </CalendarField>
+    </Box>
+  );
 };
 
 export default Calendar;
