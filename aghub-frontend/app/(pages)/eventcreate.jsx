@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Box, Text } from "@gluestack-ui/themed";
-import FriendSelector from "../../components/event/FriendSelector";
-import AvailabilityPicker from "../../components/event/AvailabilityPicker";
-import LocationPickerScreen from "../../components/event/locationpicker";
+import EventFriendSelector from "../../components/event/EventFriendSelector";
+import EventAvailabilityPicker from "../../components/event/EventAvailabilityPicker";
+import LocationPickerScreen from "../../components/event/EventLocationPicker";
 import { useAuth } from "../../contexts/AuthContext";
 
 const EventCreateScreen = () => {
@@ -74,11 +74,11 @@ const EventCreateScreen = () => {
   return (
     <Box className="flex-1 bg-background-50">
       {step === "friends" && (
-        <FriendSelector onConfirm={handleFriendsConfirm} />
+        <EventFriendSelector onConfirm={handleFriendsConfirm} />
       )}
 
       {step === "availability" && (
-        <AvailabilityPicker
+        <EventAvailabilityPicker
           friendIds={friends}
           onConfirm={handleAvailabilityConfirm}
         />

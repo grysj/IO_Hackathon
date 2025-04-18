@@ -11,7 +11,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { mockFriends } from "../../mock/MockedData";
 import { useAuth } from "../../contexts/AuthContext";
 
-const FriendSelector = ({ onConfirm }) => {
+const EventFriendSelector = ({ onConfirm }) => {
   const [friends, setFriends] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const { user } = useAuth();
@@ -127,4 +127,4 @@ const FriendSelector = ({ onConfirm }) => {
   );
 };
 
-export default FriendSelector;
+export default EventFriendSelector;

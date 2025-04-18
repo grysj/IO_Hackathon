@@ -6,7 +6,7 @@ import DateTimeRangePicker from "./DateTimeRangePicker";
 //TODO Sprawdzić czy w friendsID jest user id
 
 
-const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
+const EventAvailabilityPicker = ({friendIds = [], onConfirm}) => {
 
     const [dateStart, setDateStart] = useState(new Date())
     const [dateEnd, setDateEnd] = useState(new Date())
@@ -52,4 +52,4 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
     );
 };
 
-export default AvailabilityPicker;
+export default EventAvailabilityPicker;
