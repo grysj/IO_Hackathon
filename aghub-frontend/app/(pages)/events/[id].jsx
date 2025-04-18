@@ -8,8 +8,7 @@ import {
 import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { format } from "date-fns";
-import { getEvent, getEventParticipants } from "@/api/aghub/events";
-import { getPoi } from "@/api/aghub/poi";
+import { getPoi, getEvent, getEventParticipants } from "@/api/aghub";
 import { useQuery } from "@tanstack/react-query";
 
 // Format helpers
