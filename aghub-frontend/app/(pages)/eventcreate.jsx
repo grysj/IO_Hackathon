@@ -4,6 +4,7 @@ import EventFriendSelector from "../../components/event/EventFriendSelector";
 import EventAvailabilityPicker from "../../components/event/EventAvailabilityPicker";
 import LocationPickerScreen from "../../components/event/EventLocationPicker";
 import { useAuth } from "../../contexts/AuthContext";
+import EventSummarize from "../../components/event/EventSummarize";
 
 const EventCreateScreen = () => {
   const [friendsId, setFriendsId] = useState([]);
@@ -56,21 +57,22 @@ const EventCreateScreen = () => {
 
   const handleLocationConfirm = (location) => {
     setLocation(location);
+    setStep("summarize")
 
-    const eventData = {
-      friends: friendsId,
-      slot,
-      location,
-    };
-
-    // Tutaj będzie wysłanie do prawdziwego backendu, gdy go dodasz
-    console.log("📦 Gotowe dane do wysłania:", eventData);
-
-    fetchEvent({
-      userId: user.id,
-      slot,
-      location,
-    }).then(setStep("done"));
+    // const eventData = {
+    //   friends: friendsId,
+    //   slot,
+    //   location,
+    // };
+    //
+    // // Tutaj będzie wysłanie do prawdziwego backendu, gdy go dodasz
+    // console.log("📦 Gotowe dane do wysłania:", eventData);
+    //
+    // fetchEvent({
+    //   userId: user.id,
+    //   slot,
+    //   location,
+    // }).then(setStep("done"));
   };
 
   return (
@@ -89,7 +91,9 @@ const EventCreateScreen = () => {
       {step === "location" && (
         <LocationPickerScreen onConfirmLocation={handleLocationConfirm} />
       )}
-
+      {step==="summarize" &&(
+          <EventSummarize friends friendsId slot setStep location />
+      )}
       {step === "done" && (
         <Box className="p-4">
           <Text className="text-xl text-center text-green-700 font-bold">

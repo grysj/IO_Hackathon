@@ -103,7 +103,7 @@ const EventCreationCalendar = ({
     && selectedSlot?.dateStart < selectedSlot?.dateEnd
         ? cropScheduleToPickedDay([selectedSlot], pickedDay) : [];
     return (<View className="flex-1  bg-background-50">
-        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 4}}>
+        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 8}}>
             <CalendarLabel dateStart={weekDays[0]} dateEnd={weekDays[6]}/>
 
             <TouchableOpacity onPress={goBack} className="bg-yellow-600 px-3 py-2 rounded-lg"
