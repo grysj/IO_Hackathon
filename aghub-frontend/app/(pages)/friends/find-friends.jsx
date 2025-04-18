@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
     padding: 10,
-    backgroundColor: "#272625", // albo dynamicznie z theme
+    backgroundColor: "#272625",
   },
   header: {},
   container: {

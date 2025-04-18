@@ -1,53 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Box, HStack, ScrollView, Text } from "@gluestack-ui/themed";
+import { Box } from "@gluestack-ui/themed";
 import CalendarComponent from "./CalendarComponent";
 import WeekDayBar from "./WeekDayBar";
 import { useRouter } from "expo-router";
 import CalendarTimeLine from "./CalendarTimeLine";
-import {
-  formatDateTimeToLocalDateTime,
-  formatDateLabel,
-} from "@/util/format/FormatDateTime";
+import { formatDateTimeToLocalDateTime } from "@/util/format/FormatDateTime";
+import CalendarField from "./CalendarField";
 
-const hours = Array.from(
-  { length: 24 },
-  (_, i) => `${i.toString().padStart(2, "0")}:00`
-);
-
-const getWeekDays = (referenceDate = new Date()) => {
-  const day = referenceDate.getDay();
-  const diffToMonday = (day + 6) % 7;
-  const monday = new Date(referenceDate);
-  monday.setDate(referenceDate.getDate() - diffToMonday);
-  monday.setHours(0, 0, 0, 0);
-
-  return Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(monday);
-    date.setDate(monday.getDate() + i);
-    return date;
-  });
-};
-
-const cropScheduleToPickedDay = (items, pickedDay) => {
-  const startOfDay = new Date(pickedDay);
-  startOfDay.setHours(0, 0, 0, 0);
-
-  const endOfDay = new Date(pickedDay);
-  endOfDay.setHours(23, 59, 59, 999);
-
-  return items
-    .filter(
-      (item) =>
-        new Date(item.dateEnd) >= startOfDay &&
-        new Date(item.dateStart) <= endOfDay
-      // Should be dateEnd?
-    )
-    .map((item) => ({
-      ...item,
-      dateStart: new Date(Math.max(new Date(item.dateStart), startOfDay)),
-      dateEnd: new Date(Math.min(new Date(item.dateEnd), endOfDay)),
-    }));
-};
+import CalendarLabel from "./CalendarLabel";
+import { cropScheduleToPickedDay, getWeekDays } from "../util/calendarUtils";
 
 const Calendar = ({ user }) => {
   const [schedule, setSchedule] = useState(null);
@@ -118,11 +79,7 @@ const Calendar = ({ user }) => {
 
   return (
     <Box className="flex-1 bg-background-50">
-      <Box className="px-4 py-2 bg-background-50">
-        <Text className="text-xl font-bold text-typography-950">
-          {`${formatDateLabel(weekDays[0])} - ${formatDateLabel(weekDays[6])}`}
-        </Text>
-      </Box>
+      <CalendarLabel dateStart={weekDays[0]} dateEnd={weekDays[6]} />
 
       <WeekDayBar
         weekDays={weekDays}
@@ -131,64 +88,52 @@ const Calendar = ({ user }) => {
         shift={shiftWeek}
       />
 
-      <ScrollView>
+      <CalendarField>
         <CalendarTimeLine />
-        <Box className="px-4 py-2 min-h-[1440px]">
-          {hours.map((hour, i) => (
-            <HStack
-              key={i}
-              className="items-start h-[60px] border-t border-outline-200"
-            >
-              <Text className="text-xs w-[50px] text-typography-500">
-                {hour}
-              </Text>
-            </HStack>
-          ))}
 
-          {classesPicked.map((c, i) => (
-            <CalendarComponent
-              key={`class-${i}`}
-              {...c}
-              color="bg-info-400"
-              zIndex={9}
-              type="class"
-              onPress={() =>
-                router.push({
-                  pathname: "/classes/[id]",
-                  params: { id: c.id },
-                })
-              }
-            />
-          ))}
-          {eventsPicked.map((e, i) => (
-            <CalendarComponent
-              key={`event-${i}`}
-              {...e}
-              color="bg-success-500"
-              type="event"
-              borderColor="bg-succes-600"
-              opacity={0.6}
-              onPress={() =>
-                router.push({
-                  pathname: "/events/[id]",
-                  params: { id: e.id },
-                })
-              }
-            />
-          ))}
-          {unavailabilityPicked.map((u, i) => (
-            <CalendarComponent
-              key={`unavail-${i}`}
-              {...u}
-              color="bg-red-600"
-              opacity={0.4}
-              borderColor="bg-red-600"
-              zIndex={8}
-              type="unavailability"
-            />
-          ))}
-        </Box>
-      </ScrollView>
+        {classesPicked.map((c, i) => (
+          <CalendarComponent
+            key={`class-${i}`}
+            {...c}
+            backgroundColor="#3b82f6"
+            zIndex={9}
+            type="class"
+            onPress={() =>
+              router.push({
+                pathname: "/classes/[id]",
+                params: { id: c.id },
+              })
+            }
+          />
+        ))}
+        {eventsPicked.map((e, i) => (
+          <CalendarComponent
+            key={`event-${i}`}
+            {...e}
+            backgroundColor="#ff0000"
+            type="event"
+            borderColor="bg-succes-600"
+            opacity={0.6}
+            onPress={() =>
+              router.push({
+                pathname: "/events/[id]",
+                params: { id: e.id },
+              })
+            }
+          />
+        ))}
+        {unavailabilityPicked.map((u, i) => (
+          <CalendarComponent
+            key={`unavail-${i}`}
+            {...u}
+            backgroundColor="bg-red-600"
+            opacity={0.4}
+            borderColor="bg-red-600"
+            zIndex={8}
+            type="unavailability"
+          />
+        ))}
+      </CalendarField>
     </Box>
   );
 };

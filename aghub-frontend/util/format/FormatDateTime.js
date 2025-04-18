@@ -20,8 +20,17 @@ export function formatDateTimeToLocalDateTime(startDate) {
     date.setMinutes(startDate.getMinutes() - startDate.getTimezoneOffset());
     return date.toISOString()
 }
-export const formatDateLabel = (date, separator=" ") => {
+
+export const formatDateLabel = (date, separator = " ") => {
     const string = date.toString().split(" ");
     return `${string[1]}${separator}${string[2]}${separator}${string[3]}`;
 };
 
+export const formatDate = (date, separator = " ") => {
+    return `${date.getDate()
+        .toString()
+        .padStart(2, "0")}${separator}${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}${separator}${date.getFullYear()
+    }`
+}

@@ -9,13 +9,15 @@ const hourToTopOffset = (date) => {
   const minutes = date.getMinutes();
   return hours * 60 + minutes + shift;
 };
-
+//TODO style do porpawienia tak żeby zgadzało się z react native i może jeszcze zamiast tylu zmiennych przekazywać komponent style
 const CalendarComponent = ({
   dateStart,
   dateEnd,
+  side = "left",
+  username = "",
   showDate = true,
   name = "",
-  color = "bg-primary-600",
+  backgroundColor = "bg-primary-600",
   zIndex = 10,
   onPress: handlePress,
   opacity = 0.8,
@@ -30,22 +32,28 @@ const CalendarComponent = ({
   return (
     <Pressable
       onPress={handlePress}
-      className={`absolute left-[60px] w-[70%] ${color} rounded-md px-3 py-2`}
+      className={`absolute w-[70%] rounded-md px-3 py-2`}
       style={{
         opacity,
         borderWidth,
         borderColor,
+        backgroundColor,
         top,
         height,
+        ...(side === "left" ? { left: 60 } : {}),
+        ...(side === "right" ? { right: 15 } : {}),
         zIndex,
         ...style,
       }}
     >
       <View>
         <Text className="text-white font-bold">{name}</Text>
-        <Text className="text-gray-100 text-xs">
-          {showDate && `${formatTime(dateStart)} - ${formatTime(dateEnd)}`}
-        </Text>
+        {showDate && (
+          <Text className="text-gray-100 text-xs">
+            {formatTime(dateStart)} - {formatTime(dateEnd)}
+          </Text>
+        )}
+        {username && <Text className="text-gray-100 text-xs">{username}</Text>}
       </View>
     </Pressable>
   );
