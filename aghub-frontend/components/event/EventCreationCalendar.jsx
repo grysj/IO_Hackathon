@@ -47,7 +47,7 @@ const EventCreationCalendar = ({
     //TODO obsługa wyświetlania niedostępnych terminów po userze taka chcek lista z odznaczaniem userów
     const [hiddenUsers, setHiddenUsers] = useState([])
     const [usersCalendars, setUsersCalendars] = useState([])
-    const [pickedDay, setPickedDay] = useState(new Date(dateStart));
+    const [pickedDay, setPickedDay] = useState(new Date(selectedSlot.dateStart));
     const [weekDays, setWeekDays] = useState(getWeekDays(new Date(dateStart)));
     const [error, setError] = useState(null);
     const [showSlotCustomizer, setShowSlotCustomizer] = useState(false)
@@ -168,7 +168,10 @@ const EventCreationCalendar = ({
                                    opacity={0.8} name={`Event slot ${i + 1}`} {...entry}/>))}
             {selectedSlotPicked.map((entry, i) => (
                 <CalendarComponent key={`slot-${i}`} backgroundColor={"#2563eb"} borderColor={"#1e3a8a"}
-                                   opacity={0.4} name={`Picked slot`} {...entry}/>))}
+                                   opacity={0.4} name={`Picked slot`} {...entry}
+                    side={"right"}
+                                   style={{ alignItems: "flex-end" }}
+                />))}
         </CalendarField>
     </View>);
 };

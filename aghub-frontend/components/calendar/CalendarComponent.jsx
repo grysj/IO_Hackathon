@@ -13,6 +13,7 @@ const hourToTopOffset = (date) => {
 const CalendarComponent = ({
                                dateStart,
                                dateEnd,
+                               side = "left",
                                username = "",
                                showDate = true,
                                name = "",
@@ -31,7 +32,7 @@ const CalendarComponent = ({
     return (
         <Pressable
             onPress={handlePress}
-            className={`absolute left-[60px] w-[70%] rounded-md px-3 py-2`}
+            className={`absolute w-[70%] rounded-md px-3 py-2`}
             style={{
                 opacity,
                 borderWidth,
@@ -39,6 +40,8 @@ const CalendarComponent = ({
                 backgroundColor,
                 top,
                 height,
+            ...(side === "left" ? {left: 60} : {}),
+                ...(side === "right" ? {right: 15} : {}),
                 zIndex,
                 ...style,
             }}
@@ -48,8 +51,8 @@ const CalendarComponent = ({
                 {showDate && (<Text className="text-gray-100 text-xs">
                     {formatTime(dateStart)} - {formatTime(dateEnd)}
                 </Text>)}
-                {username &&(<Text className="text-gray-100 text-xs">
-                     {username}
+                {username && (<Text className="text-gray-100 text-xs">
+                    {username}
                 </Text>)}
             </View>
         </Pressable>
