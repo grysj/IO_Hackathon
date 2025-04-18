@@ -8,8 +8,9 @@ import React, {useState} from "react";
 import {formatDateTimeToLocalDateTime} from "../../app/functions/format/FormatDateTime";
 import EventSlotCustomizer from "./EventSlotCustomizer";
 
+
 const DateTimeRangePicker = ({
-                                 friendIds,
+                                 usersId,
                                  availableSlots,
                                  setAvailableSlots,
                                  dateStart,
@@ -135,7 +136,7 @@ const DateTimeRangePicker = ({
 
 
                     <TouchableOpacity
-                        onPress={() => fetchAvailabilities(friendIds).then(() => {
+                        onPress={() => fetchAvailabilities(usersId).then(() => {
                             setDisableCalendarButton(false)
                             setDisableCustomizeAvailability(false)
                         })}

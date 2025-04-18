@@ -6,13 +6,15 @@ import LocationPickerScreen from "../../components/event/EventLocationPicker";
 import { useAuth } from "../../contexts/AuthContext";
 
 const EventCreateScreen = () => {
-  const [friends, setFriends] = useState([]);
+  const [friendsId, setFriendsId] = useState([]);
+  const [friends, setFriends] = useState([])
   const [slot, setSlot] = useState(null);
   const [location, setLocation] = useState(null);
   const [step, setStep] = useState("friends");
   const { user } = useAuth();
-  const handleFriendsConfirm = (ids) => {
-    setFriends(ids);
+  const handleFriendsConfirm = (ids, friends) => {
+    setFriendsId(ids);
+    setFriends(friends)
     setStep("availability");
   };
 
@@ -56,7 +58,7 @@ const EventCreateScreen = () => {
     setLocation(location);
 
     const eventData = {
-      friends,
+      friends: friendsId,
       slot,
       location,
     };
@@ -79,7 +81,7 @@ const EventCreateScreen = () => {
 
       {step === "availability" && (
         <EventAvailabilityPicker
-          friendIds={friends}
+          friendIds={friendsId}
           onConfirm={handleAvailabilityConfirm}
         />
       )}

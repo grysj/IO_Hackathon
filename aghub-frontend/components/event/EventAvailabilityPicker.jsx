@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import EventCreationCalendar from "./EventCreationCalendar";
 import DateTimeRangePicker from "./DateTimeRangePicker";
+import {useAuth} from "../../contexts/AuthContext";
 
 
 //TODO Sprawdzić czy w friendsID jest user id
@@ -14,7 +15,8 @@ const EventAvailabilityPicker = ({friendIds = [], onConfirm}) => {
     const [showCalendar, setShowCalendar] = useState(false)
     const [selectedSlot, setSelectedSlot] = useState()
     const [availableSlots, setAvailableSlots] = useState([])
-
+    const { user } = useAuth();
+    const usersId = [...friendIds, user.id]
 
     const handleConfirm = () => {
         if (selectedSlot ) {
@@ -26,7 +28,7 @@ const EventAvailabilityPicker = ({friendIds = [], onConfirm}) => {
     };
 
     return showCalendar ? (
-        <EventCreationCalendar usersId={friendIds}
+        <EventCreationCalendar usersId={usersId}
                                dateStart={dateStart}
                                dateEnd={dateEnd}
                                goBack={() => setShowCalendar(false)}
@@ -43,7 +45,7 @@ const EventAvailabilityPicker = ({friendIds = [], onConfirm}) => {
                               setShowCalendar={setShowCalendar}
                               availableSlots={availableSlots}
                               setAvailableSlots={setAvailableSlots}
-                              friendIds={friendIds}
+                              usersId={usersId}
                               setSelectedSlot={setSelectedSlot}
                               selectedSlot={selectedSlot}
                               onConfirm={handleConfirm}
