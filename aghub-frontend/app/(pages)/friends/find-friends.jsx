@@ -95,13 +95,6 @@ const FindFriendsScreen = () => {
                             onClick={handleAddingFriends}
                         />
                     ))}
-
-                    style={styles.input}
-                    placeholder="Find friends..."
-                    placeholderTextColor={"#ca8a04"}
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                    />
                 </View>
             </ScrollView>
 
@@ -117,7 +110,7 @@ const styles = StyleSheet.create({
         flex: {
             flex: 1,
             padding: 10,
-            backgroundColor: "#272625", // albo dynamicznie z theme
+            backgroundColor: "#272625",
         },
         header: {}
         ,

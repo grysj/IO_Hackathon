@@ -1,9 +1,20 @@
 import React from "react";
 import {Pressable, Text, View} from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import {formatTime, formatDate} from "../../app/functions/format/FormatDateTime";
 
 
-const DateTimePickerBox = ({label ="From", type = "time", value, onChange, visible, setVisible}) => {
+const DateTimePickerBox = ({
+                               label = "From:",
+                               type = "time",
+                               maximumDate = null,
+                               minimumDate = new Date(),
+                               value,
+                               onChange,
+                               visible,
+                               setVisible,
+                               setButtons
+                           }) => {
     const setDate = (date) => {
         if (!date) return;
 
@@ -35,33 +46,30 @@ const DateTimePickerBox = ({label ="From", type = "time", value, onChange, visib
     const formatText = () => {
         switch (type) {
             case "time": {
-                return `${value.getHours().toString().padStart(2, "0")}:${value
-                    .getMinutes()
-                    .toString()
-                    .padStart(2, "0")}`;
+                return formatTime(new Date(value))
             }
             case "date": {
-                return `${value.getDate()
-                    .toString()
-                    .padStart(2, "0")}-${(value.getMonth() + 1)
-                    .toString()
-                    .padStart(2, "0")}-${value.getFullYear()
-                }`
+                return formatDate(new Date(value), "-")
             }
         }
     }
     return (
         <View className="flex-1 min-w-[100px]">
-            <Text className="text-white mb-1 font-semibold">{label}:</Text>
+            <Text className="text-white mb-1 font-semibold">{label}</Text>
 
-            <Pressable onPress={() => setVisible(true)}>
+            <Pressable onPress={() => {
+                setVisible(true)
+                setButtons()
+            }}>
                 <View className="bg-background-200 py-4 rounded-lg">
                     {visible && (
                         <RNDateTimePicker
-                            value={value}
+                            value={new Date(value)}
                             mode={type}
                             display="spinner"
                             is24Hour={true}
+                            minimumDate={minimumDate}
+                            maximumDate={maximumDate}
                             timeZoneName="Europe/Warsaw"
                             positiveButton={{textColor: "white"}}
                             negativeButton={{textColor: "white"}}

@@ -48,7 +48,8 @@ const FriendSelector = ({ onConfirm }) => {
   };
 
   const handleConfirm = () => {
-    onConfirm(selectedIds);
+    const updated = [...selectedIds, user.id]
+    onConfirm(updated);
   };
 
   return (
