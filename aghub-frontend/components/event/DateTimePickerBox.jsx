@@ -1,12 +1,11 @@
 import React from "react";
 import {Pressable, Text, View} from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
-import {formatTime} from "../../app/functions/format/FormatDateTime";
-import {formatDate} from "date-fns";
+import {formatTime, formatDate} from "../../app/functions/format/FormatDateTime";
 
 
 const DateTimePickerBox = ({
-                               label = "From",
+                               label = "From:",
                                type = "time",
                                maximumDate = null,
                                minimumDate = new Date(),
@@ -47,16 +46,16 @@ const DateTimePickerBox = ({
     const formatText = () => {
         switch (type) {
             case "time": {
-                return formatTime(value)
+                return formatTime(new Date(value))
             }
             case "date": {
-                return formatDate(value, "-")
+                return formatDate(new Date(value), "-")
             }
         }
     }
     return (
         <View className="flex-1 min-w-[100px]">
-            <Text className="text-white mb-1 font-semibold">{label}:</Text>
+            <Text className="text-white mb-1 font-semibold">{label}</Text>
 
             <Pressable onPress={() => {
                 setVisible(true)
@@ -65,7 +64,7 @@ const DateTimePickerBox = ({
                 <View className="bg-background-200 py-4 rounded-lg">
                     {visible && (
                         <RNDateTimePicker
-                            value={value}
+                            value={new Date(value)}
                             mode={type}
                             display="spinner"
                             is24Hour={true}

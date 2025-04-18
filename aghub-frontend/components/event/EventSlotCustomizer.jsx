@@ -1,6 +1,6 @@
 import {StyleSheet, TouchableOpacity, View} from "react-native";
 import DateTimePickerBox from "./DateTimePickerBox";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Text} from "@gluestack-ui/themed";
 import Divider from "../ui/Divider";
 
@@ -9,7 +9,7 @@ const EventSlotCustomizer = ({
                                  dateMin,
                                  dateMax,
                                  selectedSlot,
-                                 setSelectedSlot = (slot) => {}
+                                 setSelectedSlot = () => {}
                              }) => {
     const [dateStart, setDateStart] = useState(dateMin)
     const [dateEnd, setDateEnd] = useState(dateMax)
@@ -17,10 +17,12 @@ const EventSlotCustomizer = ({
     const [showTimeEnd, setShowTimeEnd] = useState(false)
     const [showDateStart, setShowDateStart] = useState(false)
     const [showDateEnd, setShowDateEnd] = useState(false)
-    if (selectedSlot){
-        setDateStart(selectedSlot.dateStart)
-        setDateEnd(selectedSlot.dateEnd)
-    }
+    useEffect(() => {
+        if (selectedSlot) {
+            setDateStart(selectedSlot.dateStart);
+            setDateEnd(selectedSlot.dateEnd);
+        }
+    }, [selectedSlot]);
     const handleSetDateEnd = (date) => {
         setDateEnd(date);
         setSelectedSlot({ dateStart, dateEnd: date });
@@ -59,7 +61,7 @@ const EventSlotCustomizer = ({
 
             <View style={styles.row}>
                 <DateTimePickerBox
-                    label={"To"}
+                    label={"To:"}
                     type={"date"}
                     value={dateEnd}
                     onChange={handleSetDateEnd}
@@ -93,6 +95,7 @@ export default EventSlotCustomizer;
 const styles = StyleSheet.create({
     container: {
         gap: 12,
+        padding: 8,
     },
     row: {
         flexDirection: 'row',

@@ -1,16 +1,10 @@
 import { Box, HStack, Pressable, Text } from "@gluestack-ui/themed";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import React from "react";
+import {isTheSameDay} from "../util/calendarUtils";
 //TODO poprawienie tego parszywego stylowania i wywalenie gluestacka as usuall
 const WeekDayBar = ({ weekDays, pickedDay, onClickDay, shift, specialDays =[] }) => {
 
-    const isTheSameDay = (day1, day2) => {
-        return (
-            day1.getFullYear() === day2.getFullYear() &&
-            day1.getMonth() === day2.getMonth() &&
-            day1.getDate() === day2.getDate()
-        );
-    };
     const isSpecialDay = (day2)=>{
         return specialDays.some(day1 => isTheSameDay(day1,day2))
     }

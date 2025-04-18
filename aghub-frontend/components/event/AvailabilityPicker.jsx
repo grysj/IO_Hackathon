@@ -17,8 +17,11 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
 
 
     const handleConfirm = () => {
-        if (selectedSlot) {
-            onConfirm(selectedSlot);
+        if (selectedSlot ) {
+            if(selectedSlot?.dateStart < selectedSlot?.dateEnd){
+                onConfirm(selectedSlot);
+            }
+
         }
     };
 
@@ -27,7 +30,11 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
                                dateStart={dateStart}
                                dateEnd={dateEnd}
                                goBack={() => setShowCalendar(false)}
-                               availabilities={availableSlots}/>
+                               availabilities={availableSlots}
+                               setSelectedSlot={setSelectedSlot}
+                               selectedSlot={selectedSlot}
+                               onConfirm={onConfirm}
+        />
 
     ) : (<DateTimeRangePicker dateStart={dateStart}
                               setDateStart={setDateStart}
@@ -37,8 +44,9 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
                               availableSlots={availableSlots}
                               setAvailableSlots={setAvailableSlots}
                               friendIds={friendIds}
-                              setSelectedSlot={selectedSlot}
+                              setSelectedSlot={setSelectedSlot}
                               selectedSlot={selectedSlot}
+                              onConfirm={handleConfirm}
 
         />
     );

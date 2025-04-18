@@ -31,3 +31,22 @@ export const cropScheduleToPickedDay = (items, pickedDay) => {
             dateEnd: new Date(Math.min(new Date(item.dateEnd), endOfDay)),
         }));
 };
+export const isTheSameDay = (day1, day2) => {
+    return (
+        day1.getFullYear() === day2.getFullYear() &&
+        day1.getMonth() === day2.getMonth() &&
+        day1.getDate() === day2.getDate()
+    );
+};
+export const isTheSameTime = (day1, day2) => {
+    return (
+        day1.getHours() === day2.getHours() &&
+        day1.getMinutes() === day2.getMinutes()
+    )
+}
+export const isTheSameDate = (day1, day2) => {
+    return (
+        isTheSameDay(day1, day2) &&
+        isTheSameTime(day1, day2)
+    )
+}

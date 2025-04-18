@@ -1,4 +1,4 @@
-import {cropScheduleToPickedDay, getWeekDays} from "../util/calendarUtils";
+import {cropScheduleToPickedDay, getWeekDays, isTheSameDate} from "../util/calendarUtils";
 import React, {useEffect, useState} from "react";
 import {useAuth} from "../../contexts/AuthContext";
 import {formatDateTimeToLocalDateTime} from "../../app/functions/format/FormatDateTime";
@@ -11,11 +11,10 @@ import {TouchableOpacity, View} from "react-native";
 import CalendarUsersActivitiesList from "./CalendarUsersActivitiesList";
 import {Text} from "@gluestack-ui/themed";
 import {Ionicons} from "@expo/vector-icons";
+import EventSlotCustomizer from "./EventSlotCustomizer";
 
 function filterHiddenUsers(usersCalendars = [], hiddenUsers = []) {
-    return usersCalendars.filter(
-        (entry) => !hiddenUsers.includes(entry?.user?.id)
-    );
+    return usersCalendars.filter((entry) => !hiddenUsers.includes(entry?.user?.id));
 }
 
 const generateSpecialDays = (start, end) => {
@@ -24,6 +23,7 @@ const generateSpecialDays = (start, end) => {
 
     const days = [];
     const current = new Date(startDate);
+    const [showSchedule, setShowSchedule] = useState(false)
 
     while (current <= endDate) {
         days.push(new Date(current)); // kopia obiektu
@@ -39,6 +39,9 @@ const EventCreationCalendar = ({
                                    dateEnd,
                                    usersId,
                                    goBack,
+                                   selectedSlot,
+                                   setSelectedSlot,
+                                   onConfirm
                                }) => {
     const {user} = useAuth();
     //TODO obsługa wyświetlania niedostępnych terminów po userze taka chcek lista z odznaczaniem userów
@@ -47,6 +50,7 @@ const EventCreationCalendar = ({
     const [pickedDay, setPickedDay] = useState(new Date(dateStart));
     const [weekDays, setWeekDays] = useState(getWeekDays(new Date(dateStart)));
     const [error, setError] = useState(null);
+    const [showSlotCustomizer, setShowSlotCustomizer] = useState(false)
 
 
     const shiftWeek = (direction) => {
@@ -66,16 +70,13 @@ const EventCreationCalendar = ({
 
             try {
                 const response = await fetch("http://34.116.250.33:8080/api/schedule/users", {
-                    method: "POST",
-                    headers: {
+                    method: "POST", headers: {
                         "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
+                    }, body: JSON.stringify({
                         usersId: usersId,
                         dateStart: formatDateTimeToLocalDateTime(dateStart),
                         dateEnd: formatDateTimeToLocalDateTime(dateEnd),
-                    }),
-                    signal: controller.signal,
+                    }), signal: controller.signal,
                 });
 
                 if (!response.ok) throw new Error("Failed to fetch schedule");
@@ -96,49 +97,79 @@ const EventCreationCalendar = ({
     }, [user, weekDays]);
     const specialDays = generateSpecialDays(dateStart, dateEnd);
     const pickedCalendars = filterHiddenUsers(usersCalendars, hiddenUsers)
-    const availabilitiesPicked = availabilities
-        ? cropScheduleToPickedDay(availabilities, pickedDay)
-        : [];
-    return (
-        <View className="flex-1  bg-background-50">
-            <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 4}}>
-                <CalendarLabel dateStart={weekDays[0]} dateEnd={weekDays[6]}/>
+    const availabilitiesPicked = availabilities ? cropScheduleToPickedDay(availabilities, pickedDay) : [];
+    const selectedSlotPicked = selectedSlot
 
-                <TouchableOpacity onPress={goBack} className="bg-yellow-600 px-3 py-2 rounded-lg"
-                                  style={{justifyContent: "center", alignItems: "center"}}>
-                    <View style={{flexDirection: "row", alignItems: "center"}}>
-                        <Ionicons name="arrow-back" size={15} color="white"/>
-                        <Text className="text-white font-bold">Go Back</Text>
-                    </View>
-                </TouchableOpacity>
+    && selectedSlot?.dateStart < selectedSlot?.dateEnd
+        ? cropScheduleToPickedDay([selectedSlot], pickedDay) : [];
+    return (<View className="flex-1  bg-background-50">
+        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 4}}>
+            <CalendarLabel dateStart={weekDays[0]} dateEnd={weekDays[6]}/>
 
-            </View>
+            <TouchableOpacity onPress={goBack} className="bg-yellow-600 px-3 py-2 rounded-lg"
+                              style={{justifyContent: "center", alignItems: "center"}}>
+                <View style={{flexDirection: "row", alignItems: "center"}}>
+                    <Ionicons name="arrow-back" size={15} color="white"/>
+                    <Text className="text-white font-bold">Go Back</Text>
+                </View>
+            </TouchableOpacity>
 
-            <WeekDayBar
-                weekDays={weekDays}
-                pickedDay={pickedDay}
-                onClickDay={setPickedDay}
-                shift={shiftWeek}
-                specialDays={specialDays}
-            />
-
-
-            <CalendarField>
-                <CalendarTimeLine/>
-                {pickedCalendars.map((entry, i) => (
-                    <CalendarUsersActivitiesList
-                        key={`user-${entry.user.id}-${i}`}
-                        user={entry.user}
-                        pickedDay={pickedDay}
-                        schedule={entry.calendar}
-                    />
-                ))}
-                {availabilitiesPicked.map((entry, i) => (
-                    <CalendarComponent key={`avail-${i}`} backgroundColor={"#16a34a"} borderColor={"#14532d"}
-                                       opacity={0.8} name={`Event slot ${i + 1}`} {...entry}/>
-                ))}
-            </CalendarField>
         </View>
-    );
+
+        <WeekDayBar
+            weekDays={weekDays}
+            pickedDay={pickedDay}
+            onClickDay={setPickedDay}
+            shift={shiftWeek}
+            specialDays={specialDays}
+        />
+        {showSlotCustomizer ? (
+            <View>
+                <EventSlotCustomizer
+                    dateMin={dateStart}
+                    dateMax={dateEnd}
+                    selectedSlot={selectedSlot}
+                    setSelectedSlot={setSelectedSlot}
+                    onConfirm={onConfirm}
+                />
+                <TouchableOpacity
+                    onPress={() => setShowSlotCustomizer(false)}
+                    style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderBottomWidth: 2,
+                        borderColor: "white",
+                    }}
+                >
+                    <Ionicons name="chevron-up-outline" size={24} color="white"/>
+                </TouchableOpacity>
+            </View>
+        ) : (
+            <View style={{borderBottomWidth: 2, borderColor: "white", padding: 8}}>
+                <TouchableOpacity
+                    onPress={() => setShowSlotCustomizer(true)}
+                    className="bg-yellow-600 p-4 rounded-lg items-center"
+                >
+                    <Text className="text-white font-bold">Customize Event Time</Text>
+                </TouchableOpacity>
+            </View>
+        )}
+
+        <CalendarField>
+            <CalendarTimeLine/>
+            {pickedCalendars.map((entry, i) => (<CalendarUsersActivitiesList
+                key={`user-${entry.user.id}-${i}`}
+                user={entry.user}
+                pickedDay={pickedDay}
+                schedule={entry.calendar}
+            />))}
+            {availabilitiesPicked.map((entry, i) => (
+                <CalendarComponent key={`avail-${i}`} backgroundColor={"#16a34a"} borderColor={"#14532d"}
+                                   opacity={0.8} name={`Event slot ${i + 1}`} {...entry}/>))}
+            {selectedSlotPicked.map((entry, i) => (
+                <CalendarComponent key={`slot-${i}`} backgroundColor={"#2563eb"} borderColor={"#1e3a8a"}
+                                   opacity={0.4} name={`Picked slot`} {...entry}/>))}
+        </CalendarField>
+    </View>);
 };
 export default EventCreationCalendar

@@ -18,7 +18,8 @@ const DateTimeRangePicker = ({
                                  setDateEnd,
                                  setShowCalendar,
                                  selectedSlot,
-                                 setSelectedSlot
+                                 setSelectedSlot,
+                                 onConfirm
                              }) => {
     const [minDuration, setMinDuration] = useState("60");
     const [showTimeStart, setShowTimeStart] = useState(false)
@@ -27,6 +28,7 @@ const DateTimeRangePicker = ({
     const [showDateEnd, setShowDateEnd] = useState(false)
     const [showSlotCustomizer, setShowSlotCustomizer] = useState(false)
     const [disableCalendarButton, setDisableCalendarButton] = useState(true)
+    const [disableCustomizeAvailability, setDisableCustomizeAvailability] = useState(true)
     const fetchAvailabilities = async (friendsId) => {
         try {
 
@@ -51,10 +53,16 @@ const DateTimeRangePicker = ({
 
             const data = await response.json();
             setAvailableSlots(data);
+            setSelectedSlot({dateStart, dateEnd:dateStart})
         } catch (err) {
             console.error("Błąd podczas pobierania dostępności:", err.message);
         }
     };
+    const setButtons =() =>{
+        setDisableCalendarButton(true)
+        setShowSlotCustomizer(false)
+        setDisableCustomizeAvailability(true)
+    }
     return (
         <Box
             className="flex-1 bg-background-50"
@@ -99,11 +107,11 @@ const DateTimeRangePicker = ({
 
                     <HStack space="md" className="flex-row gap-2">
                         <DateTimePickerBox type={"date"} value={dateStart} onChange={setDateStart}
-                                           visible={showDateStart} setButtons={() => setDisableCalendarButton(true)}
+                                           visible={showDateStart} setButtons={setButtons}
                                            setVisible={setShowDateStart}></DateTimePickerBox>
-                        <DateTimePickerBox label={"To"} type={"date"} value={dateEnd} onChange={setDateEnd}
+                        <DateTimePickerBox label={"To:"} type={"date"} value={dateEnd} onChange={setDateEnd}
                                            visible={showDateEnd} setVisible={setShowDateEnd}
-                                           setButtons={() => setDisableCalendarButton(true)}></DateTimePickerBox>
+                                           setButtons={setButtons}></DateTimePickerBox>
                     </HStack>
                     <Divider/>
                     <View className="flex-row alifne items-center gap-2 mb-2">
@@ -116,10 +124,10 @@ const DateTimeRangePicker = ({
                     <HStack space="md" className="flex-row gap-2">
                         <DateTimePickerBox value={dateStart} onChange={setDateStart} visible={showTimeStart}
                                            setVisible={setShowTimeStart}
-                                           setButtons={() => setDisableCalendarButton(true)}></DateTimePickerBox>
-                        <DateTimePickerBox label={"To"} value={dateEnd} onChange={setDateEnd} visible={showTimeEnd}
+                                           setButtons={setButtons}></DateTimePickerBox>
+                        <DateTimePickerBox label={"To:"} value={dateEnd} onChange={setDateEnd} visible={showTimeEnd}
                                            setVisible={setShowTimeEnd}
-                                           setButtons={() => setDisableCalendarButton(true)}></DateTimePickerBox>
+                                           setButtons={setButtons}></DateTimePickerBox>
                     </HStack>
                     <Divider/>
 
@@ -127,6 +135,7 @@ const DateTimeRangePicker = ({
                     <TouchableOpacity
                         onPress={() => fetchAvailabilities(friendIds).then(() => {
                             setDisableCalendarButton(false)
+                            setDisableCustomizeAvailability(false)
                         })}
                         className="bg-yellow-600 p-4 rounded-lg items-center"
                     >
@@ -180,12 +189,15 @@ const DateTimeRangePicker = ({
                     <Text style={{color: "white"}}>OR</Text>
                 </CustomDivider>
 
-                {showSlotCustomizer? <EventSlotCustomizer minDate={dateStart}
-                                                          dateMax={dateEnd}
-                                                          dateEnd={}
-                /> :<TouchableOpacity onPress={() => setShowSlotCustomizer(true)}
-                                   className="bg-yellow-600 p-4 rounded-lg items-center">
-                    <Text className="text-white font-bold">Customize Availability</Text>
+                {showSlotCustomizer ? <EventSlotCustomizer dateMin={dateStart}
+                                                           dateMax={dateEnd}
+                                                           selectedSlot={selectedSlot}
+                                                           setSelectedSlot={setSelectedSlot}
+                                                           onConfirm={onConfirm}
+
+                /> : <TouchableOpacity disabled={disableCustomizeAvailability} onPress={() => setShowSlotCustomizer(true)}
+                                       className="bg-yellow-600 p-4 rounded-lg items-center">
+                    <Text className="text-white font-bold">Customize Event Time</Text>
                 </TouchableOpacity>}
             </ScrollView>
 
