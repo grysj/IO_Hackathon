@@ -25,11 +25,15 @@ const EventSlotCustomizer = ({
     }, [selectedSlot]);
     const handleSetDateEnd = (date) => {
         setDateEnd(date);
-        setSelectedSlot({ dateStart, dateEnd: date });
+        const newSlot = {dateStart, dateEnd:date}
+        setSelectedSlot(newSlot);
+        console.log(selectedSlot)
     };
     const handleSetDateStart = (date) => {
         setDateStart(date);
-        setSelectedSlot({ dateStart: date, dateEnd });
+        const newSlot = {dateStart: date, dateEnd}
+        setSelectedSlot(newSlot);
+        console.log(selectedSlot)
     };
 
 

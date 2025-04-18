@@ -31,12 +31,14 @@ const DateTimeRangePicker = ({
     const [disableCustomizeAvailability, setDisableCustomizeAvailability] = useState(true)
     const fetchAvailabilities = async (friendsId) => {
         try {
+            console.log(friendsId)
 
             const response = await fetch("http://34.116.250.33:8080/api/availability/find", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
+
                 body: JSON.stringify({
                     dateStart: formatDateTimeToLocalDateTime(dateStart),
                     dateEnd: formatDateTimeToLocalDateTime(dateEnd),
