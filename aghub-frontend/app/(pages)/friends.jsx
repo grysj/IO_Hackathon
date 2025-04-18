@@ -5,7 +5,7 @@ import {Box, ScrollView, VStack, Text, View} from '@gluestack-ui/themed'
 import { useRouter } from "expo-router";
 import { useAuth } from "../../contexts/AuthContext";
 
-import FriendComponent from "../../components/friendlist/FriendComponent";
+import FriendComponent from "../../components/friendlist/FriendListComponent";
 import AddFriendButton from "../../components/friendlist/AddFriendButton";
 import Divider from "../../components/ui/Divider";
 
