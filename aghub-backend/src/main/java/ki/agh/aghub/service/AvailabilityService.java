@@ -55,20 +55,19 @@ public class AvailabilityService {
 
         List<AvailabilityDTO> mergedBusy = mergeTimeRanges(busyTimes);
 
-        // 3. Wyszukaj wolne przedziały między zajętościami
+
         List<AvailabilityDTO> freeSlots = findFreeSlotsBetween(mergedBusy, from, to);
 
-        // 4. Zwróć tylko te dłuższe niż `minDuration`
         return freeSlots.stream()
-                .filter(slot -> Duration.between(slot.startDate(), slot.endDate()).compareTo(minDuration) >= 0)
-                .map(slot -> new AvailabilityDTO(slot.startDate(), slot.endDate()))
+                .filter(slot -> Duration.between(slot.dateStart(), slot.dateEnd()).compareTo(minDuration) >= 0)
+                .map(slot -> new AvailabilityDTO(slot.dateStart(), slot.dateEnd()))
                 .toList();
     }
     public List<AvailabilityDTO> mergeTimeRanges(List<AvailabilityDTO> input) {
         if (input.isEmpty()) return List.of();
 
         List<AvailabilityDTO> sorted = input.stream()
-                .sorted(Comparator.comparing(AvailabilityDTO::startDate))
+                .sorted(Comparator.comparing(AvailabilityDTO::dateStart))
                 .toList();
 
         List<AvailabilityDTO> merged = new ArrayList<>();
@@ -77,10 +76,10 @@ public class AvailabilityService {
         for (int i = 1; i < sorted.size(); i++) {
             AvailabilityDTO next = sorted.get(i);
 
-            if (!next.startDate().isAfter(current.endDate())) {
+            if (!next.dateStart().isAfter(current.dateEnd())) {
                 current = new AvailabilityDTO(
-                        current.startDate(),
-                        current.endDate().isAfter(next.endDate()) ? current.endDate() : next.endDate()
+                        current.dateStart(),
+                        current.dateEnd().isAfter(next.dateEnd()) ? current.dateEnd() : next.dateEnd()
                 );
             } else {
                 merged.add(current);
@@ -96,11 +95,11 @@ public class AvailabilityService {
         LocalDateTime current = from;
 
         for (AvailabilityDTO busySlot : busy) {
-            if (busySlot.startDate().isAfter(current)) {
-                result.add(new AvailabilityDTO(current, busySlot.startDate()));
+            if (busySlot.dateStart().isAfter(current)) {
+                result.add(new AvailabilityDTO(current, busySlot.dateStart()));
             }
-            if (busySlot.endDate().isAfter(current)) {
-                current = busySlot.endDate();
+            if (busySlot.dateEnd().isAfter(current)) {
+                current = busySlot.dateEnd();
             }
         }
 

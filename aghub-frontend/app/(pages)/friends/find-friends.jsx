@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
     padding: 10,
-    backgroundColor: "#272625", // or dynamic from theme
+    backgroundColor: "#272625", // albo dynamicznie z theme
   },
   header: {},
   container: {
@@ -124,15 +124,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#ca8a04",
     marginBottom: 20,
-  },
-  loadingText: {
-    color: "#ca8a04",
-    textAlign: "center",
-    marginTop: 10,
-  },
-  errorText: {
-    color: "red",
-    textAlign: "center",
-    marginTop: 10,
   },
 });

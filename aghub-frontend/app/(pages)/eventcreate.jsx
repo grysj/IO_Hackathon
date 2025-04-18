@@ -25,7 +25,7 @@ const EventCreateScreen = () => {
       const eventDto = {
         name: "Nowe wydarzenie",
         description: "Wydarzenie utworzone z aplikacji",
-        dateStart: slot.startDate,
+        dateStart: slot.startDate,//TODO tu jest błąd pewnie z formatem danych dlatego to nie chciało się wysyłać
         dateEnd: slot.endDate,
         latitude: location.latitude,
         longitude: location.longitude,

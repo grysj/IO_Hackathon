@@ -1,34 +1,38 @@
-import React, {useEffect, useState} from "react";
-import {Box, Button, HStack, Input, InputField, Pressable, ScrollView, Text, VStack,} from "@gluestack-ui/themed";
-import {Platform, StatusBar} from "react-native";
+import React, {useState} from "react";
+import {Box, HStack, Input, InputField, Pressable, Text, VStack} from "@gluestack-ui/themed";
+import {Platform, ScrollView, StatusBar, TouchableOpacity, View} from "react-native";
+import DateTimePickerBox from "./DateTimePickerBox";
+import Divider from "../ui/Divider";
+import CustomDivider from "../ui/CustomDivider";
+import {Ionicons} from "@expo/vector-icons";
 
-const HARDCODED_AVAILABILITY = [
-    {start: "2025-04-14T10:00:00", end: "2025-04-14T11:00:00"},
-    {start: "2025-04-14T14:00:00", end: "2025-04-14T15:00:00"},
-    {start: "2025-04-14T19:00:00", end: "2025-04-14T20:00:00"},
-    {start: "2025-04-15T09:00:00", end: "2025-04-15T10:00:00"},
-    {start: "2025-04-15T12:00:00", end: "2025-04-15T13:00:00"},
-    {start: "2025-04-16T16:00:00", end: "2025-04-16T17:00:00"},
-];
 
+//TODO Sprawdzić czy w friendsID jest user id
 const getFormattedDate = (offset) => {
     const date = new Date();
     date.setDate(date.getDate() + offset);
     return date.toISOString().split("T")[0];
 };
 
+function formatDate(newDate) {
+    const date = new Date(newDate.toString())
+    date.setMinutes(newDate.getMinutes() - newDate.getTimezoneOffset());
+    return date.toISOString()
+}
+
 const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
     const [minDuration, setMinDuration] = useState("60");
-    const [timeRange, setTimeRange] = useState({from: "08:00", to: "23:00"});
-    const [selectedDate, setSelectedDate] = useState(getFormattedDate(0));
-    const [availableSlots, setAvailableSlots] = useState([]);
-    const [selectedSlot, setSelectedSlot] = useState(null);
+    const [showTimeStart, setShowTimeStart] = useState(false)
+    const [showTimeEnd, setShowTimeEnd] = useState(false)
+    const [showDateStart, setShowDateStart] = useState(false)
+    const [showDateEnd, setShowDateEnd] = useState(false)
+    const [dateStart, setDateStart] = useState(new Date())
+    const [dateEnd, setDateEnd] = useState(new Date())
 
-    const dates = [getFormattedDate(0), getFormattedDate(1), getFormattedDate(2)];
+    const [selectedSlot, setSelectedSlot] = useState()
+    const [availableSlots, setAvailableSlots] = useState([])
     const fetchAvailabilities = async (friendsId) => {
         try {
-            const startDate = parseTimeToDate(selectedDate, timeRange.from);
-            const endDate = parseTimeToDate(selectedDate, timeRange.to);
 
             const response = await fetch("http://34.116.250.33:8080/api/availability/find", {
                 method: "POST",
@@ -36,12 +40,13 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    usersId: friendsId,
-                    startDate: startDate.toISOString(),
-                    endDate: endDate.toISOString(),
+                    dateStart: formatDate(dateStart),
+                    dateEnd: formatDate(dateEnd),
                     minDuration: `PT${minDuration}M`,
+                    usersId: friendsId,
                 }),
             });
+
 
             if (!response.ok) {
                 const err = await response.text();
@@ -63,7 +68,6 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
     };
 
 
-
     const handleConfirm = () => {
         if (selectedSlot) {
             onConfirm(selectedSlot);
@@ -75,105 +79,75 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
             className="flex-1 bg-background-50 px-4"
             style={{
                 paddingTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
-                paddingBottom: 20,
             }}
         >
-            <Text className="text-2xl font-bold mb-4 text-white">
-                Wybierz dostępny termin
-            </Text>
+            <ScrollView>
+                <View className="flex-row items-center gap-2 mb-2">
+                    <Ionicons name="time" size={30} color="#ca8a04"/>
+                    <Text className="text-2xl font-bold text-white">
+                        Check time range
+                    </Text>
+                </View>
 
-            <VStack space="lg" className="mb-4">
-                <Text className="text-base font-semibold text-white">
-                    Minimalny czas trwania (minuty):
-                </Text>
-                <Input className="bg-background-100 px-4 py-4 rounded-lg w-full">
-                    <InputField
-                        keyboardType="numeric"
-                        value={minDuration}
-                        onChangeText={setMinDuration}
-                        placeholder="Np. 60"
-                        style={{color: "#fff"}}
-                        placeholderTextColor="#aaa"
-                    />
-                </Input>
-
-                <Text className="text-base font-semibold text-white">
-                    Zakres godzin:
-                </Text>
-
-                <HStack space="md" className="flex-row">
-                    <Box className="flex-1 min-w-[100px]">
-                        <Text className="text-white mb-1">Od:</Text>
-                        <Input className="bg-background-100 px-4 py-4 rounded-lg w-full">
-                            <InputField
-                                keyboardType={Platform.OS === "ios" ? "numbers-and-punctuation" : "default"}
-                                value={timeRange.from}
-                                onChangeText={(text) =>
-                                    setTimeRange((prev) => ({...prev, from: text}))
-                                }
-                                placeholder="08:00"
-                                style={{color: "#fff"}}
-                                placeholderTextColor="#aaa"
-                            />
-                        </Input>
-                    </Box>
-                    <Box className="flex-1 min-w-[100px]">
-                        <Text className="text-white mb-1">Do:</Text>
-                        <Input className="bg-background-100 px-4 py-4 rounded-lg w-full">
-                            <InputField
-                                keyboardType={Platform.OS === "ios" ? "numbers-and-punctuation" : "default"}
-                                value={timeRange.to}
-                                onChangeText={(text) =>
-                                    setTimeRange((prev) => ({...prev, to: text}))
-                                }
-                                placeholder="23:00"
-                                style={{color: "#fff"}}
-                                placeholderTextColor="#aaa"
-                            />
-                        </Input>
-                    </Box>
-                </HStack>
-
-                <Text className="text-base font-semibold text-white mt-2">
-                    Dzień wydarzenia:
-                </Text>
-                <HStack space="md" className="flex-wrap">
-                    {dates.map((date) => (
-                        <Pressable
-                            key={date}
-                            onPress={() => setSelectedDate(date)}
-                            className={`w-full px-4 py-3 rounded-lg border text-center mb-2 ${
-                                selectedDate === date
-                                    ? "bg-yellow-600 border-yellow-700"
-                                    : "bg-background-100 border-outline-200"
-                            }`}
-                        >
-                            <Text
-                                className={`text-center ${
-                                    selectedDate === date
-                                        ? "text-white"
-                                        : "text-typography-900"
-                                }`}
-                            >
-                                {new Date(date).toLocaleDateString()}
-                            </Text>
-                        </Pressable>
-                    ))}
-                </HStack>
+                <VStack space="lg" className="mb-4">
+                    <Text className="text-xl font-semibold text-white">
+                        Minimal duration of event (minutes)
+                    </Text>
+                    <Input className="bg-background-200 px-4 py-4 rounded-lg w-full">
+                        <InputField
+                            keyboardType="numeric"
+                            value={minDuration}
+                            onChangeText={setMinDuration}
+                            placeholder="Np. 60"
+                            style={{color: "#ca8a40"}}
+                            placeholderTextColor="#aaa"
+                        />
+                    </Input>
+                    <Divider/>
+                    <View className="flex-row alifne items-center gap-2 mb-2">
+                        <Ionicons name="calendar-number" size={24} color="#ca8a40"/>
+                        <Text className="text-xl font-semibold text-white">
+                            Dates range:
+                        </Text>
+                    </View>
 
 
-                <Pressable
-                    onPress={()=>fetchAvailabilities(friendIds)}
-                    className="bg-yellow-600 p-4 rounded-lg items-center mt-4"
-                >
-                    <Text className="text-white font-bold">Odśwież dostępność</Text>
-                </Pressable>
-            </VStack>
+                    <HStack space="md" className="flex-row gap-2">
+                        <DateTimePickerBox type={"date"} value={dateStart} onChange={setDateStart}
+                                           visible={showDateStart}
+                                           setVisible={setShowDateStart}></DateTimePickerBox>
+                        <DateTimePickerBox label={"To"} type={"date"} value={dateEnd} onChange={setDateEnd}
+                                           visible={showDateEnd} setVisible={setShowDateEnd}></DateTimePickerBox>
+                    </HStack>
+                    <Divider/>
+                    <View className="flex-row alifne items-center gap-2 mb-2">
+                        <Ionicons name="timer" size={28} color="#ca8a04"/>
+                        <Text className="text-xl font-semibold text-white">
+                            Hours range:
+                        </Text>
+                    </View>
 
-            <ScrollView className="mb-4" style={{flexGrow: 0}}>
-                <VStack space="md">
+                    <HStack space="md" className="flex-row gap-2">
+                        <DateTimePickerBox value={dateStart} onChange={setDateStart} visible={showTimeStart}
+                                           setVisible={setShowTimeStart}></DateTimePickerBox>
+                        <DateTimePickerBox label={"To"} value={dateEnd} onChange={setDateEnd} visible={showTimeEnd}
+                                           setVisible={setShowTimeEnd}></DateTimePickerBox>
+                    </HStack>
+                    <Divider/>
+
+
+                    <TouchableOpacity
+                        onPress={() => fetchAvailabilities(friendIds)}
+                        className="bg-yellow-600 p-4 rounded-lg items-center"
+                    >
+                        <Text className="text-white font-bold">Refresh Availability</Text>
+                    </TouchableOpacity>
+                </VStack>
+
+
+                <VStack space="md" className={"gap-2"}>
                     {availableSlots.map((slot, index) => {
-                        const isSelected = selectedSlot?.startDate === slot.startDate;
+                        const isSelected = selectedSlot?.dateStart === slot.dateStart;
                         return (
                             <Pressable
                                 key={index}
@@ -189,13 +163,14 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
                                         isSelected ? "text-white" : "text-typography-900"
                                     }`}
                                 >
-                                    {new Date(slot.startDate).toLocaleDateString()}{" "}
-                                    {new Date(slot.startDate).toLocaleTimeString([], {
+                                    {new Date(slot.dateStart).toLocaleDateString()}{" "}
+                                    {new Date(slot.dateStart).toLocaleTimeString([], {
                                         hour: "2-digit",
                                         minute: "2-digit",
                                     })}{" "}
                                     -{" "}
-                                    {new Date(slot.endDate).toLocaleTimeString([], {
+                                    {new Date(slot.dateEnd).toLocaleDateString()}{" "}
+                                    {new Date(slot.dateEnd).toLocaleTimeString([], {
                                         hour: "2-digit",
                                         minute: "2-digit",
                                     })}
@@ -204,24 +179,36 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
                         );
                     })}
                 </VStack>
+                <Divider style={{height:2}}/>
+                {/*TODO powyciągać takie przyciski do jednego pliku*/}
+                <TouchableOpacity className="bg-yellow-600 p-4 rounded-lg items-center">
+                    <Text className="text-white font-bold">Customize Availability</Text>
+                </TouchableOpacity>
+                <CustomDivider style={{height:2}} marginVertical={12}>
+                    <Text style={{color: "white"}}>OR</Text>
+                </CustomDivider>
+                <TouchableOpacity className="bg-yellow-600 p-4 rounded-lg items-center">
+                    <Text className="text-white font-bold">Check On Calendar</Text>
+                </TouchableOpacity>
             </ScrollView>
 
-            {/* Przycisk na dole */}
-            <Box className="mt-4">
-                <Pressable
-                    onPress={handleConfirm}
-                    disabled={!selectedSlot}
-                    className={`py-4 rounded-xl items-center ${
-                        selectedSlot ? "bg-green-600" : "bg-background-muted"
-                    }`}
-                >
-                    <Text className="text-white font-bold text-lg">
-                        {selectedSlot ? "Wybierz lokalizację ➡️" : "Zaznacz termin"}
-                    </Text>
-                </Pressable>
-            </Box>
+
+            {/*<Box className="mt-4">*/}
+            {/*    /!*<Pressable*!/*/}
+            {/*    /!*    onPress={handleConfirm}*!/*/}
+            {/*    /!*    disabled={!selectedSlot}*!/*/}
+            {/*    /!*    className={`py-4 rounded-xl items-center ${*!/*/}
+            {/*    /!*        selectedSlot ? "bg-green-600" : "bg-background-muted"*!/*/}
+            {/*    /!*    }`}*!/*/}
+            {/*    /!*>*!/*/}
+            {/*    /!*    <Text className="text-white font-bold text-lg">*!/*/}
+            {/*    /!*        {selectedSlot ? "Wybierz lokalizację ➡️" : "Zaznacz termin"}*!/*/}
+            {/*    /!*    </Text>*!/*/}
+            {/*    /!*</Pressable>*!/*/}
+            {/*</Box>*/}
         </Box>
-    );
+    )
+        ;
 };
 
 export default AvailabilityPicker;

@@ -1,13 +1,9 @@
 package ki.agh.aghub.controller;
 
-import ki.agh.aghub.dto.ClassesDTO;
-import ki.agh.aghub.dto.EventDTO;
-import ki.agh.aghub.dto.CalendarDTO;
-import ki.agh.aghub.dto.UnavailabilityDTO;
+import ki.agh.aghub.dto.*;
 import ki.agh.aghub.dto.request.ScheduleRequest;
-import ki.agh.aghub.service.ClassesService;
-import ki.agh.aghub.service.EventService;
-import ki.agh.aghub.service.UnavailabilitiesService;
+import ki.agh.aghub.dto.request.UsersScheduleRequest;
+import ki.agh.aghub.service.ScheduleService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,29 +15,28 @@ import java.util.List;
 @RequestMapping("/api/schedule")
 public class ScheduleController {
 
-    private EventService eventsService;
-    private ClassesService classesService;
-    private UnavailabilitiesService unavailabilitiesService;
+    private final ScheduleService scheduleService;
 
     public ScheduleController(
-        EventService eventsService, 
-        ClassesService classesService, 
-        UnavailabilitiesService unavailabilitiesService
+            ScheduleService scheduleService
     ) {
-        this.eventsService = eventsService;
-        this.classesService = classesService;
-        this.unavailabilitiesService = unavailabilitiesService;
+        this.scheduleService = scheduleService;
     }
 
     @PostMapping("")
     public CalendarDTO getScheduleByUserAndDate(
             @RequestBody ScheduleRequest scheduleRequest
             ) {
-        List<EventDTO> events = this.eventsService.getUserEventsByDate(scheduleRequest.id(), scheduleRequest.dateStart(), scheduleRequest.dateEnd());
-        List<ClassesDTO> classes = this.classesService.getUserClassesByDate(scheduleRequest.id(), scheduleRequest.dateStart(), scheduleRequest.dateEnd());
-        List<UnavailabilityDTO> unavailability = this.unavailabilitiesService.getUserUnavailabilitiesByDate(scheduleRequest.id(), scheduleRequest.dateStart(), scheduleRequest.dateEnd());
+        return scheduleService.getScheduleByDate(scheduleRequest.id(), scheduleRequest.dateStart(), scheduleRequest.dateEnd());
+    }
 
-        return new CalendarDTO(events, classes, unavailability);
+
+
+    @PostMapping("/users")
+    public List<UserCalendarDTO> getAllUsersScheduleByUserAndDate(
+            @RequestBody UsersScheduleRequest usersScheduleRequest
+    ){
+        return scheduleService.getAllSchedulesByDate(usersScheduleRequest.usersId(), usersScheduleRequest.dateStart(), usersScheduleRequest.dateEnd());
     }
 
 }

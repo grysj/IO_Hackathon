@@ -2,7 +2,7 @@ import React from 'react';
 import {useLocalSearchParams} from 'expo-router';
 
 import {Box} from "@gluestack-ui/themed";
-import Calendar from "../calendar";
+import Calendar from "../../../components/calendar/Calendar";
 
 
 
