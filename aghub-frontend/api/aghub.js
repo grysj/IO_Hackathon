@@ -137,3 +137,27 @@ export const getClass = async (classId, signal = null) => {
   }
   return res.json();
 };
+
+export const importClassesFromUsos = async (userId, url, signal = null) => {
+  const res = await fetch(`${API_URL}/api/classes/import_usos`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      url,
+      userId,
+    }),
+    signal,
+  });
+
+  if (!res.ok) {
+    const error = new Error(res.statusText || "Error while importing classes");
+    error.status = res.status;
+    throw error;
+  }
+
+  console.log("Response from server:", res);
+
+  return res.text();
+};
