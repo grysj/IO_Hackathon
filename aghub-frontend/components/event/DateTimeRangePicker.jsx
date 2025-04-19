@@ -81,7 +81,7 @@ const DateTimeRangePicker = ({
                     Check time range
                 </Text>
             </View>
-            //TODO zrobić tak w innych podstronach tak jak tu
+            {/*//TODO zrobić tak w innych podstronach tak jak tu*/}
 
             <View style={{paddingVertical:5, paddingHorizontal:10}}>
                 <ScrollView>
