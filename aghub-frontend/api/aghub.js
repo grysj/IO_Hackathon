@@ -161,3 +161,33 @@ export const importClassesFromUsos = async (userId, url, signal = null) => {
 
   return res.text();
 };
+
+// SCHEDULE API
+
+export const getSchedule = async (
+  userId,
+  dateStart,
+  dateEnd,
+  signal = null
+) => {
+  const res = await fetch(`${API_URL}/api/schedule`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id: userId,
+      dateStart,
+      dateEnd,
+    }),
+    signal,
+  });
+
+  if (!res.ok) {
+    const error = new Error(res.statusText || "Failed to fetch schedule");
+    error.status = res.status;
+    throw error;
+  }
+
+  return res.json();
+};
