@@ -2,6 +2,18 @@ const API_URL = process.env.EXPO_PUBLIC_AGHUB_API_URL;
 
 // FRIENDS API
 
+export const getFriends = async (userId, signal = null) => {
+  const res = await fetch(`${API_URL}/api/friends/${userId}`, { signal });
+
+  if (!res.ok) {
+    const error = new Error(res.statusText || "Failed to fetch friends");
+    error.status = res.status;
+    throw error;
+  }
+
+  return res.json();
+};
+
 export const getNewFriends = async (userId, signal = null) => {
   const res = await fetch(`${API_URL}/api/friends/new/${userId}`, {
     signal,
