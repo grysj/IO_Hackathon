@@ -10,7 +10,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "/contexts/AuthContext";
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState("");
