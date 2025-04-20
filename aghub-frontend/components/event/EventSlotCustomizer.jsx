@@ -83,7 +83,7 @@ const EventSlotCustomizer = ({
                 />
             </View>
 
-            <TouchableOpacity onPress={onConfirm} style={styles.button}>
+            <TouchableOpacity disabled={!selectedSlot} onPress={onConfirm} style={styles.button}>
                 <Text className="text-white font-bold">Choose Location</Text>
             </TouchableOpacity>
         </View>
