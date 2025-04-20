@@ -18,11 +18,44 @@ import * as Linking from "expo-linking";
 import {isTheSameDay} from "../util/calendarUtils";
 import {formatDateLabel, formatTime} from "../../app/functions/format/FormatDateTime";
 import FriendComponent from "../friendlist/FriendComponent";
+const createEvent = async ({ userId, slot, location, friendsId }) => {
+    try {
+        const eventDto = {
+            name: "Nowe wydarzenie",
+            description: "Wydarzenie utworzone z aplikacji",
+            dateStart: slot.startDate,//TODO tu jest błąd pewnie z formatem danych dlatego to nie chciało się wysyłać
+            dateEnd: slot.endDate,
+            latitude: location.latitude,
+            longitude: location.longitude,
+            poiId: null,
+            createdById: userId,
+        };
 
+        const response = await fetch("http://34.116.250.33:8080/api/events", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(eventDto),
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Błąd zapisu wydarzenia: ${errText}`);
+        }
+
+        console.log("Wydarzenie zapisane pomyślnie");
+    } catch (err) {
+        console.error("Błąd podczas zapisu eventu:", err.message);
+    }
+};
 const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
     const {user} = useAuth();
     const [name, setName] = useState("");
+    const [playAnimation, setPlayAnimation] = useState(false)
+    const [error, setError] = useState("");
     const [description, setDescription] = useState("");
+
     const handleLocationPress = () => {
         console.log(location)
         if (location?.latitude && location?.longitude) {
@@ -42,18 +75,25 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
 
 
     }
+    const handleConfirm = () => {
+        if (!name){
+            setError("Choose name for your event")
+            return
+        }
+        setPlayAnimation(true)
+    }
     return (
 
             <View style={styles.container}>
-                <LottieView
+                {playAnimation && <LottieView
                     source={require("../../assets/animations/confetti.json")}
-                    autoPlay
+                    autoPlay={playAnimation}
                     loop={false}
                     style={styles.animation}
-                />
+                />}
                 <View style={styles.header}>
                     <Ionicons name="checkmark-done-outline" size={30} color="#ca8a04"/>
-                    <Text style={styles.title}>Check time range</Text>
+                    <Text style={styles.title}>Event summarize</Text>
                 </View>
                 {/*//TODO zrobić ten styled Scroll View jak box jest*/}
                 <View style={styles.scrollContainer}>
@@ -72,6 +112,7 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                                 value={name}
                                 onChangeText={setName}
                             />
+                            {error && <Text style={styles.errorText}>{error}</Text>}
                         </View>
                         <Divider/>
                         {/*Des Container*/}
@@ -163,8 +204,8 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                         </View>
                         <Divider/>
 
-                        <TouchableOpacity style={styles.applicationButton}                       >
-                            <Text style={styles.buttonText}>Accept</Text>
+                        <TouchableOpacity onPress={handleConfirm} style={styles.applicationButton}                       >
+                            <Text style={styles.buttonText}>Confirm</Text>
                         </TouchableOpacity>
                         </View>
 
@@ -302,6 +343,9 @@ const styles = StyleSheet.create({
         alignItems:"center",
         padding:16
     },
+    errorText:{
+        color:"#ef4444",//error-500
+    }
 
 
 });

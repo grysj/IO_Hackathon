@@ -23,37 +23,7 @@ const EventCreateScreen = () => {
     setSlot(slot);
     setStep("location");
   };
-  const fetchEvent = async ({ userId, slot, location }) => {
-    try {
-      const eventDto = {
-        name: "Nowe wydarzenie",
-        description: "Wydarzenie utworzone z aplikacji",
-        dateStart: slot.startDate,//TODO tu jest błąd pewnie z formatem danych dlatego to nie chciało się wysyłać
-        dateEnd: slot.endDate,
-        latitude: location.latitude,
-        longitude: location.longitude,
-        poiId: null,
-        createdById: userId,
-      };
 
-      const response = await fetch("http://34.116.250.33:8080/api/events", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(eventDto),
-      });
-
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`Błąd zapisu wydarzenia: ${errText}`);
-      }
-
-      console.log("Wydarzenie zapisane pomyślnie");
-    } catch (err) {
-      console.error("Błąd podczas zapisu eventu:", err.message);
-    }
-  };
 
   const handleLocationConfirm = (location) => {
     setLocation(location);
