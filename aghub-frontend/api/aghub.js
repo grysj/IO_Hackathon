@@ -162,6 +162,40 @@ export const importClassesFromUsos = async (userId, url, signal = null) => {
   return res.text();
 };
 
+// AVAILABILITY API
+
+export const findAvailability = async (
+  dateStart,
+  dateEnd,
+  minDuration,
+  friendsId,
+  signal = null
+) => {
+  const res = await fetch(`${API_URL}/api/availability/find`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      dateStart,
+      dateEnd,
+      minDuration,
+      usersId: friendsId,
+    }),
+    signal,
+  });
+
+  if (!res.ok) {
+    const error = new Error(
+      res.statusText || "Error while fetching availability"
+    );
+    error.status = res.status;
+    throw error;
+  }
+
+  return res.json();
+};
+
 // SCHEDULE API
 
 export const getSchedule = async (

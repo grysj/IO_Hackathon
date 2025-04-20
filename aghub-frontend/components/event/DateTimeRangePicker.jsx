@@ -15,6 +15,8 @@ import CustomDivider from "../ui/CustomDivider";
 import React, { useState } from "react";
 import { formatDateTimeToLocalDateTime } from "@/util/format/FormatDateTime";
 import EventSlotCustomizer from "./EventSlotCustomizer";
+import { useQuery } from "@tanstack/react-query";
+import { findAvailability } from "@/api/aghub";
 
 const DateTimeRangePicker = ({
   friendIds,
@@ -38,44 +40,50 @@ const DateTimeRangePicker = ({
   const [disableCalendarButton, setDisableCalendarButton] = useState(true);
   const [disableCustomizeAvailability, setDisableCustomizeAvailability] =
     useState(true);
-  const fetchAvailabilities = async (friendsId) => {
-    try {
-      console.log(friendsId);
 
-      const response = await fetch(
-        "http://34.116.250.33:8080/api/availability/find",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({
-            dateStart: formatDateTimeToLocalDateTime(dateStart),
-            dateEnd: formatDateTimeToLocalDateTime(dateEnd),
-            minDuration: `PT${minDuration}M`,
-            usersId: friendsId,
-          }),
-        }
+  const { refetch: refetchAvailableSlots } = useQuery({
+    queryKey: [
+      "availability",
+      dateStart?.toISOString(),
+      dateEnd?.toISOString(),
+      minDuration,
+      friendIds,
+    ],
+    queryFn: ({ signal }) => {
+      return findAvailability(
+        formatDateTimeToLocalDateTime(dateStart),
+        formatDateTimeToLocalDateTime(dateEnd),
+        `PT${minDuration}M`,
+        friendIds,
+        signal
       );
+    },
+    enabled: false,
+  });
 
-      if (!response.ok) {
-        const err = await response.text();
-        throw new Error(err);
-      }
-
-      const data = await response.json();
-      setAvailableSlots(data);
-      setSelectedSlot({ dateStart, dateEnd: dateStart });
-    } catch (err) {
-      console.error("Błąd podczas pobierania dostępności:", err.message);
-    }
-  };
   const setButtons = () => {
     setDisableCalendarButton(true);
     setShowSlotCustomizer(false);
     setDisableCustomizeAvailability(true);
   };
+
+  const handleAvailabilityRefresh = async () => {
+    try {
+      const result = await refetchAvailableSlots();
+
+      if (result.data) {
+        setAvailableSlots(result.data);
+        setSelectedSlot({ dateStart, dateEnd: dateStart });
+        setDisableCalendarButton(false);
+        setDisableCustomizeAvailability(false);
+      } else if (result.error) {
+        console.error("Failed to fetch availability:", result.error);
+      }
+    } catch (err) {
+      console.error("Unexpected error while refreshing availability:", err);
+    }
+  };
+
   return (
     <Box
       className="flex-1 bg-background-50"
@@ -157,12 +165,7 @@ const DateTimeRangePicker = ({
           <Divider />
 
           <TouchableOpacity
-            onPress={() =>
-              fetchAvailabilities(friendIds).then(() => {
-                setDisableCalendarButton(false);
-                setDisableCustomizeAvailability(false);
-              })
-            }
+            onPress={handleAvailabilityRefresh}
             className="bg-yellow-600 p-4 rounded-lg items-center"
           >
             <Text className="text-white font-bold">Refresh Availability</Text>
