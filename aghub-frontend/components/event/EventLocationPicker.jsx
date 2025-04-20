@@ -1,26 +1,20 @@
-import React, { useRef, useState, useEffect } from "react";
-import {
-    View,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    Keyboard,
-    ActivityIndicator,
-} from "react-native";
-import MapView, { Marker, Callout } from "react-native-maps";
+import React, {useEffect, useRef, useState} from "react";
+import {ActivityIndicator, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, View,} from "react-native";
+import MapView, {Callout, Marker} from "react-native-maps";
 import * as Location from "expo-location";
 
-export default function LocationPickerScreen({ onConfirmLocation }) {
+export default function LocationPickerScreen({onConfirmLocation, initialLocation}) {
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [initialRegion, setInitialRegion] = useState(null);
     const [currentLocation, setCurrentLocation] = useState(null);
     const mapRef = useRef(null);
+    const [isMapReady, setIsMapReady] = useState(false);
+
 
     useEffect(() => {
         (async () => {
-            const { status } = await Location.requestForegroundPermissionsAsync();
+            const {status} = await Location.requestForegroundPermissionsAsync();
             if (status !== "granted") {
                 alert("Brak uprawnień do lokalizacji");
                 return;
@@ -34,12 +28,34 @@ export default function LocationPickerScreen({ onConfirmLocation }) {
             };
             setInitialRegion(region);
             setCurrentLocation(loc.coords);
+            if (initialLocation?.latitude && initialLocation?.longitude) {
+                setSelectedLocation(initialLocation);
+            }
         })();
     }, []);
+    useEffect(() => {
+
+        if (
+            isMapReady &&
+            initialLocation?.latitude &&
+            initialLocation?.longitude &&
+            mapRef.current
+        ) {
+            const region = {
+                latitude: initialLocation.latitude,
+                longitude: initialLocation.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+            };
+
+            mapRef.current.animateToRegion(region, 1000);
+        }
+    }, [isMapReady]);
+
 
     const handleMapPress = (event) => {
-        const { latitude, longitude } = event.nativeEvent.coordinate;
-        setSelectedLocation({ latitude, longitude });
+        const {latitude, longitude} = event.nativeEvent.coordinate;
+        setSelectedLocation({latitude, longitude});
     };
 
     const handleSearch = async () => {
@@ -54,7 +70,7 @@ export default function LocationPickerScreen({ onConfirmLocation }) {
             const data = await response.json();
 
             if (data.length > 0) {
-                const { lat, lon } = data[0];
+                const {lat, lon} = data[0];
                 const location = {
                     latitude: parseFloat(lat),
                     longitude: parseFloat(lon),
@@ -94,7 +110,7 @@ export default function LocationPickerScreen({ onConfirmLocation }) {
     if (!initialRegion) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#ca8a04" />
+                <ActivityIndicator size="large" color="#ca8a04"/>
                 <Text style={styles.loadingText}>Pobieranie lokalizacji...</Text>
             </View>
         );
@@ -122,6 +138,7 @@ export default function LocationPickerScreen({ onConfirmLocation }) {
                 style={StyleSheet.absoluteFillObject}
                 initialRegion={initialRegion}
                 onPress={handleMapPress}
+                onMapReady={() => setIsMapReady(true)}
             >
                 {currentLocation && (
                     <Marker coordinate={currentLocation} pinColor="#ca8a04">
@@ -169,7 +186,7 @@ export default function LocationPickerScreen({ onConfirmLocation }) {
                     <TouchableOpacity
                         style={[
                             styles.confirmButton,
-                            { backgroundColor: selectedLocation ? "#22c55e" : "#4a4a4a" },
+                            {backgroundColor: selectedLocation ? "#22c55e" : "#4a4a4a"},
                         ]}
                         onPress={handleConfirm}
                         disabled={!selectedLocation}
@@ -238,7 +255,7 @@ const styles = StyleSheet.create({
         shadowColor: "#000",
         shadowOpacity: 0.2,
         shadowRadius: 4,
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
     },
     infoText: {
         fontSize: 14,

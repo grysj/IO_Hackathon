@@ -10,10 +10,11 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { mockFriends } from "../../mock/MockedData";
 import { useAuth } from "../../contexts/AuthContext";
+import FriendComponent from "../friendlist/FriendComponent";
 
-const FriendSelector = ({ onConfirm }) => {
+const EventFriendSelector = ({initialFriendsId, onConfirm }) => {
   const [friends, setFriends] = useState([]);
-  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectedIds, setSelectedIds] = useState(initialFriendsId||[]);
   const { user } = useAuth();
   const fetchFriends = async (userId) => {
     try {
@@ -48,8 +49,10 @@ const FriendSelector = ({ onConfirm }) => {
   };
 
   const handleConfirm = () => {
-    const updated = [...selectedIds, user.id]
-    onConfirm(updated);
+    const selectedFriends = friends.filter(friend =>
+        selectedIds.includes(friend.id)
+    );
+    onConfirm(selectedIds, selectedFriends);
   };
 
   return (
@@ -74,25 +77,7 @@ const FriendSelector = ({ onConfirm }) => {
                       : "bg-background-100 border-outline-200"
                   }`}
                 >
-                  <Box className="mr-4">
-                    <MaterialIcons name="person" size={30} color="white" />
-                  </Box>
-                  <Box>
-                    <Text
-                      className={`font-semibold ${
-                        isSelected ? "text-white" : "text-typography-900"
-                      }`}
-                    >
-                      {friend.username}
-                    </Text>
-                    <Text
-                      className={`text-xs ${
-                        isSelected ? "text-yellow-100" : "text-typography-500"
-                      }`}
-                    >
-                      {friend.email}
-                    </Text>
-                  </Box>
+                  <FriendComponent friend={friend} isSelected={isSelected} />
                 </Pressable>
               );
             })}
@@ -127,4 +112,4 @@ const FriendSelector = ({ onConfirm }) => {
   );
 };
 
-export default FriendSelector;
+export default EventFriendSelector;
