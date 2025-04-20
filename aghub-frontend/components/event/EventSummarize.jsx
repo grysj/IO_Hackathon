@@ -85,7 +85,7 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
             setNameError("Choose name for your event")
             return
         }
-        createEvent(user.id, slot, location, friendsId, name, description)
+        createEvent(user.id, slot, location, friendsId, name, description, setFetchError)
             .then(setDisableAll(true))
             .then(setPlayAnimation(true))
 
