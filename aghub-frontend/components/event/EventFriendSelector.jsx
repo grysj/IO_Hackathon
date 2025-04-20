@@ -12,9 +12,9 @@ import { mockFriends } from "../../mock/MockedData";
 import { useAuth } from "../../contexts/AuthContext";
 import FriendComponent from "../friendlist/FriendComponent";
 
-const EventFriendSelector = ({ onConfirm }) => {
+const EventFriendSelector = ({initialFriendsId, onConfirm }) => {
   const [friends, setFriends] = useState([]);
-  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectedIds, setSelectedIds] = useState(initialFriendsId||[]);
   const { user } = useAuth();
   const fetchFriends = async (userId) => {
     try {

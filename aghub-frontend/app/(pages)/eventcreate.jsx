@@ -78,7 +78,7 @@ const EventCreateScreen = () => {
   return (
     <Box className="flex-1 bg-background-50">
       {step === "friends" && (
-        <EventFriendSelector onConfirm={handleFriendsConfirm} />
+        <EventFriendSelector initialFriendsId={friendsId} onConfirm={handleFriendsConfirm} />
       )}
 
       {step === "availability" && (
@@ -89,10 +89,10 @@ const EventCreateScreen = () => {
       )}
 
       {step === "location" && (
-        <LocationPickerScreen onConfirmLocation={handleLocationConfirm} />
+        <LocationPickerScreen initialLocation={location} onConfirmLocation={handleLocationConfirm} />
       )}
       {step==="summarize" &&(
-          <EventSummarize friends friendsId slot setStep location />
+          <EventSummarize friends={friends} friendsId={friendsId} slot={slot} setStep={setStep} location={location} />
       )}
       {step === "done" && (
         <Box className="p-4">

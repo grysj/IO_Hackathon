@@ -1,15 +1,13 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Box, ScrollView, VStack, Text, View} from '@gluestack-ui/themed'
+import React, {useEffect, useState} from 'react';
+import {Box, ScrollView, Text, View, VStack} from '@gluestack-ui/themed'
 
 
-import { useRouter } from "expo-router";
-import { useAuth } from "../../contexts/AuthContext";
+import {useRouter} from "expo-router";
+import {useAuth} from "../../contexts/AuthContext";
 
-import FriendComponent from "../../components/friendlist/FriendListComponent";
+import FriendListComponent from "../../components/friendlist/FriendListComponent";
 import AddFriendButton from "../../components/friendlist/AddFriendButton";
 import Divider from "../../components/ui/Divider";
-
-
 
 
 const FriendsScreen = () => {
@@ -28,9 +26,9 @@ const FriendsScreen = () => {
         try {
             const response = await fetch(`http://34.116.250.33:8080/api/friends/${userId}`, {
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
             });
-            if(!response.ok){
+            if (!response.ok) {
                 const errorText = await response.json(); // lub response.json() jeśli API zwraca JSON
                 throw new Error(errorText || "Błąd pobierania znajomych");
             }
@@ -49,11 +47,11 @@ const FriendsScreen = () => {
     const removeFriend = (friendId) => {
         fetchFriends()
     }
-    const goToCalendar=(friend)=>{
-            router.push({
-                pathname: "/friends/friends-calendar",
-                params: friend,
-            });
+    const goToCalendar = (friend) => {
+        router.push({
+            pathname: "/friends/friends-calendar",
+            params: friend,
+        });
     }
     return (
 
@@ -62,7 +60,7 @@ const FriendsScreen = () => {
                 <Text className="text-white mt-2 text-lg px-4 py-2 font-semibold">
                     Friends list:
                 </Text>
-                <AddFriendButton onClick={handlePress} />
+                <AddFriendButton onClick={handlePress}/>
             </View>
             <Divider marginHorizontal={4}/>
             <ScrollView>
@@ -70,8 +68,9 @@ const FriendsScreen = () => {
 
                     {friends.map((friend) => {
                         return (
-                            <FriendComponent key={friend.id} onClickRemove={removeFriend} onClickCalendar={goToCalendar}
-                                             friend={friend}/>)
+                            <FriendListComponent key={friend.id} onClickRemove={removeFriend}
+                                                 onClickCalendar={goToCalendar}
+                                                 friend={friend}/>)
                     })}
                 </VStack>
             </ScrollView>

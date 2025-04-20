@@ -67,7 +67,8 @@ const DateTimeRangePicker = ({
     }
     return (
         <Box
-            className="flex-1 bg-background-50"
+            className="flex-1 bg-background-50 "
+            style={{paddingBottom:45}}
 
 
         >
@@ -83,8 +84,8 @@ const DateTimeRangePicker = ({
             </View>
             {/*//TODO zrobić tak w innych podstronach tak jak tu*/}
 
-            <View style={{paddingVertical:5, paddingHorizontal:10}}>
-                <ScrollView>
+            <View style={{paddingTop:5, paddingHorizontal:10}}>
+                <ScrollView >
 
 
                     <VStack space="lg" className="mb-4">

@@ -32,18 +32,23 @@ export const cropScheduleToPickedDay = (items, pickedDay) => {
         }));
 };
 export const isTheSameDay = (day1, day2) => {
+    const newDay1 = new Date(day1)
+    const newDay2 = new Date(day2)
     return (
-        day1.getFullYear() === day2.getFullYear() &&
-        day1.getMonth() === day2.getMonth() &&
-        day1.getDate() === day2.getDate()
+        newDay1.getFullYear() === newDay2.getFullYear() &&
+        newDay1.getMonth() === newDay2.getMonth() &&
+        newDay1.getDate() === newDay2.getDate()
     );
 };
-export const isTheSameTime = (day1, day2) => {
+export const isTheSameTime = (a, b) => {
+    const d1 = new Date(a);
+    const d2 = new Date(b);
     return (
-        day1.getHours() === day2.getHours() &&
-        day1.getMinutes() === day2.getMinutes()
-    )
-}
+        d1.getHours() === d2.getHours() &&
+        d1.getMinutes() === d2.getMinutes()
+    );
+};
+
 export const isTheSameDate = (day1, day2) => {
     return (
         isTheSameDay(day1, day2) &&
