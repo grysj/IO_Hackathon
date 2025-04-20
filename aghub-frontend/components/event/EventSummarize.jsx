@@ -18,20 +18,23 @@ import * as Linking from "expo-linking";
 import {isTheSameDay} from "../util/calendarUtils";
 import {formatDateLabel, formatTime} from "../../app/functions/format/FormatDateTime";
 import FriendComponent from "../friendlist/FriendComponent";
-const createEvent = async ({ userId, slot, location, friendsId }) => {
+import {useRouter} from "expo-router";
+
+const createEvent = async (userId, slot, location, friendsId, name, description, onError) => {
     try {
         const eventDto = {
-            name: "Nowe wydarzenie",
-            description: "Wydarzenie utworzone z aplikacji",
-            dateStart: slot.startDate,//TODO tu jest błąd pewnie z formatem danych dlatego to nie chciało się wysyłać
-            dateEnd: slot.endDate,
+            name: name,
+            description: description,
+            dateStart: slot.dateStart,//TODO tu jest błąd pewnie z formatem danych dlatego to nie chciało się wysyłać
+            dateEnd: slot.dateEnd,
             latitude: location.latitude,
             longitude: location.longitude,
+            participantsId: friendsId,
             poiId: null,
             createdById: userId,
         };
 
-        const response = await fetch("http://34.116.250.33:8080/api/events", {
+        const response = await fetch("http://34.116.250.33:8080/api/events/create", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -43,19 +46,21 @@ const createEvent = async ({ userId, slot, location, friendsId }) => {
             const errText = await response.text();
             throw new Error(`Błąd zapisu wydarzenia: ${errText}`);
         }
-
         console.log("Wydarzenie zapisane pomyślnie");
     } catch (err) {
         console.error("Błąd podczas zapisu eventu:", err.message);
+        onError(`Event creation error: ${err.message}`)
     }
 };
 const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
     const {user} = useAuth();
+    const {router} = useRouter()
     const [name, setName] = useState("");
     const [playAnimation, setPlayAnimation] = useState(false)
-    const [error, setError] = useState("");
+    const [nameError, setNameError] = useState("");
+    const [fetchError, setFetchError] = useState("");
     const [description, setDescription] = useState("");
-
+    const [disableAll, setDisableAll] = useState(false)
     const handleLocationPress = () => {
         console.log(location)
         if (location?.latitude && location?.longitude) {
@@ -76,29 +81,37 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
 
     }
     const handleConfirm = () => {
-        if (!name){
-            setError("Choose name for your event")
+        if (!name) {
+            setNameError("Choose name for your event")
             return
         }
-        setPlayAnimation(true)
+        createEvent(user.id, slot, location, friendsId, name, description)
+            .then(setDisableAll(true))
+            .then(setPlayAnimation(true))
+
     }
     return (
 
-            <View style={styles.container}>
-                {playAnimation && <LottieView
-                    source={require("../../assets/animations/confetti.json")}
-                    autoPlay={playAnimation}
-                    loop={false}
-                    style={styles.animation}
-                />}
-                <View style={styles.header}>
-                    <Ionicons name="checkmark-done-outline" size={30} color="#ca8a04"/>
-                    <Text style={styles.title}>Event summarize</Text>
-                </View>
-                {/*//TODO zrobić ten styled Scroll View jak box jest*/}
-                <View style={styles.scrollContainer}>
-                    <ScrollView >
-                        <View style={{marginBottom:10}}>
+        <View style={styles.container}>
+            {playAnimation && <LottieView
+                source={require("../../assets/animations/confetti.json")}
+                autoPlay={playAnimation}
+                loop={false}
+                onAnimationFinish={() => {
+                    router.push({
+                        pathname:"/map"
+                    })                }}
+                style={styles.animation}
+            />}
+            <View style={styles.header}>
+                <Ionicons name="checkmark-done-outline" size={30} color="#ca8a04"/>
+                <Text style={styles.title}>Event summarize</Text>
+            </View>
+            {fetchError && <Text style={styles.errorText}>{fetchError}</Text>}
+            {/*//TODO zrobić ten styled Scroll View jak box jest*/}
+            <View style={styles.scrollContainer}>
+                <ScrollView>
+                    <View style={{marginBottom: 10}}>
                         {/*Name Container*/}
                         <View>
                             <View style={styles.labelContainer}>
@@ -112,34 +125,35 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                                 value={name}
                                 onChangeText={setName}
                             />
-                            {error && <Text style={styles.errorText}>{error}</Text>}
+                            {nameError && <Text style={styles.errorText}>{nameError}</Text>}
                         </View>
                         <Divider/>
                         {/*Des Container*/}
                         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                        <View>
-                            <View style={styles.labelContainer}>
-                                <MaterialIcons name="description" size={24} color="#ca8a40"/>
-                                <Text style={styles.labelText}>Event Description:</Text>
+                            <View>
+                                <View style={styles.labelContainer}>
+                                    <MaterialIcons name="description" size={24} color="#ca8a40"/>
+                                    <Text style={styles.labelText}>Event Description:</Text>
+                                </View>
+                                <TextInput
+                                    style={styles.description}
+                                    placeholder="Add a description..."
+                                    placeholderTextColor="#aaa"
+                                    value={description}
+                                    onChangeText={setDescription}
+                                    multiline
+                                    numberOfLines={4}
+                                    returnKeyType="done"
+                                />
                             </View>
-                            <TextInput
-                                style={styles.description}
-                                placeholder="Add a description..."
-                                placeholderTextColor="#aaa"
-                                value={description}
-                                onChangeText={setDescription}
-                                multiline
-                                numberOfLines={4}
-                                returnKeyType="done"
-                            />
-                        </View>
                         </TouchableWithoutFeedback>
                         <Divider/>
                         {/*Location Container*/}
                         <View>
                             <View style={styles.labelButtonContainer}>
                                 <Text style={[styles.labelText, {color: "#ca8a04"}]}>Location:</Text>
-                                <TouchableOpacity onPress={()=>setStep("location")} style={styles.labelButton}>
+                                <TouchableOpacity disabled={disableAll} onPress={() => setStep("location")}
+                                                  style={styles.labelButton}>
                                     <View style={[styles.labelContainer, {marginBottom: 0}]}>
                                         <Ionicons name="arrow-back" size={15} color="white"/>
                                         <Text style={styles.buttonText}>Location</Text>
@@ -147,7 +161,8 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                                 </TouchableOpacity>
 
                             </View>
-                            <TouchableOpacity onPress={handleLocationPress} style={styles.locationBox}>
+                            <TouchableOpacity disabled={disableAll} onPress={handleLocationPress}
+                                              style={styles.locationBox}>
                                 <Ionicons name="location-sharp" size={22} color="#ca8a04"/>
                                 <Text style={styles.locationText}>
                                     {"Unknown Poi"}
@@ -158,7 +173,7 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                         <View>
                             <View style={styles.labelButtonContainer}>
                                 <Text style={[styles.labelText, {color: "#ca8a04"}]}>Time:</Text>
-                                <TouchableOpacity style={styles.labelButton}
+                                <TouchableOpacity disabled={disableAll} style={styles.labelButton}
                                                   onPress={() => setStep("availability")}>
                                     <View style={[styles.labelContainer, {marginBottom: 0}]}>
                                         <Ionicons name="arrow-back" size={15} color="white"/>
@@ -187,7 +202,7 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                         <View>
                             <View style={styles.labelButtonContainer}>
                                 <Text style={[styles.labelText, {color: "#ca8a04"}]}>Participants:</Text>
-                                <TouchableOpacity style={styles.labelButton}
+                                <TouchableOpacity disabled={disableAll} style={styles.labelButton}
                                                   onPress={() => setStep("friends")}>
                                     <View style={[styles.labelContainer, {marginBottom: 0}]}>
                                         <Ionicons name="arrow-back" size={15} color="white"/>
@@ -197,22 +212,23 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                             </View>
                             <View style={styles.vStack}>
 
-                                {friends.map((friend,i)=>(
+                                {friends.map((friend, i) => (
                                     <FriendComponent key={i} friend={friend} style={styles.friend}/>
                                 ))}
                             </View>
                         </View>
                         <Divider/>
 
-                        <TouchableOpacity onPress={handleConfirm} style={styles.applicationButton}                       >
+                        <TouchableOpacity disabled={disableAll} onPress={handleConfirm}
+                                          style={styles.applicationButton}>
                             <Text style={styles.buttonText}>Confirm</Text>
                         </TouchableOpacity>
-                        </View>
+                    </View>
 
-                    </ScrollView>
+                </ScrollView>
 
-                </View>
             </View>
+        </View>
 
     );
 };
@@ -325,26 +341,26 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: "white",
-        fontWeight:"bold",
+        fontWeight: "bold",
     },
     vStack: {
         flexDirection: "column",
         gap: 12,
     },
-    friend:{
-        backgroundColor:"#FFFFFF1A",
-        padding:8,
+    friend: {
+        backgroundColor: "#FFFFFF1A",
+        padding: 8,
         borderRadius: 8,
 
     },
-    applicationButton:{
-        backgroundColor:"#ca8a04",
-        borderRadius:8,
-        alignItems:"center",
-        padding:16
+    applicationButton: {
+        backgroundColor: "#ca8a04",
+        borderRadius: 8,
+        alignItems: "center",
+        padding: 16
     },
-    errorText:{
-        color:"#ef4444",//error-500
+    errorText: {
+        color: "#ef4444",//error-500
     }
 
 
