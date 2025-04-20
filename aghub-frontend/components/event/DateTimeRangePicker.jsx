@@ -5,7 +5,7 @@ import Divider from "../ui/Divider";
 import DateTimePickerBox from "./DateTimePickerBox";
 import CustomDivider from "../ui/CustomDivider";
 import React, {useState} from "react";
-import {formatDateTimeToLocalDateTime} from "../../app/functions/format/FormatDateTime";
+import {formatDateTimeToLocalDateTime} from "../../util/format/FormatDateTime";
 import EventSlotCustomizer from "./EventSlotCustomizer";
 
 const DateTimeRangePicker = ({

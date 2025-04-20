@@ -16,9 +16,10 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Divider from "../ui/Divider";
 import * as Linking from "expo-linking";
 import {isTheSameDay} from "../util/calendarUtils";
-import {formatDateLabel, formatTime} from "../../app/functions/format/FormatDateTime";
+
 import FriendComponent from "../friendlist/FriendComponent";
 import {useRouter} from "expo-router";
+import {formatDateLabel, formatTime} from "../../util/format/FormatDateTime";
 
 const createEvent = async (userId, slot, location, friendsId, name, description, onError) => {
     try {
@@ -54,7 +55,7 @@ const createEvent = async (userId, slot, location, friendsId, name, description,
 };
 const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
     const {user} = useAuth();
-    const {router} = useRouter()
+    const router = useRouter()
     const [name, setName] = useState("");
     const [playAnimation, setPlayAnimation] = useState(false)
     const [nameError, setNameError] = useState("");
@@ -86,8 +87,8 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
             return
         }
         createEvent(user.id, slot, location, friendsId, name, description, setFetchError)
-            .then(setDisableAll(true))
-            .then(setPlayAnimation(true))
+            .then(() => setDisableAll(true))
+            .then(() => setPlayAnimation(true))
 
     }
     return (
@@ -98,9 +99,7 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                 autoPlay={playAnimation}
                 loop={false}
                 onAnimationFinish={() => {
-                    router.push({
-                        pathname:"/map"
-                    })                }}
+                    router.push("/map")}}
                 style={styles.animation}
             />}
             <View style={styles.header}>

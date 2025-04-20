@@ -25,6 +25,7 @@ public class ScheduleService {
     }
     public CalendarDTO getScheduleByDate(Long userId, LocalDateTime dateStart, LocalDateTime dateEnd) {
         List<EventDTO> events = eventsService.getUserEventsByDate(userId, dateStart, dateEnd);
+        events.addAll(eventsService.getUserCreatedEventsByDate(userId, dateStart, dateEnd));
         List<ClassesDTO> classes = classesService.getUserClassesByDate(userId, dateStart, dateEnd);
         List<UnavailabilityDTO> unavailability = unavailabilitiesService.getUserUnavailabilitiesByDate(userId, dateStart, dateEnd);
 

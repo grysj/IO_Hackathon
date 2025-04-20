@@ -22,6 +22,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
         @Param("dateStart") LocalDateTime dateStart,
         @Param("dateEnd") LocalDateTime dateEnd
     );
+    List<Event> findEventsByCreatedByIdAndDateRange(
+            @Param("userId") Long userId,
+            @Param("dateStart") LocalDateTime dateStart,
+            @Param("dateEnd") LocalDateTime dateEnd
+    );
 
     @Query("""
                 SELECT e FROM Event e

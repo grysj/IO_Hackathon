@@ -132,5 +132,11 @@ public class EventService {
             .map(EventDTO::fromEvent)
             .collect(Collectors.toList());
     }
+    public List<EventDTO> getUserCreatedEventsByDate(Long userId, LocalDateTime dateStart, LocalDateTime dateEnd) {
+        return eventRepository.findEventsByCreatedByIdAndDateRange(userId, dateStart, dateEnd)
+                .stream()
+                .map(EventDTO::fromEvent)
+                .collect(Collectors.toList());
+    }
 
 }

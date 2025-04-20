@@ -1,7 +1,7 @@
 import {cropScheduleToPickedDay, getWeekDays, isTheSameDate} from "../util/calendarUtils";
 import React, {useEffect, useState} from "react";
 import {useAuth} from "../../contexts/AuthContext";
-import {formatDateTimeToLocalDateTime} from "../../app/functions/format/FormatDateTime";
+import {formatDateTimeToLocalDateTime} from "../../util/format/FormatDateTime";
 import CalendarLabel from "../calendar/CalendarLabel";
 import WeekDayBar from "../calendar/WeekDayBar";
 import CalendarField from "../calendar/CalendarField";
