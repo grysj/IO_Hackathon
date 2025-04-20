@@ -77,7 +77,7 @@ public class DatabaseSeeder {
             //         .poi(poi)
             //         .dateStart(LocalDateTime.now())
             //         .dateEnd(LocalDateTime.now().plusHours(2))
-            //         .participants(Set.of(user1))
+            //         .participantsId(Set.of(user1))
             //         .build();
             // eventRepo.save(event);
         };
