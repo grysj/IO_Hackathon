@@ -47,7 +47,7 @@ public class AvailabilityService {
                     .toList());
 
             busyTimes.addAll(eventRepository
-                    .findAllOverlappingCreatedByUserId(userId, from, to)
+                    .findAllOverlappingEventsForParticipant(userId, from, to)
                     .stream()
                     .map(e -> new AvailabilityDTO(e.getDateStart(), e.getDateEnd()))
                     .toList());
