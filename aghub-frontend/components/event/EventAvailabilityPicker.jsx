@@ -35,7 +35,7 @@ const EventAvailabilityPicker = ({friendIds = [], onConfirm}) => {
                                availabilities={availableSlots}
                                setSelectedSlot={setSelectedSlot}
                                selectedSlot={selectedSlot}
-                               onConfirm={onConfirm}
+                               onConfirm={handleConfirm}
         />
 
     ) : (<DateTimeRangePicker dateStart={dateStart}
