@@ -1,115 +1,145 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  HStack,
-  Pressable,
-  ScrollView,
-  Text,
-  VStack,
-} from "@gluestack-ui/themed";
-import { MaterialIcons } from "@expo/vector-icons";
-import { mockFriends } from "../../mock/MockedData";
-import { useAuth } from "../../contexts/AuthContext";
+import React, {useEffect, useState} from "react";
+import {StyleSheet, TouchableOpacity} from "react-native"
+import {Pressable, Text,} from "@gluestack-ui/themed";
+import {useAuth} from "../../contexts/AuthContext";
 import FriendComponent from "../friendlist/FriendComponent";
+import ScrollView from "../ui/scrollview/StyledScrollView";
+import PageView from "../ui/PageView";
+import PageHeader from "../ui/PageHeader";
+import {Ionicons} from "@expo/vector-icons";
+import HBox from "../ui/HBox";
 
-const EventFriendSelector = ({initialFriendsId, onConfirm }) => {
-  const [friends, setFriends] = useState([]);
-  const [selectedIds, setSelectedIds] = useState(initialFriendsId||[]);
-  const { user } = useAuth();
-  const fetchFriends = async (userId) => {
-    try {
-      const response = await fetch(
-        `http://34.116.250.33:8080/api/friends/${userId}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
+const EventFriendSelector = ({initialFriendsId, onConfirm}) => {
+    const [friends, setFriends] = useState([]);
+    const [selectedIds, setSelectedIds] = useState(initialFriendsId || []);
+    const {user} = useAuth();
+    const fetchFriends = async (userId) => {
+        try {
+            const response = await fetch(
+                `http://34.116.250.33:8080/api/friends/${userId}`,
+                {
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"},
+                }
+            );
+
+            if (!response.ok) throw new Error("Błąd pobierania znajomych");
+
+            const data = await response.json();
+            setFriends(data);
+        } catch (error) {
+            console.error(error);
         }
-      );
+    };
+    useEffect(() => {
+        fetchFriends(user.id);
+    }, []);
 
-      if (!response.ok) throw new Error("Błąd pobierania znajomych");
+    const toggleSelection = (id) => {
+        setSelectedIds((prev) =>
+            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+        );
+    };
 
-      const data = await response.json();
-      setFriends(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  useEffect(() => {
-    fetchFriends(user.id);
-  }, []);
+    const handleCancel = () => {
+        setSelectedIds([]);
+    };
 
-  const toggleSelection = (id) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    const handleConfirm = () => {
+        const selectedFriends = friends.filter(friend =>
+            selectedIds.includes(friend.id)
+        );
+        onConfirm(selectedIds, selectedFriends);
+    };
+
+    return (
+        <PageView>
+            <PageHeader>
+                <Ionicons name="person-add" size={24} color="#ca8a04"/>
+                <Text style={styles.title}>
+                    Wybierz znajomych
+                </Text>
+            </PageHeader>
+
+            <ScrollView>
+                {friends.map((friend) => {
+                    const isSelected = selectedIds.includes(friend.id);
+
+                    return (
+                        <Pressable
+                            key={friend.id}
+                            onPress={() => toggleSelection(friend.id)}
+                            style={[styles.itemContainer, isSelected && styles.selectedItem]}
+                        >
+                            <FriendComponent friend={friend} isSelected={isSelected}/>
+                        </Pressable>
+                    );
+                })}
+                <HBox>
+                    <TouchableOpacity onPress={handleCancel} style={styles.button}>
+                        <Text style={styles.cancelText}>Anuluj</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={handleConfirm}
+                        disabled={selectedIds.length === 0}
+                        style={[
+                            styles.button,
+                            selectedIds.length !== 0 && styles.confirmButtonEnabled,
+                        ]}
+                    >
+                        <Text style={styles.confirmText}>Potwierdź</Text>
+                    </TouchableOpacity>
+                </HBox>
+            </ScrollView>
+        </PageView>
     );
-  };
-
-  const handleCancel = () => {
-    setSelectedIds([]);
-  };
-
-  const handleConfirm = () => {
-    const selectedFriends = friends.filter(friend =>
-        selectedIds.includes(friend.id)
-    );
-    onConfirm(selectedIds, selectedFriends);
-  };
-
-  return (
-    <Box className="flex-1 bg-background-50 p-4">
-      <Text className="text-xl font-bold text-typography-950 mb-4">
-        Wybierz znajomych
-      </Text>
-
-      <ScrollView className="mb-4">
-        <Box justifyContent="space-between">
-          <VStack space="md">
-            {friends.map((friend) => {
-              const isSelected = selectedIds.includes(friend.id);
-
-              return (
-                <Pressable
-                  key={friend.id}
-                  onPress={() => toggleSelection(friend.id)}
-                  className={`rounded-lg p-3 border mb-3 flex-row items-center ${
-                    isSelected
-                      ? "bg-yellow-600 border-yellow-700"
-                      : "bg-background-100 border-outline-200"
-                  }`}
-                >
-                  <FriendComponent friend={friend} isSelected={isSelected} />
-                </Pressable>
-              );
-            })}
-          </VStack>
-          <HStack
-            space="md"
-            justifyContent="space-between"
-            className="flex flex-row mt-4"
-          >
-            <Pressable
-              onPress={handleCancel}
-              className="flex-1 items-center py-2 rounded-xl bg-background-muted"
-            >
-              <Text className="text-error-500 font-bold">Anuluj</Text>
-            </Pressable>
-
-            <Pressable
-              onPress={handleConfirm}
-              disabled={selectedIds.length === 0}
-              className={`flex-1 items-center py-2 rounded-xl ml-2 ${
-                selectedIds.length === 0
-                  ? "bg-background-muted"
-                  : "bg-yellow-600"
-              }`}
-            >
-              <Text className="text-background-light font-bold">Potwierdź</Text>
-            </Pressable>
-          </HStack>
-        </Box>
-      </ScrollView>
-    </Box>
-  );
 };
 
 export default EventFriendSelector;
+const styles = StyleSheet.create({
+    title: {
+        fontSize: 24,
+        lineHeight:
+            30,
+        fontWeight:
+            700,
+        color:
+            "white",
+    },
+    itemContainer: {
+        borderRadius: 8,
+        padding: 12,
+        borderWidth: 1,
+        marginBottom: 12,
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#414040",
+        borderColor: "#535252"
+    },
+    selectedItem: {
+        backgroundColor: "#ca8a04",
+        borderColor: "#a16207",
+    },
+
+    button: {
+        flex: 1,
+        alignItems: "center",
+        paddingVertical: 8,
+        borderRadius: 12,
+        backgroundColor: "#333333",
+        marginRight: 8,
+    },
+    cancelText: {
+        color: "#ef4444", // text-error-500
+        fontWeight: "bold",
+    },
+    confirmButtonEnabled: {
+        backgroundColor: "#ca8a04", // bg-yellow-600
+    },
+
+    confirmText: {
+        color: "#fefce8", // text-background-light
+        fontWeight: "bold",
+    },
+})

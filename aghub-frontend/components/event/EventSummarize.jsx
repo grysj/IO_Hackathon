@@ -12,6 +12,8 @@ import {isTheSameDay} from "../util/calendarUtils";
 import FriendComponent from "../friendlist/FriendComponent";
 import {useRouter} from "expo-router";
 import {formatDateLabel, formatTime} from "../../util/format/FormatDateTime";
+import PageHeader from "../ui/PageHeader";
+import PageView from "../ui/PageView";
 
 
 
@@ -87,7 +89,7 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
     }
     return (
 
-        <View style={styles.container}>
+        <PageView>
             {playAnimation && <LottieView
                 source={require("../../assets/animations/confetti.json")}
                 autoPlay={playAnimation}
@@ -97,10 +99,10 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                 }}
                 style={styles.animation}
             />}
-            <View style={styles.header}>
+            <PageHeader>
                 <Ionicons name="checkmark-done-outline" size={30} color="#ca8a04"/>
                 <Text style={styles.title}>Event summarize</Text>
-            </View>
+            </PageHeader>
             {fetchError && <Text style={styles.errorText}>{fetchError}</Text>}
             {/*//TODO zrobić ten styled Scroll View jak box jest*/}
             <ScrollView>
@@ -216,7 +218,7 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                     <Text style={styles.buttonText}>Confirm</Text>
                 </TouchableOpacity>
             </ScrollView>
-        </View>
+        </PageView>
 
     );
 };
@@ -227,25 +229,13 @@ const styles = StyleSheet.create({
 
     //To w ogóle można wyciągnąc jako jakiś aPlication view bo
     // takie stylowanie będę dawał wszędzie gdzie jest ten navbar obsrany
-    container: {
-        flex: 1,
-        backgroundColor: "#272625",
-    },
     animation: {
         position: "absolute",
         top: "-50%",
         height: "200%",
         width: "100%"
     },
-    header: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        borderBottomWidth: 2,
-        borderColor: "white",
-        padding: 3,
-        marginBottom: 4,
-    },
+
     title: {
         fontSize: 24,
         lineHeight: 30,
@@ -297,7 +287,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 10,
         color: "#fff",
-        backgroundColor: "#FFFFFF1A",
+        backgroundColor: "#414040",
         fontSize: 16,
         lineHeight: 22,
         minHeight: 160,
@@ -312,7 +302,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",              // flex-row
         alignItems: "center",              // items-center
         gap: 12,                            // gap-3 (if unsupported, use marginRight on icon)
-        backgroundColor: "#FFFFFF1A",
+        backgroundColor: "#414040",
         paddingVertical: 12,               // py-3
         paddingHorizontal: 20,             // px-5
         borderRadius: 12,                  // rounded-xl
@@ -331,7 +321,7 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     friend: {
-        backgroundColor: "#FFFFFF1A",
+        backgroundColor: "#414040",
         padding: 8,
         borderRadius: 8,
 
