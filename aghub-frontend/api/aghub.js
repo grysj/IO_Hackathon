@@ -225,3 +225,31 @@ export const getSchedule = async (
 
   return res.json();
 };
+
+export const getUsersSchedules = async (
+  usersIds,
+  dateStart,
+  dateEnd,
+  signal = null
+) => {
+  const res = await fetch(`${API_URL}/api/schedule/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      usersId: usersIds,
+      dateStart,
+      dateEnd,
+    }),
+    signal,
+  });
+
+  if (!res.ok) {
+    const error = new Error(res.statusText || "Failed to fetch schedule");
+    error.status = res.status;
+    throw error;
+  }
+
+  return res.json();
+};

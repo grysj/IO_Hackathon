@@ -9,9 +9,11 @@ import CalendarTimeLine from "../calendar/CalendarTimeLine";
 import CalendarComponent from "../calendar/CalendarComponent";
 import { TouchableOpacity, View } from "react-native";
 import CalendarUsersActivitiesList from "./CalendarUsersActivitiesList";
-import { Text } from "@gluestack-ui/themed";
+import { get, Text } from "@gluestack-ui/themed";
 import { Ionicons } from "@expo/vector-icons";
 import EventSlotCustomizer from "./EventSlotCustomizer";
+import { useQuery } from "@tanstack/react-query";
+import { getUsersSchedules } from "../../api/aghub";
 
 function filterHiddenUsers(usersCalendars = [], hiddenUsers = []) {
   return usersCalendars.filter(
@@ -48,10 +50,8 @@ const EventCreationCalendar = ({
   const { user } = useAuth();
   //TODO obsługa wyświetlania niedostępnych terminów po userze taka chcek lista z odznaczaniem userów
   const [hiddenUsers, setHiddenUsers] = useState([]);
-  const [usersCalendars, setUsersCalendars] = useState([]);
   const [pickedDay, setPickedDay] = useState(new Date(selectedSlot.dateStart));
   const [weekDays, setWeekDays] = useState(getWeekDays(new Date(dateStart)));
-  const [error, setError] = useState(null);
   const [showSlotCustomizer, setShowSlotCustomizer] = useState(false);
 
   const shiftWeek = (direction) => {
@@ -63,45 +63,22 @@ const EventCreationCalendar = ({
     setWeekDays(newWeekDays);
   };
 
-  useEffect(() => {
-    const controller = new AbortController();
+  const {
+    data: usersCalendars,
+    isLoading: isUsersCalendarsLoading,
+    error: usersCalendarsError,
+  } = useQuery({
+    queryKey: ["usersCalendars", usersId.slice().sort(), dateStart, dateEnd],
+    queryFn: ({ signal }) =>
+      getUsersSchedules(
+        usersId,
+        formatDateTimeToLocalDateTime(dateStart),
+        formatDateTimeToLocalDateTime(dateEnd),
+        signal
+      ),
+    enabled: !!user?.id,
+  });
 
-    const fetchUsersSchedule = async () => {
-      if (!user?.id) return;
-
-      try {
-        const response = await fetch(
-          "http://34.116.250.33:8080/api/schedule/users",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              usersId: usersId,
-              dateStart: formatDateTimeToLocalDateTime(dateStart),
-              dateEnd: formatDateTimeToLocalDateTime(dateEnd),
-            }),
-            signal: controller.signal,
-          }
-        );
-
-        if (!response.ok) throw new Error("Failed to fetch schedule");
-
-        const data = await response.json();
-        setUsersCalendars(data);
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          setError(err.message);
-          console.error(err);
-        }
-      }
-    };
-
-    fetchUsersSchedule();
-
-    return () => controller.abort();
-  }, [user, weekDays]);
   const specialDays = generateSpecialDays(dateStart, dateEnd);
   const pickedCalendars = filterHiddenUsers(usersCalendars, hiddenUsers);
   const availabilitiesPicked = availabilities
@@ -111,6 +88,7 @@ const EventCreationCalendar = ({
     selectedSlot && selectedSlot?.dateStart < selectedSlot?.dateEnd
       ? cropScheduleToPickedDay([selectedSlot], pickedDay)
       : [];
+
   return (
     <View className="flex-1  bg-background-50">
       <View
