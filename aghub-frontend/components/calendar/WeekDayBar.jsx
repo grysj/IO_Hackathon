@@ -1,15 +1,28 @@
 import { Box, HStack, Pressable, Text } from "@gluestack-ui/themed";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import React from "react";
-import {isTheSameDay} from "../util/calendarUtils";
+import {getWeekDays, isTheSameDay} from "../util/calendarUtils";
 //TODO poprawienie tego parszywego stylowania i wywalenie gluestacka as usuall
-const WeekDayBar = ({ weekDays, pickedDay, onClickDay, shift, specialDays =[] }) => {
+const WeekDayBar = ({ weekDays, pickedDay, onClickDay, setWeekDays, specialDays =[] }) => {
 
     const isSpecialDay = (day2)=>{
         return specialDays.some(day1 => isTheSameDay(day1,day2))
     }
+    const shiftWeek = (direction) => {
+        const newPicked = new Date(pickedDay);
+        newPicked.setDate(pickedDay.getDate() + direction * 7);
+
+        const newWeekDays = getWeekDays(newPicked);
+        if (direction === -1){
+            onClickDay(newWeekDays[6]);
+        }else{
+            onClickDay(newWeekDays[0])
+        }
+
+        setWeekDays(newWeekDays);
+    };
     return (<HStack className="flex flex-row justify-between px-4 py-2 bg-background-200">
-            <Pressable onPress={()=>shift(-1)}>
+            <Pressable onPress={()=>shiftWeek(-1)}>
                 <Box className="p-2">
                     <AntDesign name="left" size={24} color={"white"} />
                 </Box>
@@ -35,7 +48,7 @@ const WeekDayBar = ({ weekDays, pickedDay, onClickDay, shift, specialDays =[] })
                 </Pressable>
 
             ))}
-            <Pressable onPress={()=>shift(1)}>
+            <Pressable onPress={()=>shiftWeek(1)}>
                 <Box className="p-2">
                     <AntDesign name="right" size={24} color={"white"} />
                 </Box>

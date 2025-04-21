@@ -85,7 +85,7 @@ const Calendar = ({ user }) => {
         weekDays={weekDays}
         pickedDay={pickedDay}
         onClickDay={setPickedDay}
-        shift={shiftWeek}
+        setWeekDays={setWeekDays}
       />
 
       <CalendarField>
