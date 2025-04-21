@@ -6,14 +6,13 @@ import Divider from "../ui/Divider";
 import DateTimePickerBox from "./DateTimePickerBox";
 import CustomDivider from "../ui/CustomDivider";
 import React, {useState} from "react";
-import {formatDateTimeToLocalDateTime, formatDate} from "/util/format/FormatDateTime";
+import {formatDateTimeToLocalDateTime,} from "/util/format/FormatDateTime";
 import EventSlotCustomizer from "./EventSlotCustomizer";
 import PageView from "../ui/PageView";
 import PageHeader from "../ui/PageHeader";
 import HBox from "../ui/HBox";
 import PageButton from "../ui/PageButton";
 import {isTheSameDate} from "../util/calendarUtils";
-import VBox from "../ui/VBox";
 import AvailabilityList from "./AvailabilityList";
 
 
