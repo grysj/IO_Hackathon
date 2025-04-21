@@ -1,14 +1,6 @@
 import {useAuth} from "../../contexts/AuthContext";
-import {
-    Keyboard,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View
-} from "react-native";
+import {Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View} from "react-native";
+import ScrollView from "../ui/scrollview/StyledScrollView";
 import LottieView from "lottie-react-native";
 import {Ionicons} from "@expo/vector-icons";
 import React, {useState} from "react";
@@ -20,6 +12,8 @@ import {isTheSameDay} from "../util/calendarUtils";
 import FriendComponent from "../friendlist/FriendComponent";
 import {useRouter} from "expo-router";
 import {formatDateLabel, formatTime} from "../../util/format/FormatDateTime";
+
+
 
 const createEvent = async (userId, slot, location, friendsId, name, description, onError) => {
     try {
@@ -99,7 +93,8 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                 autoPlay={playAnimation}
                 loop={false}
                 onAnimationFinish={() => {
-                    router.push("/map")}}
+                    router.push("/map")
+                }}
                 style={styles.animation}
             />}
             <View style={styles.header}>
@@ -108,125 +103,119 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
             </View>
             {fetchError && <Text style={styles.errorText}>{fetchError}</Text>}
             {/*//TODO zrobić ten styled Scroll View jak box jest*/}
-            <View style={styles.scrollContainer}>
-                <ScrollView>
-                    <View style={{marginBottom: 10}}>
-                        {/*Name Container*/}
-                        <View>
-                            <View style={styles.labelContainer}>
-                                <MaterialIcons name="new-label" size={24} color="#ca8a04"/>
-                                <Text style={styles.labelText}>Name:</Text>
-                            </View>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Enter a name..."
-                                placeholderTextColor="#aaa"
-                                value={name}
-                                onChangeText={setName}
-                            />
-                            {nameError && <Text style={styles.errorText}>{nameError}</Text>}
+            <ScrollView>
+                {/*Name Container*/}
+                <View>
+                    <View style={styles.labelContainer}>
+                        <MaterialIcons name="new-label" size={24} color="#ca8a04"/>
+                        <Text style={styles.labelText}>Name:</Text>
+                    </View>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter a name..."
+                        placeholderTextColor="#aaa"
+                        value={name}
+                        onChangeText={setName}
+                    />
+                    {nameError && <Text style={styles.errorText}>{nameError}</Text>}
+                </View>
+                <Divider/>
+                {/*Des Container*/}
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <View>
+                        <View style={styles.labelContainer}>
+                            <MaterialIcons name="description" size={24} color="#ca8a40"/>
+                            <Text style={styles.labelText}>Event Description:</Text>
                         </View>
-                        <Divider/>
-                        {/*Des Container*/}
-                        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                            <View>
-                                <View style={styles.labelContainer}>
-                                    <MaterialIcons name="description" size={24} color="#ca8a40"/>
-                                    <Text style={styles.labelText}>Event Description:</Text>
-                                </View>
-                                <TextInput
-                                    style={styles.description}
-                                    placeholder="Add a description..."
-                                    placeholderTextColor="#aaa"
-                                    value={description}
-                                    onChangeText={setDescription}
-                                    multiline
-                                    numberOfLines={4}
-                                    returnKeyType="done"
-                                />
+                        <TextInput
+                            style={styles.description}
+                            placeholder="Add a description..."
+                            placeholderTextColor="#aaa"
+                            value={description}
+                            onChangeText={setDescription}
+                            multiline
+                            numberOfLines={4}
+                            returnKeyType="done"
+                        />
+                    </View>
+                </TouchableWithoutFeedback>
+                <Divider/>
+                {/*Location Container*/}
+                <View>
+                    <View style={styles.labelButtonContainer}>
+                        <Text style={[styles.labelText, {color: "#ca8a04"}]}>Location:</Text>
+                        <TouchableOpacity disabled={disableAll} onPress={() => setStep("location")}
+                                          style={styles.labelButton}>
+                            <View style={[styles.labelContainer, {marginBottom: 0}]}>
+                                <Ionicons name="arrow-back" size={15} color="white"/>
+                                <Text style={styles.buttonText}>Location</Text>
                             </View>
-                        </TouchableWithoutFeedback>
-                        <Divider/>
-                        {/*Location Container*/}
-                        <View>
-                            <View style={styles.labelButtonContainer}>
-                                <Text style={[styles.labelText, {color: "#ca8a04"}]}>Location:</Text>
-                                <TouchableOpacity disabled={disableAll} onPress={() => setStep("location")}
-                                                  style={styles.labelButton}>
-                                    <View style={[styles.labelContainer, {marginBottom: 0}]}>
-                                        <Ionicons name="arrow-back" size={15} color="white"/>
-                                        <Text style={styles.buttonText}>Location</Text>
-                                    </View>
-                                </TouchableOpacity>
+                        </TouchableOpacity>
 
+                    </View>
+                    <TouchableOpacity disabled={disableAll} onPress={handleLocationPress}
+                                      style={styles.locationBox}>
+                        <Ionicons name="location-sharp" size={22} color="#ca8a04"/>
+                        <Text style={styles.locationText}>
+                            {"Unknown Poi"}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+                <Divider/>
+                <View>
+                    <View style={styles.labelButtonContainer}>
+                        <Text style={[styles.labelText, {color: "#ca8a04"}]}>Time:</Text>
+                        <TouchableOpacity disabled={disableAll} style={styles.labelButton}
+                                          onPress={() => setStep("availability")}>
+                            <View style={[styles.labelContainer, {marginBottom: 0}]}>
+                                <Ionicons name="arrow-back" size={15} color="white"/>
+                                <Text style={styles.buttonText}>Time</Text>
                             </View>
-                            <TouchableOpacity disabled={disableAll} onPress={handleLocationPress}
-                                              style={styles.locationBox}>
-                                <Ionicons name="location-sharp" size={22} color="#ca8a04"/>
-                                <Text style={styles.locationText}>
-                                    {"Unknown Poi"}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                        <Divider/>
-                        <View>
-                            <View style={styles.labelButtonContainer}>
-                                <Text style={[styles.labelText, {color: "#ca8a04"}]}>Time:</Text>
-                                <TouchableOpacity disabled={disableAll} style={styles.labelButton}
-                                                  onPress={() => setStep("availability")}>
-                                    <View style={[styles.labelContainer, {marginBottom: 0}]}>
-                                        <Ionicons name="arrow-back" size={15} color="white"/>
-                                        <Text style={styles.buttonText}>Time</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-
-                            <View style={styles.labelContainer}>
-                                <Ionicons name="time" size={24} color="#ca8a04"/>
-                                <Text style={styles.locationText}>
-                                    {formatTime(slot.dateStart)} - {formatTime(slot.dateEnd)}
-                                </Text>
-                            </View>
-                            <View style={styles.labelContainer}>
-                                <Ionicons name="calendar" size={24} color="#ca8a04"/>
-                                <Text style={styles.locationText}>
-                                    {isTheSameDay(slot.dateStart, slot.dateEnd)
-                                        ? `${formatDateLabel(slot.dateStart)}`
-                                        : `${formatDateLabel(slot.dateStart)} - ${formatDateLabel(slot.dateEnd)}`
-                                    }</Text>
-                            </View>
-
-                        </View>
-                        <Divider/>
-                        <View>
-                            <View style={styles.labelButtonContainer}>
-                                <Text style={[styles.labelText, {color: "#ca8a04"}]}>Participants:</Text>
-                                <TouchableOpacity disabled={disableAll} style={styles.labelButton}
-                                                  onPress={() => setStep("friends")}>
-                                    <View style={[styles.labelContainer, {marginBottom: 0}]}>
-                                        <Ionicons name="arrow-back" size={15} color="white"/>
-                                        <Text style={styles.buttonText}>Friends</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={styles.vStack}>
-
-                                {friends.map((friend, i) => (
-                                    <FriendComponent key={i} friend={friend} style={styles.friend}/>
-                                ))}
-                            </View>
-                        </View>
-                        <Divider/>
-
-                        <TouchableOpacity disabled={disableAll} onPress={handleConfirm}
-                                          style={styles.applicationButton}>
-                            <Text style={styles.buttonText}>Confirm</Text>
                         </TouchableOpacity>
                     </View>
 
-                </ScrollView>
+                    <View style={styles.labelContainer}>
+                        <Ionicons name="time" size={24} color="#ca8a04"/>
+                        <Text style={styles.locationText}>
+                            {formatTime(slot.dateStart)} - {formatTime(slot.dateEnd)}
+                        </Text>
+                    </View>
+                    <View style={styles.labelContainer}>
+                        <Ionicons name="calendar" size={24} color="#ca8a04"/>
+                        <Text style={styles.locationText}>
+                            {isTheSameDay(slot.dateStart, slot.dateEnd)
+                                ? `${formatDateLabel(slot.dateStart)}`
+                                : `${formatDateLabel(slot.dateStart)} - ${formatDateLabel(slot.dateEnd)}`
+                            }</Text>
+                    </View>
 
-            </View>
+                </View>
+                <Divider/>
+                <View>
+                    <View style={styles.labelButtonContainer}>
+                        <Text style={[styles.labelText, {color: "#ca8a04"}]}>Participants:</Text>
+                        <TouchableOpacity disabled={disableAll} style={styles.labelButton}
+                                          onPress={() => setStep("friends")}>
+                            <View style={[styles.labelContainer, {marginBottom: 0}]}>
+                                <Ionicons name="arrow-back" size={15} color="white"/>
+                                <Text style={styles.buttonText}>Friends</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.vStack}>
+
+                        {friends.map((friend, i) => (
+                            <FriendComponent key={i} friend={friend} style={styles.friend}/>
+                        ))}
+                    </View>
+                </View>
+                <Divider/>
+
+                <TouchableOpacity disabled={disableAll} onPress={handleConfirm}
+                                  style={styles.applicationButton}>
+                    <Text style={styles.buttonText}>Confirm</Text>
+                </TouchableOpacity>
+            </ScrollView>
         </View>
 
     );
@@ -241,11 +230,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#272625",
-    },
-    scrollContainer: {
-        paddingTop: 5,
-        paddingHorizontal: 10,
-        paddingBottom: 45
     },
     animation: {
         position: "absolute",
