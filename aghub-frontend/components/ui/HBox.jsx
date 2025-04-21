@@ -1,7 +1,7 @@
-import {View, StyleSheet} from "react-native";
+import {StyleSheet, View} from "react-native";
 
 const HBox = ({children, style}) => {
-    return(
+    return (
         <View style={[styles.hBox, style]}>
             {children}
         </View>
@@ -11,6 +11,7 @@ export default HBox
 const styles = StyleSheet.create({
     hBox: {
         flexDirection: "row",
-            justifyContent: "space-between",
+        justifyContent: "space-between",
+        gap: 8
     },
 })

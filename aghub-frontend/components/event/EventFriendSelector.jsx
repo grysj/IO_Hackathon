@@ -100,12 +100,9 @@ export default EventFriendSelector;
 const styles = StyleSheet.create({
     title: {
         fontSize: 24,
-        lineHeight:
-            30,
-        fontWeight:
-            700,
-        color:
-            "white",
+        lineHeight: 30,
+        fontWeight: 700,
+        color: "white",
     },
     itemContainer: {
         borderRadius: 8,
@@ -128,7 +125,6 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         borderRadius: 12,
         backgroundColor: "#333333",
-        marginRight: 8,
     },
     cancelText: {
         color: "#ef4444", // text-error-500

@@ -110,7 +110,7 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                 <View>
                     <View style={styles.labelContainer}>
                         <MaterialIcons name="new-label" size={24} color="#ca8a04"/>
-                        <Text style={styles.labelText}>Name:</Text>
+                        <Text style={styles.subTitle}>Name:</Text>
                     </View>
                     <TextInput
                         style={styles.input}
@@ -127,7 +127,7 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                     <View>
                         <View style={styles.labelContainer}>
                             <MaterialIcons name="description" size={24} color="#ca8a40"/>
-                            <Text style={styles.labelText}>Event Description:</Text>
+                            <Text style={styles.subTitle}>Event Description:</Text>
                         </View>
                         <TextInput
                             style={styles.description}
@@ -145,7 +145,7 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                 {/*Location Container*/}
                 <View>
                     <View style={styles.labelButtonContainer}>
-                        <Text style={[styles.labelText, {color: "#ca8a04"}]}>Location:</Text>
+                        <Text style={[styles.subTitle, {color: "#ca8a04"}]}>Location:</Text>
                         <TouchableOpacity disabled={disableAll} onPress={() => setStep("location")}
                                           style={styles.labelButton}>
                             <View style={[styles.labelContainer, {marginBottom: 0}]}>
@@ -166,7 +166,7 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                 <Divider/>
                 <View>
                     <View style={styles.labelButtonContainer}>
-                        <Text style={[styles.labelText, {color: "#ca8a04"}]}>Time:</Text>
+                        <Text style={[styles.subTitle, {color: "#ca8a04"}]}>Time:</Text>
                         <TouchableOpacity disabled={disableAll} style={styles.labelButton}
                                           onPress={() => setStep("availability")}>
                             <View style={[styles.labelContainer, {marginBottom: 0}]}>
@@ -195,7 +195,7 @@ const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
                 <Divider/>
                 <View>
                     <View style={styles.labelButtonContainer}>
-                        <Text style={[styles.labelText, {color: "#ca8a04"}]}>Participants:</Text>
+                        <Text style={[styles.subTitle, {color: "#ca8a04"}]}>Participants:</Text>
                         <TouchableOpacity disabled={disableAll} style={styles.labelButton}
                                           onPress={() => setStep("friends")}>
                             <View style={[styles.labelContainer, {marginBottom: 0}]}>
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    labelText: {
+    subTitle: {
         fontSize: 20,
         lineHeight: 28,
         fontWeight: "600",

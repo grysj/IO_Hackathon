@@ -16,11 +16,11 @@ export default ScrollView;
 
 const styles= StyleSheet.create({
     scrollContainer: {
-        paddingTop: 5,
         paddingHorizontal: 10,
-        paddingBottom: 45
+        paddingBottom: 40
     },
     scrollInsideContainer: {
-        marginBottom: 10
+        marginBottom: 10,
+        paddingTop:10
     }
 })

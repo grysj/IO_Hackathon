@@ -5,6 +5,7 @@ import EventAvailabilityPicker from "../../components/event/EventAvailabilityPic
 import LocationPickerScreen from "../../components/event/EventLocationPicker";
 import { useAuth } from "../../contexts/AuthContext";
 import EventSummarize from "../../components/event/EventSummarize";
+import PageView from "../../components/ui/PageView";
 
 const EventCreateScreen = () => {
   const [friendsId, setFriendsId] = useState([]);
@@ -28,25 +29,10 @@ const EventCreateScreen = () => {
   const handleLocationConfirm = (location) => {
     setLocation(location);
     setStep("summarize")
-
-    // const eventData = {
-    //   friends: friendsId,
-    //   slot,
-    //   location,
-    // };
-    //
-    // // Tutaj będzie wysłanie do prawdziwego backendu, gdy go dodasz
-    // console.log("📦 Gotowe dane do wysłania:", eventData);
-    //
-    // fetchEvent({
-    //   userId: user.id,
-    //   slot,
-    //   location,
-    // }).then(setStep("done"));
   };
 
   return (
-    <Box className="flex-1 bg-background-50">
+    <PageView>
       {step === "friends" && (
         <EventFriendSelector initialFriendsId={friendsId} onConfirm={handleFriendsConfirm} />
       )}
@@ -71,7 +57,7 @@ const EventCreateScreen = () => {
           </Text>
         </Box>
       )}
-    </Box>
+    </PageView>
   );
 };
 

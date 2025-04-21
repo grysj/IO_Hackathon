@@ -1,12 +1,21 @@
-import {ScrollView, TouchableOpacity, View} from "react-native";
+import {StyleSheet, View, Text, TouchableOpacity} from "react-native";
+import ScrollView from "../ui/scrollview/StyledScrollView";
 import {Ionicons} from "@expo/vector-icons";
-import {Box, HStack, Input, InputField, Pressable, Text, VStack} from "@gluestack-ui/themed";
+import {Input, InputField} from "@gluestack-ui/themed";
 import Divider from "../ui/Divider";
 import DateTimePickerBox from "./DateTimePickerBox";
 import CustomDivider from "../ui/CustomDivider";
 import React, {useState} from "react";
-import {formatDateTimeToLocalDateTime} from "../../util/format/FormatDateTime";
+import {formatDateTimeToLocalDateTime, formatDate} from "/util/format/FormatDateTime";
 import EventSlotCustomizer from "./EventSlotCustomizer";
+import PageView from "../ui/PageView";
+import PageHeader from "../ui/PageHeader";
+import HBox from "../ui/HBox";
+import PageButton from "../ui/PageButton";
+import {isTheSameDate} from "../util/calendarUtils";
+import VBox from "../ui/VBox";
+import AvailabilityList from "./AvailabilityList";
+
 
 const DateTimeRangePicker = ({
                                  usersId,
@@ -66,150 +75,139 @@ const DateTimeRangePicker = ({
         setDisableCustomizeAvailability(true)
     }
     return (
-        <Box
-            className="flex-1 bg-background-50 "
-            style={{paddingBottom:45}}
-
-
-        >
-            <View style={{
-                borderBottomWidth: 2,
-                borderColor: "white",
-                padding: 3
-            }} className="flex-row items-center gap-2 mb-1">
+        <PageView>
+            <PageHeader>
                 <Ionicons name="time" size={30} color="#ca8a04"/>
-                <Text className="text-2xl font-bold text-white">
+                <Text style={styles.title}>
                     Check time range
                 </Text>
-            </View>
+            </PageHeader>
             {/*//TODO zrobić tak w innych podstronach tak jak tu*/}
 
-            <View style={{paddingTop:5, paddingHorizontal:10}}>
-                <ScrollView >
+            <ScrollView>
+
+                <Text style={styles.sectionText}>
+                    Minimal duration of event (minutes)
+                </Text>
+                <Input style={styles.inputWrapper}>
+                    <InputField
+                        keyboardType="numeric"
+                        value={minDuration}
+                        onChangeText={setMinDuration}
+                        placeholder="Np. 60"
+                        placeholderTextColor="#aaa"
+                        style={styles.inputField}
+                    />
+                </Input>
+
+                <Divider/>
+                <View style={styles.sectionHeader}>
+                    <Ionicons name="calendar-number" size={24} color="#ca8a04"/>
+                    <Text style={styles.sectionText}>Dates range:</Text>
+                </View>
 
 
-                    <VStack space="lg" className="mb-4">
-                        <Text className="text-xl font-semibold text-white">
-                            Minimal duration of event (minutes)
-                        </Text>
-                        <Input className="bg-background-200 px-4 py-4 rounded-lg w-full">
-                            <InputField
-                                keyboardType="numeric"
-                                value={minDuration}
-                                onChangeText={setMinDuration}
-                                placeholder="Np. 60"
-                                style={{color: "#ca8a40"}}
-                                placeholderTextColor="#aaa"
-                            />
-                        </Input>
-                        <Divider/>
-                        <View className="flex-row alifne items-center gap-2 mb-2">
-                            <Ionicons name="calendar-number" size={24} color="#ca8a40"/>
-                            <Text className="text-xl font-semibold text-white">
-                                Dates range:
-                            </Text>
-                        </View>
+                <HBox>
+                    <DateTimePickerBox type={"date"} value={dateStart} onChange={setDateStart}
+                                       visible={showDateStart} setButtons={setButtons}
+                                       setVisible={setShowDateStart}></DateTimePickerBox>
+                    <DateTimePickerBox label={"To:"} type={"date"} value={dateEnd} onChange={setDateEnd}
+                                       visible={showDateEnd} setVisible={setShowDateEnd}
+                                       setButtons={setButtons}></DateTimePickerBox>
+                </HBox>
+                <Divider/>
+                <View style={styles.sectionHeader}>
+                    <Ionicons name="timer" size={28} color="#ca8a04"/>
+                    <Text style={styles.sectionText}>
+                        Hours range:
+                    </Text>
+                </View>
+
+                <HBox>
+                    <DateTimePickerBox value={dateStart} onChange={setDateStart} visible={showTimeStart}
+                                       setVisible={setShowTimeStart}
+                                       setButtons={setButtons}></DateTimePickerBox>
+                    <DateTimePickerBox label={"To:"} value={dateEnd} onChange={setDateEnd} visible={showTimeEnd}
+                                       setVisible={setShowTimeEnd}
+                                       setButtons={setButtons}></DateTimePickerBox>
+                </HBox>
+                <Divider/>
 
 
-                        <HStack space="md" className="flex-row gap-2">
-                            <DateTimePickerBox type={"date"} value={dateStart} onChange={setDateStart}
-                                               visible={showDateStart} setButtons={setButtons}
-                                               setVisible={setShowDateStart}></DateTimePickerBox>
-                            <DateTimePickerBox label={"To:"} type={"date"} value={dateEnd} onChange={setDateEnd}
-                                               visible={showDateEnd} setVisible={setShowDateEnd}
-                                               setButtons={setButtons}></DateTimePickerBox>
-                        </HStack>
-                        <Divider/>
-                        <View className="flex-row alifne items-center gap-2 mb-2">
-                            <Ionicons name="timer" size={28} color="#ca8a04"/>
-                            <Text className="text-xl font-semibold text-white">
-                                Hours range:
-                            </Text>
-                        </View>
-
-                        <HStack space="md" className="flex-row gap-2">
-                            <DateTimePickerBox value={dateStart} onChange={setDateStart} visible={showTimeStart}
-                                               setVisible={setShowTimeStart}
-                                               setButtons={setButtons}></DateTimePickerBox>
-                            <DateTimePickerBox label={"To:"} value={dateEnd} onChange={setDateEnd} visible={showTimeEnd}
-                                               setVisible={setShowTimeEnd}
-                                               setButtons={setButtons}></DateTimePickerBox>
-                        </HStack>
-                        <Divider/>
+                <PageButton
+                    title="Refresh Availability"
+                    onPress={() => fetchAvailabilities(usersId).then(() => {
+                        setDisableCalendarButton(false)
+                        setDisableCustomizeAvailability(false)
+                    })}
+                    disabled={isTheSameDate(dateStart, dateEnd)}
+                />
 
 
-                        <TouchableOpacity
-                            onPress={() => fetchAvailabilities(usersId).then(() => {
-                                setDisableCalendarButton(false)
-                                setDisableCustomizeAvailability(false)
-                            })}
-                            className="bg-yellow-600 p-4 rounded-lg items-center"
-                        >
-                            <Text className="text-white font-bold">Refresh Availability</Text>
-                        </TouchableOpacity>
-                    </VStack>
+                <AvailabilityList
+                    availableSlots={availableSlots}
+                    selectedSlot={selectedSlot}
+                    setSelectedSlot={setSelectedSlot}
+                />
+                <Divider style={{height: 2}}/>
+
+                <PageButton
+                    title="Check On Calendar"
+                    onPress={() => setShowCalendar(true)}
+                    disabled={disableCalendarButton}
+                />
+                <CustomDivider style={{height: 2}} marginVertical={12}>
+                    <Text style={{color: "white"}}>OR</Text>
+                </CustomDivider>
+
+                {showSlotCustomizer ? <EventSlotCustomizer dateMin={dateStart}
+                                                           dateMax={dateEnd}
+                                                           selectedSlot={selectedSlot}
+                                                           setSelectedSlot={setSelectedSlot}
+                                                           onConfirm={onConfirm}
+
+                /> : <PageButton disabled={disableCustomizeAvailability}
+                                 onPress={() => setShowSlotCustomizer(true)}
+                                 title={"Customize Event Time"}
+                />
 
 
-                    <VStack space="md" className={"gap-2"}>
-                        {availableSlots.map((slot, index) => {
-                            const isSelected = selectedSlot?.dateStart === slot.dateStart;
-                            return (
-                                <Pressable
-                                    key={index}
-                                    onPress={() => {
-                                        setSelectedSlot(slot)
-                                    }}
-                                    className={`w-full p-4 rounded-lg border ${
-                                        isSelected
-                                            ? "bg-yellow-600 border-yellow-700"
-                                            : "bg-background-100 border-outline-200"
-                                    }`}
-                                >
-                                    <Text
-                                        className={`text-lg font-semibold ${
-                                            isSelected ? "text-white" : "text-typography-900"
-                                        }`}
-                                    >
-                                        {new Date(slot.dateStart).toLocaleDateString()}{" "}
-                                        {new Date(slot.dateStart).toLocaleTimeString([], {
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                        })}{" "}
-                                        -{" "}
-                                        {new Date(slot.dateEnd).toLocaleDateString()}{" "}
-                                        {new Date(slot.dateEnd).toLocaleTimeString([], {
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                        })}
-                                    </Text>
-                                </Pressable>
-                            );
-                        })}
-                    </VStack>
-                    <Divider style={{height: 2}}/>
-                    <TouchableOpacity disabled={disableCalendarButton} onPress={() => setShowCalendar(true)}
-                                      className="bg-yellow-600 p-4 rounded-lg items-center">
-                        <Text className="text-white font-bold">Check On Calendar</Text>
-                    </TouchableOpacity>
-                    <CustomDivider style={{height: 2}} marginVertical={12}>
-                        <Text style={{color: "white"}}>OR</Text>
-                    </CustomDivider>
+                }
 
-                    {showSlotCustomizer ? <EventSlotCustomizer dateMin={dateStart}
-                                                               dateMax={dateEnd}
-                                                               selectedSlot={selectedSlot}
-                                                               setSelectedSlot={setSelectedSlot}
-                                                               onConfirm={onConfirm}
-
-                    /> : <TouchableOpacity disabled={disableCustomizeAvailability}
-                                           onPress={() => setShowSlotCustomizer(true)}
-                                           className="bg-yellow-600 p-4 rounded-lg items-center">
-                        <Text className="text-white font-bold">Customize Event Time</Text>
-                    </TouchableOpacity>}
-
-                </ScrollView>
-            </View>
-        </Box>
+            </ScrollView>
+        </PageView>
     )
 };
 export default DateTimeRangePicker
+
+const styles = StyleSheet.create({
+    title: {
+        fontSize: 24,
+        lineHeight: 30,
+        fontWeight: "600",
+        color: "white",
+    },
+
+    sectionHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        marginBottom: 8,
+    },
+    sectionText: {
+        fontSize: 20,
+        fontWeight: "600",
+        color: "white",
+    },
+    inputWrapper: {
+        backgroundColor: "#535252",
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 12,
+        marginTop: 4
+    },
+    inputField: {
+        color: "#ca8a04",           // tekst wpisywany
+        fontSize: 16,
+    },
+})

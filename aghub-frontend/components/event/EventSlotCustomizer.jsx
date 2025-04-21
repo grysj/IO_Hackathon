@@ -3,6 +3,8 @@ import DateTimePickerBox from "./DateTimePickerBox";
 import React, {useEffect, useState} from "react";
 import {Text} from "@gluestack-ui/themed";
 import Divider from "../ui/Divider";
+import PageButton from "../ui/PageButton";
+import HBox from "../ui/HBox";
 
 const EventSlotCustomizer = ({
                                  onConfirm,
@@ -36,7 +38,7 @@ const EventSlotCustomizer = ({
     return (
         <View style={styles.container}>
 
-            <View style={styles.row}>
+            <HBox>
                 <DateTimePickerBox
                     type={"date"}
                     value={dateStart}
@@ -57,9 +59,9 @@ const EventSlotCustomizer = ({
                     maximumDate={dateMax}
                     setButtons={() => {}}
                 />
-            </View>
+            </HBox>
 
-            <View style={styles.row}>
+            <HBox>
                 <DateTimePickerBox
                     label={"To:"}
                     type={"date"}
@@ -81,11 +83,10 @@ const EventSlotCustomizer = ({
                     maximumDate={dateMax}
                     setButtons={() => {}}
                 />
-            </View>
+            </HBox>
 
-            <TouchableOpacity disabled={!selectedSlot} onPress={onConfirm} style={styles.button}>
-                <Text className="text-white font-bold">Choose Location</Text>
-            </TouchableOpacity>
+            <PageButton disabled={!selectedSlot} onPress={onConfirm} title={"Choose Location"}/>
+
         </View>
     );
 };
@@ -97,19 +98,6 @@ const styles = StyleSheet.create({
         gap: 12,
         padding: 8,
     },
-    row: {
-        flexDirection: 'row',
-        gap: 12,
-        justifyContent: 'space-between',
-    },
-    button: {
-        backgroundColor: '#ca8a04', // yellow-600
-        padding: 16,
-        borderRadius: 10,
-        alignItems: 'center',
-    },
-    buttonText: {
-        color: '#ffffff',
-        fontWeight: 'bold',
-    },
+
+
 });
