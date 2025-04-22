@@ -85,25 +85,7 @@ const FriendSelector = ({ onConfirm }) => {
                       : "bg-background-100 border-outline-200"
                   }`}
                 >
-                  <Box className="mr-4">
-                    <MaterialIcons name="person" size={30} color="white" />
-                  </Box>
-                  <Box>
-                    <Text
-                      className={`font-semibold ${
-                        isSelected ? "text-white" : "text-typography-900"
-                      }`}
-                    >
-                      {friend.username}
-                    </Text>
-                    <Text
-                      className={`text-xs ${
-                        isSelected ? "text-yellow-100" : "text-typography-500"
-                      }`}
-                    >
-                      {friend.email}
-                    </Text>
-                  </Box>
+                  <FriendComponent friend={friend} isSelected={isSelected} />
                 </Pressable>
               );
             })}
@@ -138,4 +120,4 @@ const FriendSelector = ({ onConfirm }) => {
   );
 };
 
-export default FriendSelector;
+export default EventFriendSelector;

@@ -1,12 +1,13 @@
 import React, {useState} from "react";
 import EventCreationCalendar from "./EventCreationCalendar";
 import DateTimeRangePicker from "./DateTimeRangePicker";
+import {useAuth} from "../../contexts/AuthContext";
 
 
 //TODO Sprawdzić czy w friendsID jest user id
 
 
-const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
+const EventAvailabilityPicker = ({friendIds = [], onConfirm}) => {
 
     const [dateStart, setDateStart] = useState(new Date())
     const [dateEnd, setDateEnd] = useState(new Date())
@@ -14,7 +15,8 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
     const [showCalendar, setShowCalendar] = useState(false)
     const [selectedSlot, setSelectedSlot] = useState()
     const [availableSlots, setAvailableSlots] = useState([])
-
+    const { user } = useAuth();
+    const usersId = [...friendIds, user.id]
 
     const handleConfirm = () => {
         if (selectedSlot ) {
@@ -26,14 +28,14 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
     };
 
     return showCalendar ? (
-        <EventCreationCalendar usersId={friendIds}
+        <EventCreationCalendar usersId={usersId}
                                dateStart={dateStart}
                                dateEnd={dateEnd}
                                goBack={() => setShowCalendar(false)}
                                availabilities={availableSlots}
                                setSelectedSlot={setSelectedSlot}
                                selectedSlot={selectedSlot}
-                               onConfirm={onConfirm}
+                               onConfirm={handleConfirm}
         />
 
     ) : (<DateTimeRangePicker dateStart={dateStart}
@@ -43,7 +45,7 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
                               setShowCalendar={setShowCalendar}
                               availableSlots={availableSlots}
                               setAvailableSlots={setAvailableSlots}
-                              friendIds={friendIds}
+                              usersId={usersId}
                               setSelectedSlot={setSelectedSlot}
                               selectedSlot={selectedSlot}
                               onConfirm={handleConfirm}
@@ -52,4 +54,4 @@ const AvailabilityPicker = ({friendIds = [], onConfirm}) => {
     );
 };
 
-export default AvailabilityPicker;
+export default EventAvailabilityPicker;

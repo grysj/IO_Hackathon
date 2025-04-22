@@ -13,7 +13,7 @@ import Divider from "../ui/Divider";
 import DateTimePickerBox from "./DateTimePickerBox";
 import CustomDivider from "../ui/CustomDivider";
 import React, { useState } from "react";
-import { formatDateTimeToLocalDateTime } from "@/util/format/FormatDateTime";
+import { formatDateTimeToLocalDateTime } from "../../util/format/FormatDateTime";
 import EventSlotCustomizer from "./EventSlotCustomizer";
 import { useQuery } from "@tanstack/react-query";
 import { findAvailability } from "@/api/aghub";
@@ -171,73 +171,9 @@ const DateTimeRangePicker = ({
             <Text className="text-white font-bold">Refresh Availability</Text>
           </TouchableOpacity>
         </VStack>
-
-        <VStack space="md" className={"gap-2"}>
-          {availableSlots.map((slot, index) => {
-            const isSelected = selectedSlot?.dateStart === slot.dateStart;
-            return (
-              <Pressable
-                key={index}
-                onPress={() => {
-                  setSelectedSlot(slot);
-                }}
-                className={`w-full p-4 rounded-lg border ${
-                  isSelected
-                    ? "bg-yellow-600 border-yellow-700"
-                    : "bg-background-100 border-outline-200"
-                }`}
-              >
-                <Text
-                  className={`text-lg font-semibold ${
-                    isSelected ? "text-white" : "text-typography-900"
-                  }`}
-                >
-                  {new Date(slot.dateStart).toLocaleDateString()}{" "}
-                  {new Date(slot.dateStart).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}{" "}
-                  - {new Date(slot.dateEnd).toLocaleDateString()}{" "}
-                  {new Date(slot.dateEnd).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </VStack>
-        <Divider style={{ height: 2 }} />
-        <TouchableOpacity
-          disabled={disableCalendarButton}
-          onPress={() => setShowCalendar(true)}
-          className="bg-yellow-600 p-4 rounded-lg items-center"
-        >
-          <Text className="text-white font-bold">Check On Calendar</Text>
-        </TouchableOpacity>
-        <CustomDivider style={{ height: 2 }} marginVertical={12}>
-          <Text style={{ color: "white" }}>OR</Text>
-        </CustomDivider>
-
-        {showSlotCustomizer ? (
-          <EventSlotCustomizer
-            dateMin={dateStart}
-            dateMax={dateEnd}
-            selectedSlot={selectedSlot}
-            setSelectedSlot={setSelectedSlot}
-            onConfirm={onConfirm}
-          />
-        ) : (
-          <TouchableOpacity
-            disabled={disableCustomizeAvailability}
-            onPress={() => setShowSlotCustomizer(true)}
-            className="bg-yellow-600 p-4 rounded-lg items-center"
-          >
-            <Text className="text-white font-bold">Customize Event Time</Text>
-          </TouchableOpacity>
-        )}
       </ScrollView>
     </Box>
   );
 };
+
 export default DateTimeRangePicker;

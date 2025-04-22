@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
+import { useMutate } from "@tanstack/react-query";
+import { searchLocation } from "../../api/openstreetmap";
 
 export default function LocationPickerScreen({ onConfirmLocation }) {
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -42,25 +44,9 @@ export default function LocationPickerScreen({ onConfirmLocation }) {
     setSelectedLocation({ latitude, longitude });
   };
 
-  const handleSearch = async () => {
-    if (!searchQuery) return;
-
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-          searchQuery
-        )}&format=json&limit=1`,
-        {
-          method: "GET",
-          headers: {
-            "User-Agent": "AGHub/1.0",
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
-      const data = await response.json();
-
+  const searchLocationMutation = useMutate({
+    mutationFn: ({ query }) => searchLocation(query),
+    onSuccess: (data) => {
       if (data.length > 0) {
         const { lat, lon } = data[0];
         const location = {
@@ -82,10 +68,12 @@ export default function LocationPickerScreen({ onConfirmLocation }) {
       } else {
         alert("Nie znaleziono lokalizacji");
       }
-    } catch (error) {
-      console.error("Błąd wyszukiwania:", error);
-      alert("Błąd podczas wyszukiwania lokalizacji.");
-    }
+    },
+  });
+
+  const handleSearch = async () => {
+    if (!searchQuery) return;
+    searchLocationMutation.mutate({ query: searchQuery });
   };
 
   const handleConfirm = () => {

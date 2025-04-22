@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { Box, Text } from "@gluestack-ui/themed";
-import FriendSelector from "../../components/event/FriendSelector";
-import AvailabilityPicker from "../../components/event/AvailabilityPicker";
-import LocationPickerScreen from "../../components/event/locationpicker";
+import EventFriendSelector from "../../components/event/EventFriendSelector";
+import EventAvailabilityPicker from "../../components/event/EventAvailabilityPicker";
+import LocationPickerScreen from "../../components/event/EventLocationPicker";
 import { useAuth } from "../../contexts/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { addEvent } from "@/api/aghub";
+import EventSummarize from "../../components/event/EventSummarize";
 
 const EventCreateScreen = () => {
+  const [friendsId, setFriendsId] = useState([]);
   const [friends, setFriends] = useState([]);
   const [slot, setSlot] = useState(null);
   const [location, setLocation] = useState(null);
@@ -41,8 +43,9 @@ const EventCreateScreen = () => {
     },
   });
 
-  const handleFriendsConfirm = (ids) => {
-    setFriends(ids);
+  const handleFriendsConfirm = (ids, friends) => {
+    setFriendsId(ids);
+    setFriends(friends);
     setStep("availability");
   };
 
@@ -53,6 +56,7 @@ const EventCreateScreen = () => {
 
   const handleLocationConfirm = (location) => {
     setLocation(location);
+    setStep("summarize");
 
     addEventMutation.mutate({
       name: "Nowe wydarzenie",
@@ -69,20 +73,34 @@ const EventCreateScreen = () => {
   return (
     <Box className="flex-1 bg-background-50">
       {step === "friends" && (
-        <FriendSelector onConfirm={handleFriendsConfirm} />
+        <EventFriendSelector
+          initialFriendsId={friendsId}
+          onConfirm={handleFriendsConfirm}
+        />
       )}
 
       {step === "availability" && (
-        <AvailabilityPicker
-          friendIds={friends}
+        <EventAvailabilityPicker
+          friendIds={friendsId}
           onConfirm={handleAvailabilityConfirm}
         />
       )}
 
       {step === "location" && (
-        <LocationPickerScreen onConfirmLocation={handleLocationConfirm} />
+        <LocationPickerScreen
+          initialLocation={location}
+          onConfirmLocation={handleLocationConfirm}
+        />
       )}
-
+      {step === "summarize" && (
+        <EventSummarize
+          friends={friends}
+          friendsId={friendsId}
+          slot={slot}
+          setStep={setStep}
+          location={location}
+        />
+      )}
       {step === "done" && (
         <Box className="p-4">
           <Text className="text-xl text-center text-green-700 font-bold">

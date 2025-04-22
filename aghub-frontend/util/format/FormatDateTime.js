@@ -1,8 +1,9 @@
 export const formatTime = (date, separator = ":", includeSec = false, includeMils = false) => {
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    const seconds = includeSec || includeMils ? date.getSeconds().toString().padStart(2, "0") : "";
-    const millis = includeMils ? date.getMilliseconds().toString().padStart(3, "0") : "";
+    const newDate = new Date(date)
+    const hours = newDate.getHours().toString().padStart(2, "0");
+    const minutes = newDate.getMinutes().toString().padStart(2, "0");
+    const seconds = includeSec || includeMils ? newDate.getSeconds().toString().padStart(2, "0") : "";
+    const millis = includeMils ? newDate.getMilliseconds().toString().padStart(3, "0") : "";
 
     let time = `${hours}${separator}${minutes}`;
     if (seconds) {
@@ -22,15 +23,15 @@ export function formatDateTimeToLocalDateTime(startDate) {
 }
 
 export const formatDateLabel = (date, separator = " ") => {
-    const string = date.toString().split(" ");
+    const d = new Date(date);
+    const string = d.toString().split(" ");
     return `${string[1]}${separator}${string[2]}${separator}${string[3]}`;
 };
 
 export const formatDate = (date, separator = " ") => {
-    return `${date.getDate()
-        .toString()
-        .padStart(2, "0")}${separator}${(date.getMonth() + 1)
-        .toString()
-        .padStart(2, "0")}${separator}${date.getFullYear()
-    }`
-}
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, "0");
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}${separator}${month}${separator}${year}`;
+};

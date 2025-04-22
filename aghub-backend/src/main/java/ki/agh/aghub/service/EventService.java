@@ -2,17 +2,23 @@ package ki.agh.aghub.service;
 
 import ki.agh.aghub.dto.EventDTO;
 import ki.agh.aghub.dto.UserDTO;
+import ki.agh.aghub.exception.PoiNotFoundException;
+import ki.agh.aghub.exception.UserNotFoundException;
+import ki.agh.aghub.exception.UsersNotFoundException;
 import ki.agh.aghub.model.Event;
+import ki.agh.aghub.model.POI;
 import ki.agh.aghub.model.User;
 import ki.agh.aghub.repository.EventRepository;
 import ki.agh.aghub.repository.PoiRepository;
 import ki.agh.aghub.repository.UsersRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -84,6 +90,35 @@ public class EventService {
         event.getParticipants().add(user);
         eventRepository.save(event);
     }
+    @Transactional
+    public Event createEvent(Long createById, LocalDateTime dateStart, LocalDateTime dateEnd, String name, String description, Double latitude, Double longitude, Long poiId, List<Long> participantsId) {
+
+            User creator = usersRepository.findById(createById)
+                    .orElseThrow(() -> new UserNotFoundException(createById));
+
+            POI poi = null;
+            if (poiId != null) {
+                poi = poiRepository.findById(poiId)
+                        .orElseThrow(() -> new PoiNotFoundException(poiId));
+            }
+            Set<User> participants = new HashSet<>(usersRepository.findAllById(participantsId));
+            if (participants.size() != participantsId.size()) {
+                throw new UsersNotFoundException(participantsId.size(), participants.size());
+            }
+        Event event = Event.builder()
+                .createdBy(creator)
+                .dateStart(dateStart)
+                .dateEnd(dateEnd)
+                .name(name)
+                .description(description)
+                .latitude(latitude)
+                .longitude(longitude)
+                .poi(poi)
+                .participants(participants)
+                .build();
+
+        return eventRepository.save(event);
+    }
 
 
     @Transactional
@@ -96,6 +131,12 @@ public class EventService {
             .stream()
             .map(EventDTO::fromEvent)
             .collect(Collectors.toList());
+    }
+    public List<EventDTO> getUserCreatedEventsByDate(Long userId, LocalDateTime dateStart, LocalDateTime dateEnd) {
+        return eventRepository.findEventsByCreatedByUserIdAndDateRange(userId, dateStart, dateEnd)
+                .stream()
+                .map(EventDTO::fromEvent)
+                .collect(Collectors.toList());
     }
 
 }

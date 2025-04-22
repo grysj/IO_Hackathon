@@ -1,7 +1,11 @@
-import { cropScheduleToPickedDay, getWeekDays } from "../util/calendarUtils";
+import {
+  cropScheduleToPickedDay,
+  getWeekDays,
+  isTheSameDate,
+} from "../util/calendarUtils";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { formatDateTimeToLocalDateTime } from "@/util/format/FormatDateTime";
+import { formatDateTimeToLocalDateTime } from "../../util/format/FormatDateTime";
 import CalendarLabel from "../calendar/CalendarLabel";
 import WeekDayBar from "../calendar/WeekDayBar";
 import CalendarField from "../calendar/CalendarField";
@@ -9,7 +13,7 @@ import CalendarTimeLine from "../calendar/CalendarTimeLine";
 import CalendarComponent from "../calendar/CalendarComponent";
 import { TouchableOpacity, View } from "react-native";
 import CalendarUsersActivitiesList from "./CalendarUsersActivitiesList";
-import { get, Text } from "@gluestack-ui/themed";
+import { Text } from "@gluestack-ui/themed";
 import { Ionicons } from "@expo/vector-icons";
 import EventSlotCustomizer from "./EventSlotCustomizer";
 import { useQuery } from "@tanstack/react-query";
@@ -57,10 +61,6 @@ const EventCreationCalendar = ({
   const shiftWeek = (direction) => {
     const newPicked = new Date(pickedDay);
     newPicked.setDate(pickedDay.getDate() + direction * 7);
-
-    const newWeekDays = getWeekDays(newPicked);
-    setPickedDay(newPicked);
-    setWeekDays(newWeekDays);
   };
 
   const {
@@ -190,4 +190,5 @@ const EventCreationCalendar = ({
     </View>
   );
 };
+
 export default EventCreationCalendar;

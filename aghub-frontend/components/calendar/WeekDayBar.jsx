@@ -19,8 +19,8 @@ const WeekDayBar = ({ weekDays, pickedDay, onClickDay, shift, specialDays =[] })
                     <Box
                         className={`w-8 h-8 mt-1 flex items-center justify-center align-middle ${
                             isTheSameDay(day, pickedDay) ? 'bg-yellow-600 rounded-full' : 
-                                isSpecialDay(day) ? "bg-green-500 rounded-full border-2 border-green-700" :""}
-                             ${isTheSameDay(day, pickedDay)&& isSpecialDay(day)?"border-2 border-green-700":""}`}
+                                isSpecialDay(day) ? "bg-green-500 rounded-full" :""}
+                             ${isTheSameDay(day, pickedDay)&& isSpecialDay(day)?"border-2 border-green-500":""}`}
                     >
                         <Text
                             className={`${
