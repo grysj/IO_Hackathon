@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Box } from "@gluestack-ui/themed";
 import CalendarComponent from "./CalendarComponent";
 import WeekDayBar from "./WeekDayBar";
 import { useRouter } from "expo-router";
@@ -10,18 +9,16 @@ import { useQuery } from "@tanstack/react-query";
 import { getSchedule } from "@/api/aghub";
 import CalendarLabel from "./CalendarLabel";
 import { cropScheduleToPickedDay, getWeekDays } from "../util/calendarUtils";
+import PageView from "../ui/PageView";
 
 const Calendar = ({ user }) => {
   const [pickedDay, setPickedDay] = useState(new Date());
   const router = useRouter();
 
+
   const weekDays = getWeekDays(pickedDay);
 
-  const shiftWeek = (direction) => {
-    const newPicked = new Date(pickedDay);
-    newPicked.setDate(pickedDay.getDate() + direction * 7);
-    setPickedDay(newPicked);
-  };
+
 
   const { data: schedule } = useQuery({
     queryKey: ["schedule", user?.id, pickedDay.toISOString()],
@@ -50,14 +47,13 @@ const Calendar = ({ user }) => {
     : [];
 
   return (
-    <Box className="flex-1 bg-background-50">
+    <PageView>
       <CalendarLabel dateStart={weekDays[0]} dateEnd={weekDays[6]} />
 
       <WeekDayBar
         weekDays={weekDays}
         pickedDay={pickedDay}
         onClickDay={setPickedDay}
-        setWeekDays={setWeekDays}
       />
 
       <CalendarField>
@@ -108,7 +104,7 @@ const Calendar = ({ user }) => {
           />
         ))}
       </CalendarField>
-    </Box>
+    </PageView>
   );
 };
 

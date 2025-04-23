@@ -15,59 +15,52 @@ import PageButton from "../ui/PageButton";
 import {isTheSameDate} from "../util/calendarUtils";
 import AvailabilityList from "./AvailabilityList";
 
-import { useQuery } from "@tanstack/react-query";
-import { findAvailability } from "@/api/aghub";
+import {useQuery} from "@tanstack/react-query";
+import {findAvailability} from "@/api/aghub";
+import {useAuth} from "../../contexts/AuthContext";
 
 const DateTimeRangePicker = ({
-  friendIds,
-  availableSlots,
-  setAvailableSlots,
-  dateStart,
-  setDateStart,
-  dateEnd,
-  setDateEnd,
-  setShowCalendar,
-  selectedSlot,
-  setSelectedSlot,
-  onConfirm,
-}) => {
-  const [minDuration, setMinDuration] = useState("60");
-  const [showTimeStart, setShowTimeStart] = useState(false);
-  const [showTimeEnd, setShowTimeEnd] = useState(false);
-  const [showDateStart, setShowDateStart] = useState(false);
-  const [showDateEnd, setShowDateEnd] = useState(false);
-  const [showSlotCustomizer, setShowSlotCustomizer] = useState(false);
-  const [disableCalendarButton, setDisableCalendarButton] = useState(true);
-  const [disableCustomizeAvailability, setDisableCustomizeAvailability] =
-    useState(true);
-
-  const { refetch: refetchAvailableSlots } = useQuery({
-    queryKey: [
-      "availability",
-      dateStart?.toISOString(),
-      dateEnd?.toISOString(),
-      minDuration,
-      friendIds,
-    ],
-    queryFn: ({ signal }) => {
-      console.log("Fetching availability with params:", {
-        dateStart: formatDateTimeToLocalDateTime(dateStart),
-        dateEnd: formatDateTimeToLocalDateTime(dateEnd),
-        minDuration,
-        friendIds,
-      });
-      return findAvailability(
-        formatDateTimeToLocalDateTime(dateStart),
-        formatDateTimeToLocalDateTime(dateEnd),
-        `PT${minDuration}M`,
-        friendIds,
-        signal
-      );
-    },
-    enabled: false,
-  });
-
-
+                                 friendIds,
+                                 availableSlots,
+                                 setAvailableSlots,
+                                 dateStart,
+                                 setDateStart,
+                                 dateEnd,
+                                 setDateEnd,
+                                 setShowCalendar,
+                                 selectedSlot,
+                                 setSelectedSlot,
+                                 onConfirm,
+                             }) => {
+    const [minDuration, setMinDuration] = useState("60");
+    const [showTimeStart, setShowTimeStart] = useState(false);
+    const [showTimeEnd, setShowTimeEnd] = useState(false);
+    const [showDateStart, setShowDateStart] = useState(false);
+    const [showDateEnd, setShowDateEnd] = useState(false);
+    const [showSlotCustomizer, setShowSlotCustomizer] = useState(false);
+    const [disableCalendarButton, setDisableCalendarButton] = useState(true);
+    const [disableCustomizeAvailability, setDisableCustomizeAvailability] =
+        useState(true);
+    const {user} = useAuth()
+    const {refetch: refetchAvailableSlots} = useQuery({
+        queryKey: [
+            "availability",
+            dateStart?.toISOString(),
+            dateEnd?.toISOString(),
+            minDuration,
+            friendIds,
+        ],
+        queryFn: ({signal}) => {
+            return findAvailability(
+                formatDateTimeToLocalDateTime(dateStart),
+                formatDateTimeToLocalDateTime(dateEnd),
+                `PT${minDuration}M`,
+                [user.id, ...friendIds],
+                signal
+            );
+        },
+        enabled: false,
+    });
 
 
     const setButtons = () => {
@@ -81,7 +74,7 @@ const DateTimeRangePicker = ({
 
             if (result.data) {
                 setAvailableSlots(result.data);
-                setSelectedSlot({ dateStart, dateEnd: dateStart });
+                setSelectedSlot({dateStart, dateEnd: dateStart});
                 setDisableCalendarButton(false);
                 setDisableCustomizeAvailability(false);
             } else if (result.error) {
@@ -100,7 +93,6 @@ const DateTimeRangePicker = ({
                 </Text>
             </PageHeader>
             {/*//TODO zrobić tak w innych podstronach tak jak tu*/}
-
 
 
             <ScrollView>

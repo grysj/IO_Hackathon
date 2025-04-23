@@ -3,7 +3,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import React from "react";
 import {getWeekDays, isTheSameDay} from "../util/calendarUtils";
 //TODO poprawienie tego parszywego stylowania i wywalenie gluestacka as usuall
-const WeekDayBar = ({ weekDays, pickedDay, onClickDay, setWeekDays, specialDays =[] }) => {
+const WeekDayBar = ({ weekDays, pickedDay, onClickDay, specialDays =[] }) => {
 
     const isSpecialDay = (day2)=>{
         return specialDays.some(day1 => isTheSameDay(day1,day2))
@@ -11,15 +11,13 @@ const WeekDayBar = ({ weekDays, pickedDay, onClickDay, setWeekDays, specialDays 
     const shiftWeek = (direction) => {
         const newPicked = new Date(pickedDay);
         newPicked.setDate(pickedDay.getDate() + direction * 7);
-
-        const newWeekDays = getWeekDays(newPicked);
+        const newWeekDays = getWeekDays(newPicked)
         if (direction === -1){
             onClickDay(newWeekDays[6]);
         }else{
             onClickDay(newWeekDays[0])
         }
 
-        setWeekDays(newWeekDays);
     };
     return (<HStack className="flex flex-row justify-between px-4 py-2 bg-background-200">
             <Pressable onPress={()=>shiftWeek(-1)}>
