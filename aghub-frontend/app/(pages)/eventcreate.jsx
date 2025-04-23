@@ -16,32 +16,32 @@ const EventCreateScreen = () => {
   const [step, setStep] = useState("friends");
   const { user } = useAuth();
 
-  const addEventMutation = useMutation({
-    mutationFn: ({
-      name,
-      description,
-      dateStart,
-      dateEnd,
-      latitude,
-      longitude,
-      poiId,
-      userId,
-    }) => {
-      return addEvent(
-        name,
-        description,
-        dateStart,
-        dateEnd,
-        latitude,
-        longitude,
-        poiId,
-        userId
-      );
-    },
-    onSettled: () => {
-      setStep("done");
-    },
-  });
+  // const addEventMutation = useMutation({
+  //   mutationFn: ({
+  //     name,
+  //     description,
+  //     dateStart,
+  //     dateEnd,
+  //     latitude,
+  //     longitude,
+  //     poiId,
+  //     userId,
+  //   }) => {
+  //     return addEvent(
+  //       name,
+  //       description,
+  //       dateStart,
+  //       dateEnd,
+  //       latitude,
+  //       longitude,
+  //       poiId,
+  //       userId
+  //     );
+  //   },
+  //   onSettled: () => {
+  //     setStep("done");
+  //   },
+  // });
 
   const handleFriendsConfirm = (ids, friends) => {
     setFriendsId(ids);
@@ -58,16 +58,16 @@ const EventCreateScreen = () => {
     setLocation(location);
     setStep("summarize");
 
-    addEventMutation.mutate({
-      name: "Nowe wydarzenie",
-      description: "Wydarzenie utworzone z aplikacji",
-      dateStart: slot.dateStart,
-      dateEnd: slot.dateEnd,
-      latitude: location.latitude,
-      longitude: location.longitude,
-      poiId: null,
-      userId: user.id,
-    });
+    // addEventMutation.mutate({
+    //   name: "Nowe wydarzenie",
+    //   description: "Wydarzenie utworzone z aplikacji",
+    //   dateStart: slot.dateStart,
+    //   dateEnd: slot.dateEnd,
+    //   latitude: location.latitude,
+    //   longitude: location.longitude,
+    //   poiId: null,
+    //   userId: user.id,
+    // });
   };
 
   return (

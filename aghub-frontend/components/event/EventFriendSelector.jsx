@@ -38,8 +38,11 @@ const EventFriendSelector = ({ onConfirm }) => {
   };
 
   const handleConfirm = () => {
-    const updated = [...selectedIds, user.id];
-    onConfirm(updated);
+    const updatedIds = [...selectedIds, user.id];
+    const updatedFriends = friends.filter((friend) =>
+      updatedIds.includes(friend.id)
+    );
+    onConfirm(updatedIds, updatedFriends);
   };
 
   if (isFriendsLoading) {
