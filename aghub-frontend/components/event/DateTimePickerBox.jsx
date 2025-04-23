@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, View, StyleSheet } from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { formatTime, formatDate } from "@/util/format/FormatDateTime";
 
@@ -51,40 +51,61 @@ const DateTimePickerBox = ({
     }
   };
   return (
-    <View className="flex-1 min-w-[100px]">
-      <Text className="text-white mb-1 font-semibold">{label}</Text>
+      <View style={styles.wrapper}>
+        <Text style={styles.label}>{label}</Text>
 
-      <Pressable
-        onPress={() => {
-          setVisible(true);
-          setButtons();
-        }}
-      >
-        <View className="bg-background-200 py-4 rounded-lg">
-          {visible && (
-            <RNDateTimePicker
-              value={new Date(value)}
-              mode={type}
-              display="spinner"
-              is24Hour={true}
-              minimumDate={minimumDate}
-              maximumDate={maximumDate}
-              timeZoneName="Europe/Warsaw"
-              positiveButton={{ textColor: "white" }}
-              negativeButton={{ textColor: "white" }}
-              onChange={(event, date) => {
-                setDate(date);
-              }}
-            />
-          )}
+        <Pressable
+            onPress={() => {
+              setVisible(true);
+              setButtons();
+            }}
+        >
+          <View style={styles.pickerBox}>
+            {visible && (
+                <RNDateTimePicker
+                    value={new Date(value)}
+                    mode={type}
+                    display="spinner"
+                    is24Hour={true}
+                    minimumDate={minimumDate}
+                    maximumDate={maximumDate}
+                    timeZoneName="Europe/Warsaw"
+                    positiveButton={{ textColor: "white" }}
+                    negativeButton={{ textColor: "white" }}
+                    onChange={(event, date) => setDate(date)}
+                />
+            )}
 
-          <Text className="text-yellow-600 font-bold text-xl text-center">
-            {formatText()}
-          </Text>
-        </View>
-      </Pressable>
-    </View>
+            <Text style={styles.valueText}>{formatText()}</Text>
+          </View>
+        </Pressable>
+      </View>
+
   );
 };
 
 export default DateTimePickerBox;
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    minWidth: 100,
+  },
+  label: {
+    color: "white",
+    marginBottom:2,
+    fontWeight: "600",
+  },
+  pickerBox: {
+    backgroundColor: "#535252", // bg-background-200 dark
+    paddingVertical: 16,        // py-4
+    borderRadius: 12,           // rounded-lg
+    justifyContent: "center",
+  },
+  valueText: {
+    color: "#ca8a04", // text-yellow-600
+    fontWeight: "bold",
+    fontSize: 18,      // text-xl
+    textAlign: "center",
+  },
+});

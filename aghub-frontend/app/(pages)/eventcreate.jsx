@@ -7,6 +7,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { addEvent } from "@/api/aghub";
 import EventSummarize from "../../components/event/EventSummarize";
+import PageView from "../../components/ui/PageView";
 
 const EventCreateScreen = () => {
   const [friendsId, setFriendsId] = useState([]);
@@ -15,34 +16,6 @@ const EventCreateScreen = () => {
   const [location, setLocation] = useState(null);
   const [step, setStep] = useState("friends");
   const { user } = useAuth();
-
-  // const addEventMutation = useMutation({
-  //   mutationFn: ({
-  //     name,
-  //     description,
-  //     dateStart,
-  //     dateEnd,
-  //     latitude,
-  //     longitude,
-  //     poiId,
-  //     userId,
-  //   }) => {
-  //     return addEvent(
-  //       name,
-  //       description,
-  //       dateStart,
-  //       dateEnd,
-  //       latitude,
-  //       longitude,
-  //       poiId,
-  //       userId
-  //     );
-  //   },
-  //   onSettled: () => {
-  //     setStep("done");
-  //   },
-  // });
-
   const handleFriendsConfirm = (ids, friends) => {
     setFriendsId(ids);
     setFriends(friends);
@@ -56,22 +29,11 @@ const EventCreateScreen = () => {
 
   const handleLocationConfirm = (location) => {
     setLocation(location);
-    setStep("summarize");
-
-    // addEventMutation.mutate({
-    //   name: "Nowe wydarzenie",
-    //   description: "Wydarzenie utworzone z aplikacji",
-    //   dateStart: slot.dateStart,
-    //   dateEnd: slot.dateEnd,
-    //   latitude: location.latitude,
-    //   longitude: location.longitude,
-    //   poiId: null,
-    //   userId: user.id,
-    // });
+    setStep("summarize")
   };
 
   return (
-    <Box className="flex-1 bg-background-50">
+    <PageView>
       {step === "friends" && (
         <EventFriendSelector
           initialFriendsId={friendsId}
@@ -108,7 +70,7 @@ const EventCreateScreen = () => {
           </Text>
         </Box>
       )}
-    </Box>
+    </PageView>
   );
 };
 
