@@ -13,7 +13,7 @@ import * as Location from "expo-location";
 import { useMutation } from "@tanstack/react-query";
 import { searchLocation } from "../../api/openstreetmap";
 
-export default function LocationPickerScreen({ onConfirmLocation }) {
+export default function LocationPickerScreen({ onConfirmLocation ,initialLocation }) {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [initialRegion, setInitialRegion] = useState(null);
@@ -28,15 +28,43 @@ export default function LocationPickerScreen({ onConfirmLocation }) {
         return;
       }
       const loc = await Location.getCurrentPositionAsync({});
+
+      setCurrentLocation(loc.coords);
+      if (initialLocation?.latitude && initialLocation?.longitude) {
+        setSelectedLocation(initialLocation);
+        const region = {
+          latitude: initialLocation.latitude,
+          longitude: initialLocation.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        };
+        setInitialRegion(region)
+        return
+      }
       const region = {
         latitude: loc.coords.latitude,
         longitude: loc.coords.longitude,
         latitudeDelta: 0.01,
         longitudeDelta: 0.01,
       };
-      setInitialRegion(region);
-      setCurrentLocation(loc.coords);
+      setInitialRegion(region)
     })();
+  }, []);
+  useEffect(() => {
+    if (
+        initialLocation?.latitude &&
+        initialLocation?.longitude &&
+        mapRef.current
+    ) {
+      const region = {
+        latitude: initialLocation.latitude,
+        longitude: initialLocation.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      };
+
+      mapRef.current.animateToRegion(region, 1000);
+    }
   }, []);
 
   const handleMapPress = (event) => {
