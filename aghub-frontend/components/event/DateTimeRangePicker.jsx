@@ -15,64 +15,82 @@ import PageButton from "../ui/PageButton";
 import {isTheSameDate} from "../util/calendarUtils";
 import AvailabilityList from "./AvailabilityList";
 
+import { useQuery } from "@tanstack/react-query";
+import { findAvailability } from "@/api/aghub";
 
 const DateTimeRangePicker = ({
-                                 usersId,
-                                 availableSlots,
-                                 setAvailableSlots,
-                                 dateStart,
-                                 setDateStart,
-                                 dateEnd,
-                                 setDateEnd,
-                                 setShowCalendar,
-                                 selectedSlot,
-                                 setSelectedSlot,
-                                 onConfirm
-                             }) => {
-    const [minDuration, setMinDuration] = useState("60");
-    const [showTimeStart, setShowTimeStart] = useState(false)
-    const [showTimeEnd, setShowTimeEnd] = useState(false)
-    const [showDateStart, setShowDateStart] = useState(false)
-    const [showDateEnd, setShowDateEnd] = useState(false)
-    const [showSlotCustomizer, setShowSlotCustomizer] = useState(false)
-    const [disableCalendarButton, setDisableCalendarButton] = useState(true)
-    const [disableCustomizeAvailability, setDisableCustomizeAvailability] = useState(true)
-    const fetchAvailabilities = async (friendsId) => {
-        try {
-            console.log(friendsId)
+  friendIds,
+  availableSlots,
+  setAvailableSlots,
+  dateStart,
+  setDateStart,
+  dateEnd,
+  setDateEnd,
+  setShowCalendar,
+  selectedSlot,
+  setSelectedSlot,
+  onConfirm,
+}) => {
+  const [minDuration, setMinDuration] = useState("60");
+  const [showTimeStart, setShowTimeStart] = useState(false);
+  const [showTimeEnd, setShowTimeEnd] = useState(false);
+  const [showDateStart, setShowDateStart] = useState(false);
+  const [showDateEnd, setShowDateEnd] = useState(false);
+  const [showSlotCustomizer, setShowSlotCustomizer] = useState(false);
+  const [disableCalendarButton, setDisableCalendarButton] = useState(true);
+  const [disableCustomizeAvailability, setDisableCustomizeAvailability] =
+    useState(true);
 
-            const response = await fetch("http://34.116.250.33:8080/api/availability/find", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+  const { refetch: refetchAvailableSlots } = useQuery({
+    queryKey: [
+      "availability",
+      dateStart?.toISOString(),
+      dateEnd?.toISOString(),
+      minDuration,
+      friendIds,
+    ],
+    queryFn: ({ signal }) => {
+      console.log("Fetching availability with params:", {
+        dateStart: formatDateTimeToLocalDateTime(dateStart),
+        dateEnd: formatDateTimeToLocalDateTime(dateEnd),
+        minDuration,
+        friendIds,
+      });
+      return findAvailability(
+        formatDateTimeToLocalDateTime(dateStart),
+        formatDateTimeToLocalDateTime(dateEnd),
+        `PT${minDuration}M`,
+        friendIds,
+        signal
+      );
+    },
+    enabled: false,
+  });
 
-                body: JSON.stringify({
-                    dateStart: formatDateTimeToLocalDateTime(dateStart),
-                    dateEnd: formatDateTimeToLocalDateTime(dateEnd),
-                    minDuration: `PT${minDuration}M`,
-                    usersId: friendsId,
-                }),
-            });
 
 
-            if (!response.ok) {
-                const err = await response.text();
-                throw new Error(err);
-            }
 
-            const data = await response.json();
-            setAvailableSlots(data);
-            setSelectedSlot({dateStart, dateEnd: dateStart})
-        } catch (err) {
-            console.error("Błąd podczas pobierania dostępności:", err.message);
-        }
-    };
     const setButtons = () => {
         setDisableCalendarButton(true)
         setShowSlotCustomizer(false)
         setDisableCustomizeAvailability(true)
     }
+    const handleAvailabilityRefresh = async () => {
+        try {
+            const result = await refetchAvailableSlots();
+
+            if (result.data) {
+                setAvailableSlots(result.data);
+                setSelectedSlot({ dateStart, dateEnd: dateStart });
+                setDisableCalendarButton(false);
+                setDisableCustomizeAvailability(false);
+            } else if (result.error) {
+                console.error("Failed to fetch availability:", result.error);
+            }
+        } catch (err) {
+            console.error("Unexpected error while refreshing availability:", err);
+        }
+    };
     return (
         <PageView>
             <PageHeader>
@@ -82,6 +100,8 @@ const DateTimeRangePicker = ({
                 </Text>
             </PageHeader>
             {/*//TODO zrobić tak w innych podstronach tak jak tu*/}
+
+
 
             <ScrollView>
 
@@ -135,10 +155,7 @@ const DateTimeRangePicker = ({
 
                 <PageButton
                     title="Refresh Availability"
-                    onPress={() => fetchAvailabilities(usersId).then(() => {
-                        setDisableCalendarButton(false)
-                        setDisableCustomizeAvailability(false)
-                    })}
+                    onPress={handleAvailabilityRefresh}
                     disabled={isTheSameDate(dateStart, dateEnd)}
                 />
 

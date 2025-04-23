@@ -4,19 +4,21 @@ import EventFriendSelector from "../../components/event/EventFriendSelector";
 import EventAvailabilityPicker from "../../components/event/EventAvailabilityPicker";
 import LocationPickerScreen from "../../components/event/EventLocationPicker";
 import { useAuth } from "../../contexts/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import { addEvent } from "@/api/aghub";
 import EventSummarize from "../../components/event/EventSummarize";
 import PageView from "../../components/ui/PageView";
 
 const EventCreateScreen = () => {
   const [friendsId, setFriendsId] = useState([]);
-  const [friends, setFriends] = useState([])
+  const [friends, setFriends] = useState([]);
   const [slot, setSlot] = useState(null);
   const [location, setLocation] = useState(null);
   const [step, setStep] = useState("friends");
   const { user } = useAuth();
   const handleFriendsConfirm = (ids, friends) => {
     setFriendsId(ids);
-    setFriends(friends)
+    setFriends(friends);
     setStep("availability");
   };
 
@@ -24,7 +26,6 @@ const EventCreateScreen = () => {
     setSlot(slot);
     setStep("location");
   };
-
 
   const handleLocationConfirm = (location) => {
     setLocation(location);
@@ -34,7 +35,10 @@ const EventCreateScreen = () => {
   return (
     <PageView>
       {step === "friends" && (
-        <EventFriendSelector initialFriendsId={friendsId} onConfirm={handleFriendsConfirm} />
+        <EventFriendSelector
+          initialFriendsId={friendsId}
+          onConfirm={handleFriendsConfirm}
+        />
       )}
 
       {step === "availability" && (
@@ -45,10 +49,19 @@ const EventCreateScreen = () => {
       )}
 
       {step === "location" && (
-        <LocationPickerScreen initialLocation={location} onConfirmLocation={handleLocationConfirm} />
+        <LocationPickerScreen
+          initialLocation={location}
+          onConfirmLocation={handleLocationConfirm}
+        />
       )}
-      {step==="summarize" &&(
-          <EventSummarize friends={friends} friendsId={friendsId} slot={slot} setStep={setStep} location={location} />
+      {step === "summarize" && (
+        <EventSummarize
+          friends={friends}
+          friendsId={friendsId}
+          slot={slot}
+          setStep={setStep}
+          location={location}
+        />
       )}
       {step === "done" && (
         <Box className="p-4">

@@ -1,13 +1,22 @@
-import {useAuth} from "../../contexts/AuthContext";
-import {Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View} from "react-native";
+
 import ScrollView from "../ui/scrollview/StyledScrollView";
+import { useAuth } from "../../contexts/AuthContext";
+import {
+  Keyboard,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import LottieView from "lottie-react-native";
-import {Ionicons} from "@expo/vector-icons";
-import React, {useState} from "react";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Divider from "../ui/Divider";
 import * as Linking from "expo-linking";
-import {isTheSameDay} from "../util/calendarUtils";
+import { isTheSameDay } from "../util/calendarUtils";
 
 import FriendComponent from "../friendlist/FriendComponent";
 import {useRouter} from "expo-router";
@@ -17,76 +26,93 @@ import PageView from "../ui/PageView";
 
 
 
-const createEvent = async (userId, slot, location, friendsId, name, description, onError) => {
-    try {
-        const eventDto = {
-            name: name,
-            description: description,
-            dateStart: slot.dateStart,//TODO tu jest błąd pewnie z formatem danych dlatego to nie chciało się wysyłać
-            dateEnd: slot.dateEnd,
-            latitude: location.latitude,
-            longitude: location.longitude,
-            participantsId: friendsId,
-            poiId: null,
-            createdById: userId,
-        };
+const createEvent = async (
+  userId,
+  slot,
+  location,
+  friendsId,
+  name,
+  description,
+  onError
+) => {
+  try {
+    const eventDto = {
+      name: name,
+      description: description,
+      dateStart: slot.dateStart, //TODO tu jest błąd pewnie z formatem danych dlatego to nie chciało się wysyłać
+      dateEnd: slot.dateEnd,
+      latitude: location.latitude,
+      longitude: location.longitude,
+      participantsId: friendsId,
+      poiId: null,
+      createdById: userId,
+    };
 
-        const response = await fetch("http://34.116.250.33:8080/api/events/create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(eventDto),
-        });
+    const response = await fetch(
+      "http://34.116.250.33:8080/api/events/create",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(eventDto),
+      }
+    );
 
-        if (!response.ok) {
-            const errText = await response.text();
-            throw new Error(`Błąd zapisu wydarzenia: ${errText}`);
-        }
-        console.log("Wydarzenie zapisane pomyślnie");
-    } catch (err) {
-        console.error("Błąd podczas zapisu eventu:", err.message);
-        onError(`Event creation error: ${err.message}`)
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Błąd zapisu wydarzenia: ${errText}`);
     }
+    console.log("Wydarzenie zapisane pomyślnie");
+  } catch (err) {
+    console.error("Błąd podczas zapisu eventu:", err.message);
+    onError(`Event creation error: ${err.message}`);
+  }
 };
-const EventSummarize = ({friends, friendsId, slot, setStep, location}) => {
-    const {user} = useAuth();
-    const router = useRouter()
-    const [name, setName] = useState("");
-    const [playAnimation, setPlayAnimation] = useState(false)
-    const [nameError, setNameError] = useState("");
-    const [fetchError, setFetchError] = useState("");
-    const [description, setDescription] = useState("");
-    const [disableAll, setDisableAll] = useState(false)
-    const handleLocationPress = () => {
-        console.log(location)
-        if (location?.latitude && location?.longitude) {
-            const gmapsUrl = `comgooglemaps://?q=${location.latitude},${location.longitude}`;
-            const fallbackUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
+const EventSummarize = ({ friends, friendsId, slot, setStep, location }) => {
+  const { user } = useAuth();
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [playAnimation, setPlayAnimation] = useState(false);
+  const [nameError, setNameError] = useState("");
+  const [fetchError, setFetchError] = useState("");
+  const [description, setDescription] = useState("");
+  const [disableAll, setDisableAll] = useState(false);
+  const handleLocationPress = () => {
+    console.log(location);
+    if (location?.latitude && location?.longitude) {
+      const gmapsUrl = `comgooglemaps://?q=${location.latitude},${location.longitude}`;
+      const fallbackUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
 
-            Linking.canOpenURL(gmapsUrl)
-                .then((supported) => {
-                    if (supported) {
-                        Linking.openURL(gmapsUrl);
-                    } else {
-                        Linking.openURL(fallbackUrl);
-                    }
-                })
-                .catch((err) => console.error("Error opening map:", err));
-        }
-
-
+      Linking.canOpenURL(gmapsUrl)
+        .then((supported) => {
+          if (supported) {
+            Linking.openURL(gmapsUrl);
+          } else {
+            Linking.openURL(fallbackUrl);
+          }
+        })
+        .catch((err) => console.error("Error opening map:", err));
     }
-    const handleConfirm = () => {
-        if (!name) {
-            setNameError("Choose name for your event")
-            return
-        }
-        createEvent(user.id, slot, location, friendsId, name, description, setFetchError)
-            .then(() => setDisableAll(true))
-            .then(() => setPlayAnimation(true))
-
+  };
+  const handleConfirm = () => {
+    if (!name) {
+      setNameError("Choose name for your event");
+      return;
     }
+    createEvent(
+      user.id,
+      slot,
+      location,
+      friendsId,
+      name,
+      description,
+      setFetchError
+    )
+      .then(() => setDisableAll(true))
+      .then(() => setPlayAnimation(true));
+  };
+
     return (
 
         <PageView>

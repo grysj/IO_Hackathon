@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box } from "@gluestack-ui/themed";
 import CalendarComponent from "./CalendarComponent";
 import WeekDayBar from "./WeekDayBar";
@@ -6,66 +6,38 @@ import { useRouter } from "expo-router";
 import CalendarTimeLine from "./CalendarTimeLine";
 import { formatDateTimeToLocalDateTime } from "@/util/format/FormatDateTime";
 import CalendarField from "./CalendarField";
-
+import { useQuery } from "@tanstack/react-query";
+import { getSchedule } from "@/api/aghub";
 import CalendarLabel from "./CalendarLabel";
 import { cropScheduleToPickedDay, getWeekDays } from "../util/calendarUtils";
 
 const Calendar = ({ user }) => {
-  const [schedule, setSchedule] = useState(null);
   const [pickedDay, setPickedDay] = useState(new Date());
-  const [weekDays, setWeekDays] = useState(getWeekDays());
-  const [error, setError] = useState(null);
   const router = useRouter();
+
+  const weekDays = getWeekDays(pickedDay);
 
   const shiftWeek = (direction) => {
     const newPicked = new Date(pickedDay);
     newPicked.setDate(pickedDay.getDate() + direction * 7);
-
-    const newWeekDays = getWeekDays(newPicked);
     setPickedDay(newPicked);
-    setWeekDays(newWeekDays);
   };
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const fetchSchedule = async () => {
-      if (!user?.id) return;
-
+  const { data: schedule } = useQuery({
+    queryKey: ["schedule", user?.id, pickedDay.toISOString()],
+    queryFn: async () => {
       const dateStart = weekDays[0];
       const dateEnd = new Date(weekDays[6]);
       dateEnd.setHours(23, 59, 59, 999);
 
-      try {
-        const response = await fetch("http://34.116.250.33:8080/api/schedule", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: user.id,
-            dateStart: formatDateTimeToLocalDateTime(dateStart),
-            dateEnd: formatDateTimeToLocalDateTime(dateEnd),
-          }),
-          signal: controller.signal,
-        });
-
-        if (!response.ok) throw new Error("Failed to fetch schedule");
-
-        const data = await response.json();
-        setSchedule(data);
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          setError(err.message);
-          console.error(err);
-        }
-      }
-    };
-
-    fetchSchedule();
-
-    return () => controller.abort();
-  }, [user, weekDays]);
+      return getSchedule(
+        user.id,
+        formatDateTimeToLocalDateTime(dateStart),
+        formatDateTimeToLocalDateTime(dateEnd)
+      );
+    },
+    enabled: !!user?.id,
+  });
 
   const classesPicked = schedule?.classes
     ? cropScheduleToPickedDay(schedule.classes, pickedDay)
@@ -106,6 +78,7 @@ const Calendar = ({ user }) => {
             }
           />
         ))}
+
         {eventsPicked.map((e, i) => (
           <CalendarComponent
             key={`event-${i}`}
@@ -122,6 +95,7 @@ const Calendar = ({ user }) => {
             }
           />
         ))}
+
         {unavailabilityPicked.map((u, i) => (
           <CalendarComponent
             key={`unavail-${i}`}

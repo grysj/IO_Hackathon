@@ -1,5 +1,6 @@
+
 import {cropScheduleToPickedDay, getWeekDays} from "../util/calendarUtils";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {useAuth} from "../../contexts/AuthContext";
 import {formatDateTimeToLocalDateTime} from "../../util/format/FormatDateTime";
 import CalendarLabel from "../calendar/CalendarLabel";
@@ -13,25 +14,29 @@ import {Ionicons} from "@expo/vector-icons";
 import EventSlotCustomizer from "./EventSlotCustomizer";
 import PageView from "../ui/PageView";
 import PageButton from "../ui/PageButton";
+import { useQuery } from "@tanstack/react-query";
+import { getUsersSchedules } from "../../api/aghub";
 
 function filterHiddenUsers(usersCalendars = [], hiddenUsers = []) {
-    return usersCalendars.filter((entry) => !hiddenUsers.includes(entry?.user?.id));
+  return usersCalendars.filter(
+    (entry) => !hiddenUsers.includes(entry?.user?.id)
+  );
 }
 
 const generateSpecialDays = (start, end) => {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
+  const startDate = new Date(start);
+  const endDate = new Date(end);
 
-    const days = [];
-    const current = new Date(startDate);
-    const [showSchedule, setShowSchedule] = useState(false)
+  const days = [];
+  const current = new Date(startDate);
+  const [showSchedule, setShowSchedule] = useState(false);
 
-    while (current <= endDate) {
-        days.push(new Date(current)); // kopia obiektu
-        current.setDate(current.getDate() + 1);
-    }
+  while (current <= endDate) {
+    days.push(new Date(current)); // kopia obiektu
+    current.setDate(current.getDate() + 1);
+  }
 
-    return days;
+  return days;
 };
 
 const EventCreationCalendar = ({
@@ -47,7 +52,6 @@ const EventCreationCalendar = ({
     const {user} = useAuth();
     //TODO obsługa wyświetlania niedostępnych terminów po userze taka chcek lista z odznaczaniem userów
     const [hiddenUsers, setHiddenUsers] = useState([])
-    const [usersCalendars, setUsersCalendars] = useState([])
     const [pickedDay, setPickedDay] = useState(new Date(selectedSlot.dateStart));
     const [weekDays, setWeekDays] = useState(getWeekDays(new Date(dateStart)));
     const [error, setError] = useState(null);
@@ -56,46 +60,34 @@ const EventCreationCalendar = ({
 
 
 
-    useEffect(() => {
-        const controller = new AbortController();
 
-        const fetchUsersSchedule = async () => {
-            if (!user?.id) return;
 
-            try {
-                const response = await fetch("http://34.116.250.33:8080/api/schedule/users", {
-                    method: "POST", headers: {
-                        "Content-Type": "application/json",
-                    }, body: JSON.stringify({
-                        usersId: usersId,
-                        dateStart: formatDateTimeToLocalDateTime(dateStart),
-                        dateEnd: formatDateTimeToLocalDateTime(dateEnd),
-                    }), signal: controller.signal,
-                });
+  const {
+    data: usersCalendars,
+    isLoading: isUsersCalendarsLoading,
+    error: usersCalendarsError,
+  } = useQuery({
+    queryKey: ["usersCalendars", usersId.slice().sort(), dateStart, dateEnd],
+    queryFn: ({ signal }) =>
+      getUsersSchedules(
+        usersId,
+        formatDateTimeToLocalDateTime(dateStart),
+        formatDateTimeToLocalDateTime(dateEnd),
+        signal
+      ),
+    enabled: !!user?.id,
+  });
 
-                if (!response.ok) throw new Error("Failed to fetch schedule");
+  const specialDays = generateSpecialDays(dateStart, dateEnd);
+  const pickedCalendars = filterHiddenUsers(usersCalendars, hiddenUsers);
+  const availabilitiesPicked = availabilities
+    ? cropScheduleToPickedDay(availabilities, pickedDay)
+    : [];
+  const selectedSlotPicked =
+    selectedSlot && selectedSlot?.dateStart < selectedSlot?.dateEnd
+      ? cropScheduleToPickedDay([selectedSlot], pickedDay)
+      : [];
 
-                const data = await response.json();
-                setUsersCalendars(data)
-            } catch (err) {
-                if (err.name !== "AbortError") {
-                    setError(err.message);
-                    console.error(err);
-                }
-            }
-        };
-
-        fetchUsersSchedule();
-
-        return () => controller.abort();
-    }, [user, weekDays]);
-    const specialDays = generateSpecialDays(dateStart, dateEnd);
-    const pickedCalendars = filterHiddenUsers(usersCalendars, hiddenUsers)
-    const availabilitiesPicked = availabilities ? cropScheduleToPickedDay(availabilities, pickedDay) : [];
-    const selectedSlotPicked = selectedSlot
-
-    && selectedSlot?.dateStart < selectedSlot?.dateEnd
-        ? cropScheduleToPickedDay([selectedSlot], pickedDay) : [];
     return (
         <PageView>
             <View style={styles.header}>
