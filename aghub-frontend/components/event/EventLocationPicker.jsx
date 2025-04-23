@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
-import { useMutate } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { searchLocation } from "../../api/openstreetmap";
 
 export default function LocationPickerScreen({ onConfirmLocation }) {
@@ -44,7 +44,7 @@ export default function LocationPickerScreen({ onConfirmLocation }) {
     setSelectedLocation({ latitude, longitude });
   };
 
-  const searchLocationMutation = useMutate({
+  const searchLocationMutation = useMutation({
     mutationFn: ({ query }) => searchLocation(query),
     onSuccess: (data) => {
       if (data.length > 0) {

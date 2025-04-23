@@ -75,7 +75,7 @@ const FriendsScreen = () => {
         <VStack space="md" className={"p-3"}>
           {friends.map((friend) => {
             return (
-              <FriendComponent
+              <FriendListComponent
                 key={friend.id}
                 onClickRemove={removeFriend}
                 onClickCalendar={goToCalendar}

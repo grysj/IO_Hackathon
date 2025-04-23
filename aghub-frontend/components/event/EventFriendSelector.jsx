@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   HStack,
@@ -7,12 +7,12 @@ import {
   Text,
   VStack,
 } from "@gluestack-ui/themed";
-import { MaterialIcons } from "@expo/vector-icons";
+import FriendComponent from "../friendlist/FriendComponent";
 import { useAuth } from "../../contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { getFriends } from "../../api/aghub";
 
-const FriendSelector = ({ onConfirm }) => {
+const EventFriendSelector = ({ onConfirm }) => {
   const [selectedIds, setSelectedIds] = useState([]);
   const { user } = useAuth();
 

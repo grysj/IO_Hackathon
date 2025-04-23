@@ -185,6 +185,8 @@ export const findAvailability = async (
     signal,
   });
 
+  console.log("Response from server:", res);
+
   if (!res.ok) {
     const error = new Error(
       res.statusText || "Error while fetching availability"
