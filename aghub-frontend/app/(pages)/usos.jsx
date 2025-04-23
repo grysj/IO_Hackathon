@@ -10,47 +10,32 @@ import {
   Alert,
 } from "react-native";
 import { useAuth } from "@/contexts/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import { importClassesFromUsos } from "@/api/aghub";
 
 export default function UsosScreen() {
   const { user } = useAuth();
   const [url, setUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleUpload = async () => {
+  const usosImportMutation = useMutation({
+    mutationFn: ({ userId, url }) => {
+      return importClassesFromUsos(userId, url);
+    },
+    onSuccess: () => {
+      setUrl("");
+    },
+  });
+
+  const handleUpload = () => {
     if (!url.trim()) {
       Alert.alert("error", "Paste link from USOS.");
       return;
     }
 
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        "http://34.116.250.33:8080/api/classes/import_usos",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            url: url.trim(),
-            userId: user.id,
-          }),
-        }
-      );
-
-      const text = await response.text();
-
-      if (response.ok) {
-        Alert.alert("Your plan was successfully uploaded", text);
-        setUrl("");
-      } else {
-        Alert.alert("error", text);
-      }
-    } catch (error) {
-      Alert.alert("network error", error.message);
-    } finally {
-      setIsLoading(false);
-    }
+    usosImportMutation.mutate({
+      userId: user.id,
+      url: url.trim(),
+    });
   };
 
   return (
@@ -77,10 +62,10 @@ export default function UsosScreen() {
         <TouchableOpacity
           style={styles.button}
           onPress={handleUpload}
-          disabled={isLoading}
+          disabled={usosImportMutation.isLoading}
         >
           <Text style={styles.buttonText}>
-            {isLoading ? "Uploading..." : "Upload"}
+            {usosImportMutation.isLoading ? "Uploading..." : "Upload"}
           </Text>
         </TouchableOpacity>
       </View>

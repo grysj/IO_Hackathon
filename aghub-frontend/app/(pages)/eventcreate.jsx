@@ -4,18 +4,48 @@ import EventFriendSelector from "../../components/event/EventFriendSelector";
 import EventAvailabilityPicker from "../../components/event/EventAvailabilityPicker";
 import LocationPickerScreen from "../../components/event/EventLocationPicker";
 import { useAuth } from "../../contexts/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import { addEvent } from "@/api/aghub";
 import EventSummarize from "../../components/event/EventSummarize";
 
 const EventCreateScreen = () => {
   const [friendsId, setFriendsId] = useState([]);
-  const [friends, setFriends] = useState([])
+  const [friends, setFriends] = useState([]);
   const [slot, setSlot] = useState(null);
   const [location, setLocation] = useState(null);
   const [step, setStep] = useState("friends");
   const { user } = useAuth();
+
+  // const addEventMutation = useMutation({
+  //   mutationFn: ({
+  //     name,
+  //     description,
+  //     dateStart,
+  //     dateEnd,
+  //     latitude,
+  //     longitude,
+  //     poiId,
+  //     userId,
+  //   }) => {
+  //     return addEvent(
+  //       name,
+  //       description,
+  //       dateStart,
+  //       dateEnd,
+  //       latitude,
+  //       longitude,
+  //       poiId,
+  //       userId
+  //     );
+  //   },
+  //   onSettled: () => {
+  //     setStep("done");
+  //   },
+  // });
+
   const handleFriendsConfirm = (ids, friends) => {
     setFriendsId(ids);
-    setFriends(friends)
+    setFriends(friends);
     setStep("availability");
   };
 
@@ -24,31 +54,29 @@ const EventCreateScreen = () => {
     setStep("location");
   };
 
-
   const handleLocationConfirm = (location) => {
     setLocation(location);
-    setStep("summarize")
+    setStep("summarize");
 
-    // const eventData = {
-    //   friends: friendsId,
-    //   slot,
-    //   location,
-    // };
-    //
-    // // Tutaj będzie wysłanie do prawdziwego backendu, gdy go dodasz
-    // console.log("📦 Gotowe dane do wysłania:", eventData);
-    //
-    // fetchEvent({
+    // addEventMutation.mutate({
+    //   name: "Nowe wydarzenie",
+    //   description: "Wydarzenie utworzone z aplikacji",
+    //   dateStart: slot.dateStart,
+    //   dateEnd: slot.dateEnd,
+    //   latitude: location.latitude,
+    //   longitude: location.longitude,
+    //   poiId: null,
     //   userId: user.id,
-    //   slot,
-    //   location,
-    // }).then(setStep("done"));
+    // });
   };
 
   return (
     <Box className="flex-1 bg-background-50">
       {step === "friends" && (
-        <EventFriendSelector initialFriendsId={friendsId} onConfirm={handleFriendsConfirm} />
+        <EventFriendSelector
+          initialFriendsId={friendsId}
+          onConfirm={handleFriendsConfirm}
+        />
       )}
 
       {step === "availability" && (
@@ -59,10 +87,19 @@ const EventCreateScreen = () => {
       )}
 
       {step === "location" && (
-        <LocationPickerScreen initialLocation={location} onConfirmLocation={handleLocationConfirm} />
+        <LocationPickerScreen
+          initialLocation={location}
+          onConfirmLocation={handleLocationConfirm}
+        />
       )}
-      {step==="summarize" &&(
-          <EventSummarize friends={friends} friendsId={friendsId} slot={slot} setStep={setStep} location={location} />
+      {step === "summarize" && (
+        <EventSummarize
+          friends={friends}
+          friendsId={friendsId}
+          slot={slot}
+          setStep={setStep}
+          location={location}
+        />
       )}
       {step === "done" && (
         <Box className="p-4">

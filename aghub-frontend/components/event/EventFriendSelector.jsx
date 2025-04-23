@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   HStack,
@@ -7,36 +7,25 @@ import {
   Text,
   VStack,
 } from "@gluestack-ui/themed";
-import { MaterialIcons } from "@expo/vector-icons";
-import { mockFriends } from "../../mock/MockedData";
-import { useAuth } from "../../contexts/AuthContext";
 import FriendComponent from "../friendlist/FriendComponent";
+import { useAuth } from "../../contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { getFriends } from "../../api/aghub";
 
-const EventFriendSelector = ({initialFriendsId, onConfirm }) => {
-  const [friends, setFriends] = useState([]);
-  const [selectedIds, setSelectedIds] = useState(initialFriendsId||[]);
+const EventFriendSelector = ({ onConfirm }) => {
+  const [selectedIds, setSelectedIds] = useState([]);
   const { user } = useAuth();
-  const fetchFriends = async (userId) => {
-    try {
-      const response = await fetch(
-        `http://34.116.250.33:8080/api/friends/${userId}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
 
-      if (!response.ok) throw new Error("Błąd pobierania znajomych");
-
-      const data = await response.json();
-      setFriends(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  useEffect(() => {
-    fetchFriends(user.id);
-  }, []);
+  const {
+    data: friends,
+    isLoading: isFriendsLoading,
+    error: friendsError,
+  } = useQuery({
+    queryKey: ["friends", user.id],
+    queryFn: () => getFriends(user.id),
+    enabled: !!user.id,
+    initialData: [],
+  });
 
   const toggleSelection = (id) => {
     setSelectedIds((prev) =>
@@ -49,11 +38,33 @@ const EventFriendSelector = ({initialFriendsId, onConfirm }) => {
   };
 
   const handleConfirm = () => {
-    const selectedFriends = friends.filter(friend =>
-        selectedIds.includes(friend.id)
+    const updatedIds = [...selectedIds, user.id];
+    const updatedFriends = friends.filter((friend) =>
+      updatedIds.includes(friend.id)
     );
-    onConfirm(selectedIds, selectedFriends);
+    onConfirm(updatedIds, updatedFriends);
   };
+
+  if (isFriendsLoading) {
+    return (
+      <Box className="flex-1 justify-center items-center bg-background-50">
+        <Spinner size="large" color="$yellow600" />
+        <Text className="mt-4 text-yellow-700 font-semibold">
+          Loading friends...
+        </Text>
+      </Box>
+    );
+  }
+
+  if (friendsError) {
+    return (
+      <Box className="flex-1 justify-center items-center bg-background-50 px-4">
+        <Text className="text-error-500 text-center font-semibold text-lg mb-2">
+          Failed to load friends.
+        </Text>
+      </Box>
+    );
+  }
 
   return (
     <Box className="flex-1 bg-background-50 p-4">
