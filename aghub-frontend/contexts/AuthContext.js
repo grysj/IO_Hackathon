@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const API_URL = process.env.EXPO_PUBLIC_AGHUB_API_URL;
+
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -25,7 +27,7 @@ export function AuthProvider({ children }) {
 
   const signup = async (username, email, password) => {
     try {
-      const res = await fetch("http://34.116.250.33:8080/auth/register", {
+      const res = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,7 +55,7 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      const res = await fetch("http://34.116.250.33:8080/auth/login", {
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
