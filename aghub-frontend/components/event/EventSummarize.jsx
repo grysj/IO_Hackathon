@@ -24,7 +24,7 @@ import {formatDateLabel, formatTime} from "../../util/format/FormatDateTime";
 import PageHeader from "../ui/PageHeader";
 import PageView from "../ui/PageView";
 
-
+const API_URL = process.env.EXPO_PUBLIC_AGHUB_API_URL;
 
 const createEvent = async (
   userId,
@@ -49,7 +49,7 @@ const createEvent = async (
     };
 
     const response = await fetch(
-      "http://34.116.250.33:8080/api/events/create",
+      `${API_URL}/api/events/create`,
       {
         method: "POST",
         headers: {
